@@ -16,6 +16,7 @@ foreach my $org (@files) {
         my $line = $_;
         chomp $line;
         $line =~ s/32/64/g;
+        $line =~ s/float/double/g;
         print FILE64 "$line\n";
     }
     close FILE32;

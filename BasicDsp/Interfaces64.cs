@@ -10,9 +10,9 @@ namespace BasicDsp
 {
     public interface IDataVector64
     {
-        float this[int index] { get; set; }
+        double this[int index] { get; set; }
         VectorDomain Domain { get; }
-        float Delta { get; }
+        double Delta { get; }
         bool IsComplex { get; }
         int Length { get; }
         int AllocatedLength { get; }
@@ -21,13 +21,13 @@ namespace BasicDsp
 
     public interface IRealVectorOperations64
     {
-        DataVector64 Add(float value);
+        DataVector64 Add(double value);
         DataVector64 Add(DataVector64 vector);
-        DataVector64 Subtract(float value);
+        DataVector64 Subtract(double value);
         DataVector64 Subtract(DataVector64 vector);
-        DataVector64 Multiply(float value);
+        DataVector64 Multiply(double value);
         DataVector64 Multiply(DataVector64 vector);
-        DataVector64 Divide(float value);
+        DataVector64 Divide(double value);
         DataVector64 Divide(DataVector64 vector);
         DataVector64 ZeroPad(int points);
         DataVector64 ZeroInterleave(int factor = 2);
@@ -37,28 +37,28 @@ namespace BasicDsp
         DataVector64 Abs();
         DataVector64 Sqrt();
         DataVector64 Square();
-        DataVector64 Root(float value);
-        DataVector64 Power(float value);
+        DataVector64 Root(double value);
+        DataVector64 Power(double value);
         DataVector64 Logn();
         DataVector64 Expn();
-        DataVector64 Exp(float value);
-        DataVector64 Log(float value);
+        DataVector64 Exp(double value);
+        DataVector64 Log(double value);
         DataVector64 Sin();
         DataVector64 Cos();
         DataVector64 ToComplex();
-        DataVector64 Wrap(float value);
-        DataVector64 Unwrap(float value);
+        DataVector64 Wrap(double value);
+        DataVector64 Unwrap(double value);
     }
 
     public interface IComplexVectorOperations64
     {
-        DataVector64 Add(float real, float imag);
+        DataVector64 Add(double real, double imag);
         DataVector64 Add(DataVector64 vector);
-        DataVector64 Subtract(float real, float imag);
+        DataVector64 Subtract(double real, double imag);
         DataVector64 Subtract(DataVector64 vector);
-        DataVector64 Multiply(float real, float imag);
+        DataVector64 Multiply(double real, double imag);
         DataVector64 Multiply(DataVector64 vector);
-        DataVector64 Divide(float real, float imag);
+        DataVector64 Divide(double real, double imag);
         DataVector64 Divide(DataVector64 vector);
         DataVector64 ComplexAbs();
         void GetComplexAbs(DataVector64 destination);
@@ -84,13 +84,13 @@ namespace BasicDsp
 
     public interface IRealTimeDomainVector64 : IDataVector64, IDisposable
     {
-        IRealTimeDomainVector64 Add(float value);
+        IRealTimeDomainVector64 Add(double value);
         IRealTimeDomainVector64 Add(IRealTimeDomainVector64 vector);
-        IRealTimeDomainVector64 Subtract(float value);
+        IRealTimeDomainVector64 Subtract(double value);
         IRealTimeDomainVector64 Subtract(IRealTimeDomainVector64 vector);
-        IRealTimeDomainVector64 Multiply(float value);
+        IRealTimeDomainVector64 Multiply(double value);
         IRealTimeDomainVector64 Multiply(IRealTimeDomainVector64 vector);
-        IRealTimeDomainVector64 Divide(float value);
+        IRealTimeDomainVector64 Divide(double value);
         IRealTimeDomainVector64 Divide(IRealTimeDomainVector64 vector);
         IRealTimeDomainVector64 ZeroPad(int points);
         IRealTimeDomainVector64 ZeroInterleave(int factor = 2);
@@ -100,30 +100,30 @@ namespace BasicDsp
         IRealTimeDomainVector64 Abs();
         IRealTimeDomainVector64 Sqrt();
         IRealTimeDomainVector64 Square();
-        IRealTimeDomainVector64 Root(float value);
-        IRealTimeDomainVector64 Power(float value);
+        IRealTimeDomainVector64 Root(double value);
+        IRealTimeDomainVector64 Power(double value);
         IRealTimeDomainVector64 Logn();
         IRealTimeDomainVector64 Expn();
-        IRealTimeDomainVector64 Exp(float value);
-        IRealTimeDomainVector64 Log(float value);
+        IRealTimeDomainVector64 Exp(double value);
+        IRealTimeDomainVector64 Log(double value);
         IRealTimeDomainVector64 Sin();
         IRealTimeDomainVector64 Cos();
         IRealTimeDomainVector64 SwapHalves();
         IComplexTimeDomainVector64 ToComplex();
-        IRealTimeDomainVector64 Wrap(float value);
-        IRealTimeDomainVector64 Unwrap(float value);
+        IRealTimeDomainVector64 Wrap(double value);
+        IRealTimeDomainVector64 Unwrap(double value);
         IComplexFrequencyDomainVector64 PlainFft();
     }
 
     public interface IRealFrequencyDomainVector64 : IDataVector64, IDisposable
     {
-        IRealFrequencyDomainVector64 Add(float value);
+        IRealFrequencyDomainVector64 Add(double value);
         IRealFrequencyDomainVector64 Add(IRealFrequencyDomainVector64 vector);
-        IRealFrequencyDomainVector64 Subtract(float value);
+        IRealFrequencyDomainVector64 Subtract(double value);
         IRealFrequencyDomainVector64 Subtract(IRealFrequencyDomainVector64 vector);
-        IRealFrequencyDomainVector64 Multiply(float value);
+        IRealFrequencyDomainVector64 Multiply(double value);
         IRealFrequencyDomainVector64 Multiply(IRealFrequencyDomainVector64 vector);
-        IRealFrequencyDomainVector64 Divide(float value);
+        IRealFrequencyDomainVector64 Divide(double value);
         IRealFrequencyDomainVector64 Divide(IRealFrequencyDomainVector64 vector);
         IRealFrequencyDomainVector64 ZeroPad(int points);
         IRealFrequencyDomainVector64 ZeroInterleave(int factor = 2);
@@ -133,40 +133,40 @@ namespace BasicDsp
         IRealFrequencyDomainVector64 Abs();
         IRealFrequencyDomainVector64 Sqrt();
         IRealFrequencyDomainVector64 Square();
-        IRealFrequencyDomainVector64 Root(float value);
-        IRealFrequencyDomainVector64 Power(float value);
+        IRealFrequencyDomainVector64 Root(double value);
+        IRealFrequencyDomainVector64 Power(double value);
         IRealFrequencyDomainVector64 Logn();
         IRealFrequencyDomainVector64 Expn();
-        IRealFrequencyDomainVector64 Exp(float value);
-        IRealFrequencyDomainVector64 Log(float value);
+        IRealFrequencyDomainVector64 Exp(double value);
+        IRealFrequencyDomainVector64 Log(double value);
         IRealFrequencyDomainVector64 Sin();
         IRealFrequencyDomainVector64 Cos();
         IRealFrequencyDomainVector64 SwapHalves();
         IComplexFrequencyDomainVector64 ToComplex();
-        IRealFrequencyDomainVector64 Wrap(float value);
-        IRealFrequencyDomainVector64 Unwrap(float value);
+        IRealFrequencyDomainVector64 Wrap(double value);
+        IRealFrequencyDomainVector64 Unwrap(double value);
         IComplexTimeDomainVector64 PlainIfft();
     }
 
     public interface IComplexTimeDomainVector64 : IDataVector64, IDisposable
     {
-        IComplexTimeDomainVector64 Add(float real, float imag);
+        IComplexTimeDomainVector64 Add(double real, double imag);
         IComplexTimeDomainVector64 Add(IComplexTimeDomainVector64 vector);
-        IComplexTimeDomainVector64 Subtract(float real, float imag);
+        IComplexTimeDomainVector64 Subtract(double real, double imag);
         IComplexTimeDomainVector64 Subtract(IComplexTimeDomainVector64 vector);
-        IComplexTimeDomainVector64 Multiply(float real, float imag);
+        IComplexTimeDomainVector64 Multiply(double real, double imag);
         IComplexTimeDomainVector64 Multiply(IComplexTimeDomainVector64 vector);
-        IComplexTimeDomainVector64 Divide(float real, float imag);
+        IComplexTimeDomainVector64 Divide(double real, double imag);
         IComplexTimeDomainVector64 Divide(IComplexTimeDomainVector64 vector);
         IRealTimeDomainVector64 Abs();
         IComplexTimeDomainVector64 Sqrt();
         IComplexTimeDomainVector64 Square();
-        IComplexTimeDomainVector64 Root(float value);
-        IComplexTimeDomainVector64 Power(float value);
+        IComplexTimeDomainVector64 Root(double value);
+        IComplexTimeDomainVector64 Power(double value);
         IComplexTimeDomainVector64 Logn();
         IComplexTimeDomainVector64 Expn();
-        IComplexTimeDomainVector64 Exp(float value);
-        IComplexTimeDomainVector64 Log(float value);
+        IComplexTimeDomainVector64 Exp(double value);
+        IComplexTimeDomainVector64 Log(double value);
         IComplexTimeDomainVector64 Sin();
         IComplexTimeDomainVector64 Cos();
         IComplexTimeDomainVector64 SwapHalves();
@@ -184,23 +184,23 @@ namespace BasicDsp
 
     public interface IComplexFrequencyDomainVector64 : IDataVector64, IDisposable
     {
-        IComplexFrequencyDomainVector64 Add(float real, float imag);
+        IComplexFrequencyDomainVector64 Add(double real, double imag);
         IComplexFrequencyDomainVector64 Add(IComplexFrequencyDomainVector64 vector);
-        IComplexFrequencyDomainVector64 Subtract(float real, float imag);
+        IComplexFrequencyDomainVector64 Subtract(double real, double imag);
         IComplexFrequencyDomainVector64 Subtract(IComplexFrequencyDomainVector64 vector);
-        IComplexFrequencyDomainVector64 Multiply(float real, float imag);
+        IComplexFrequencyDomainVector64 Multiply(double real, double imag);
         IComplexFrequencyDomainVector64 Multiply(IComplexFrequencyDomainVector64 vector);
-        IComplexFrequencyDomainVector64 Divide(float real, float imag);
+        IComplexFrequencyDomainVector64 Divide(double real, double imag);
         IComplexFrequencyDomainVector64 Divide(IComplexFrequencyDomainVector64 vector);
         IRealFrequencyDomainVector64 Abs();
         IComplexFrequencyDomainVector64 Sqrt();
         IComplexFrequencyDomainVector64 Square();
-        IComplexFrequencyDomainVector64 Root(float value);
-        IComplexFrequencyDomainVector64 Power(float value);
+        IComplexFrequencyDomainVector64 Root(double value);
+        IComplexFrequencyDomainVector64 Power(double value);
         IComplexFrequencyDomainVector64 Logn();
         IComplexFrequencyDomainVector64 Expn();
-        IComplexFrequencyDomainVector64 Exp(float value);
-        IComplexFrequencyDomainVector64 Log(float value);
+        IComplexFrequencyDomainVector64 Exp(double value);
+        IComplexFrequencyDomainVector64 Log(double value);
         IComplexFrequencyDomainVector64 Sin();
         IComplexFrequencyDomainVector64 Cos();
         IComplexFrequencyDomainVector64 SwapHalves();
