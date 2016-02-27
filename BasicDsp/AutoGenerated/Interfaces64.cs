@@ -1,5 +1,5 @@
-// Auto generated code, change Interfaces32.cs and run create_64bit_impl.pl.pl
-﻿using System;
+﻿// Auto generated code, change Interfaces32.cs and run create_64bit_impl.pl.pl
+ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -29,7 +29,7 @@ namespace BasicDsp
         DataVector64 Multiply(DataVector64 vector);
         DataVector64 Divide(double value);
         DataVector64 Divide(DataVector64 vector);
-        DataVector64 ZeroPad(int points);
+        DataVector64 ZeroPad(int points, PaddingOption paddingOption);
         DataVector64 ZeroInterleave(int factor = 2);
         DataVector64 Diff();
         DataVector64 DiffWithStart();
@@ -92,7 +92,7 @@ namespace BasicDsp
         IRealTimeDomainVector64 Multiply(IRealTimeDomainVector64 vector);
         IRealTimeDomainVector64 Divide(double value);
         IRealTimeDomainVector64 Divide(IRealTimeDomainVector64 vector);
-        IRealTimeDomainVector64 ZeroPad(int points);
+        IRealTimeDomainVector64 ZeroPad(int points, PaddingOption paddingOption);
         IRealTimeDomainVector64 ZeroInterleave(int factor = 2);
         IRealTimeDomainVector64 Diff();
         IRealTimeDomainVector64 DiffWithStart();
@@ -125,7 +125,7 @@ namespace BasicDsp
         IRealFrequencyDomainVector64 Multiply(IRealFrequencyDomainVector64 vector);
         IRealFrequencyDomainVector64 Divide(double value);
         IRealFrequencyDomainVector64 Divide(IRealFrequencyDomainVector64 vector);
-        IRealFrequencyDomainVector64 ZeroPad(int points);
+        IRealFrequencyDomainVector64 ZeroPad(int points, PaddingOption paddingOption);
         IRealFrequencyDomainVector64 ZeroInterleave(int factor = 2);
         IRealFrequencyDomainVector64 Diff();
         IRealFrequencyDomainVector64 DiffWithStart();

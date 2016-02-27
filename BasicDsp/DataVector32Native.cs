@@ -1,20 +1,21 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+﻿using System.Runtime.InteropServices;
 
 namespace BasicDsp
 {
-    internal unsafe static class DataVector32Native
+    internal static unsafe class DataVector32Native
     {
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
         public struct VectorResult32
         {
-            public int resultCode;
-            public DataVector32Struct* vector;
+            public readonly int resultCode;
+            public readonly DataVector32Struct* vector;
+        }
+
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
+        public struct ScalarResult<T>
+        {
+            public readonly int resultCode;
+            public readonly T vector;
         }
 
         /// <summary>
@@ -101,7 +102,7 @@ namespace BasicDsp
         [DllImport(DllName,
             EntryPoint = "zero_pad32",
             CallingConvention = RustConvention)]
-        public static extern VectorResult32 ZeroPad(DataVector32Struct* vector, ulong points);
+        public static extern VectorResult32 ZeroPad(DataVector32Struct* vector, ulong points, int paddingOption);
 
         [DllImport(DllName,
             EntryPoint = "zero_interleave32",
@@ -282,5 +283,10 @@ namespace BasicDsp
             EntryPoint = "plain_ifft32",
             CallingConvention = RustConvention)]
         public static extern VectorResult32 PlainIfft(DataVector32Struct* vector);
+
+        [DllImport(DllName,
+           EntryPoint = "real_dot_product32",
+           CallingConvention = RustConvention)]
+        public static extern ScalarResult<float> RealDotProduct(DataVector32Struct* vector, DataVector32Struct* operand);
     }
 }

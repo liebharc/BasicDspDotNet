@@ -1,5 +1,5 @@
-// Auto generated code, change DataVector32.cs and run create_64bit_impl.pl.pl
-﻿using System;
+﻿// Auto generated code, change DataVector32.cs and run create_64bit_impl.pl.pl
+ using System;
 using System.Runtime.InteropServices;
 
 namespace BasicDsp
@@ -148,9 +148,9 @@ namespace BasicDsp
             return Divide((DataVector64)vector);
         }
 
-        IRealFrequencyDomainVector64 IRealFrequencyDomainVector64.ZeroPad(int points)
+        IRealFrequencyDomainVector64 IRealFrequencyDomainVector64.ZeroPad(int points, PaddingOption paddingOption)
         {
-            return ZeroPad(points);
+            return ZeroPad(points, paddingOption);
         }
 
         IRealFrequencyDomainVector64 IRealFrequencyDomainVector64.ZeroInterleave(int factor)
@@ -293,9 +293,9 @@ namespace BasicDsp
             return Divide((DataVector64)vector);
         }
 
-        IRealTimeDomainVector64 IRealTimeDomainVector64.ZeroPad(int points)
+        IRealTimeDomainVector64 IRealTimeDomainVector64.ZeroPad(int points, PaddingOption paddingOption)
         {
-            return ZeroPad(points);
+            return ZeroPad(points, paddingOption);
         }
 
         IRealTimeDomainVector64 IRealTimeDomainVector64.ZeroInterleave(int factor)
@@ -774,14 +774,14 @@ namespace BasicDsp
             return this;
         }
 
-        public DataVector64 ZeroPad(int points)
+        public DataVector64 ZeroPad(int points, PaddingOption paddingOption)
         {
             if (points < 0)
             {
                 throw new IndexOutOfRangeException("Points must be >= 0");
             }
 
-            Unwrap(DataVector64Native.ZeroPad(_native, (ulong)points));
+            Unwrap(DataVector64Native.ZeroPad(_native, (ulong)points, (int)paddingOption));
             return this;
         }
 

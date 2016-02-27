@@ -11,7 +11,9 @@ sub parse_facade {
         my $line = $_;
         chomp $line;
         if ($line =~ /^(\/\/)?\s*pub extern fn (\w+32)/) {
-           push @methods, $2; 
+            if ($2 ne "complex_data32") {
+                push @methods, $2; 
+            }
         }
     }
     close FACADE32;

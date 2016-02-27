@@ -1,21 +1,22 @@
-// Auto generated code, change DataVector32Native.cs and run create_64bit_impl.pl.pl
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+﻿// Auto generated code, change DataVector32Native.cs and run create_64bit_impl.pl.pl
+ using System.Runtime.InteropServices;
 
 namespace BasicDsp
 {
-    internal unsafe static class DataVector64Native
+    internal static unsafe class DataVector64Native
     {
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
         public struct VectorResult64
         {
-            public int resultCode;
-            public DataVector64Struct* vector;
+            public readonly int resultCode;
+            public readonly DataVector64Struct* vector;
+        }
+
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
+        public struct ScalarResult<T>
+        {
+            public readonly int resultCode;
+            public readonly T vector;
         }
 
         /// <summary>
@@ -102,7 +103,7 @@ namespace BasicDsp
         [DllImport(DllName,
             EntryPoint = "zero_pad64",
             CallingConvention = RustConvention)]
-        public static extern VectorResult64 ZeroPad(DataVector64Struct* vector, ulong points);
+        public static extern VectorResult64 ZeroPad(DataVector64Struct* vector, ulong points, int paddingOption);
 
         [DllImport(DllName,
             EntryPoint = "zero_interleave64",
@@ -283,5 +284,10 @@ namespace BasicDsp
             EntryPoint = "plain_ifft64",
             CallingConvention = RustConvention)]
         public static extern VectorResult64 PlainIfft(DataVector64Struct* vector);
+
+        [DllImport(DllName,
+           EntryPoint = "real_dot_product64",
+           CallingConvention = RustConvention)]
+        public static extern ScalarResult<double> RealDotProduct(DataVector64Struct* vector, DataVector64Struct* operand);
     }
 }
