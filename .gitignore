@@ -1,0 +1,11 @@
+.nuget/
+/.vs
+BasicDsp.sln.DotSettings.user
+BasicDsp.v12.suo
+BasicDspExample.v12.suo
+TestResults/
+packages/
+bin
+obj
+Release
+Debug
