@@ -1,13 +1,14 @@
+// Auto generated code, change DataVector32.cs and run create_64bit_impl.pl.pl
 ﻿using System;
 using System.Runtime.InteropServices;
 
 namespace BasicDsp
 {
-    public unsafe sealed class DataVector64 :
-         IRealTimeDomainVector64,
-         IRealFrequencyDomainVector64,
-         IComplexTimeDomainVector64,
-         IComplexFrequencyDomainVector64
+   public unsafe sealed class DataVector64 : 
+        IRealTimeDomainVector64,
+        IRealFrequencyDomainVector64,
+        IComplexTimeDomainVector64,
+        IComplexFrequencyDomainVector64
     {
         private DataVector64Native.DataVector64Struct* _native;
 
@@ -15,28 +16,28 @@ namespace BasicDsp
 
         private const int Real = 0;
 
-        public static DataVector64 NewGenericVector(bool isComplex, VectorDomain domain, int length)
-        {
-            if (length < 0)
-            {
-                throw new ArgumentException("Vector length must be >= 0", "length");
-            }
+       public static DataVector64 NewGenericVector(bool isComplex, VectorDomain domain, int length)
+       {
+           if (length < 0)
+           {
+               throw new ArgumentException("Vector length must be >= 0", "length");
+           }
 
-            return new DataVector64(DataVector64Native.New(isComplex ? Complex : Real, (int)domain, 0.0f, (ulong)length, 1.0f));
-        }
+           return new DataVector64(DataVector64Native.New(isComplex ? Complex : Real, (int)domain, 0.0f, (ulong)length, 1.0f));
+       }
 
-        public static DataVector64 NewGenericVector(bool isComplex, VectorDomain domain, double[] data)
-        {
-            var vector = new DataVector64(DataVector64Native.New(isComplex ? Complex : Real, (int)domain, 0.0f, (ulong)data.Length, 1.0f));
-            for (int i = 0; i < data.Length; i++)
-            {
-                vector[i] = data[i];
-            }
+       public static DataVector64 NewGenericVector(bool isComplex, VectorDomain domain, float[] data)
+       {
+           var vector = new DataVector64(DataVector64Native.New(isComplex ? Complex : Real, (int)domain, 0.0f, (ulong)data.Length, 1.0f));
+           for (int i = 0; i < data.Length; i++)
+           {
+               vector[i] = data[i];
+           }
 
-            return vector;
-        }
+           return vector;
+       }
 
-        public static IRealTimeDomainVector64 NewRealTimeVectorFromConstant(double constant, int length)
+        public static IRealTimeDomainVector64 NewRealTimeVectorFromConstant(float constant, int length)
         {
             if (length < 0)
             {
@@ -46,7 +47,7 @@ namespace BasicDsp
             return new DataVector64(DataVector64Native.New(Real, (int)VectorDomain.Time, constant, (ulong)length, 1.0f));
         }
 
-        public static IRealTimeDomainVector64 NewRealTimeVectorFromArray(double[] data)
+        public static IRealTimeDomainVector64 NewRealTimeVectorFromArray(float[] data)
         {
             var vector = new DataVector64(DataVector64Native.New(Real, (int)VectorDomain.Time, 0.0f, (ulong)data.Length, 1.0f));
             for (int i = 0; i < data.Length; i++)
@@ -57,7 +58,7 @@ namespace BasicDsp
             return vector;
         }
 
-        public static IComplexTimeDomainVector64 NewComplexTimeVectorFromConstant(double constant, int length)
+        public static IComplexTimeDomainVector64 NewComplexTimeVectorFromConstant(float constant, int length)
         {
             if (length < 0)
             {
@@ -67,7 +68,7 @@ namespace BasicDsp
             return new DataVector64(DataVector64Native.New(Complex, (int)VectorDomain.Time, constant, (ulong)length, 1.0f));
         }
 
-        public static IComplexTimeDomainVector64 NewComplexTimeVectorFromInterleaved(double[] data)
+        public static IComplexTimeDomainVector64 NewComplexTimeVectorFromInterleaved(float[] data)
         {
             var vector = new DataVector64(DataVector64Native.New(Real, (int)VectorDomain.Time, 0.0f, (ulong)data.Length, 1.0f));
             for (int i = 0; i < data.Length; i++)
@@ -83,7 +84,7 @@ namespace BasicDsp
             _native = native;
         }
 
-        public double this[int index]
+        public float this[int index]
         {
             get
             {
@@ -106,7 +107,7 @@ namespace BasicDsp
             }
         }
 
-        public DataVector64 Add(double value)
+        public DataVector64 Add(float value)
         {
             Unwrap(DataVector64Native.RealOffset(_native, value));
             return this;
@@ -117,17 +118,17 @@ namespace BasicDsp
             return Add((DataVector64)vector);
         }
 
-        IRealFrequencyDomainVector64 IRealFrequencyDomainVector64.Subtract(double value)
+        IRealFrequencyDomainVector64 IRealFrequencyDomainVector64.Subtract(float value)
         {
             return Subtract(value);
         }
 
         public IRealFrequencyDomainVector64 Subtract(IRealFrequencyDomainVector64 vector)
         {
-            return Subtract((DataVector64)vector);
+            return Subtract((DataVector64) vector);
         }
 
-        IRealFrequencyDomainVector64 IRealFrequencyDomainVector64.Multiply(double value)
+        IRealFrequencyDomainVector64 IRealFrequencyDomainVector64.Multiply(float value)
         {
             return Multiply(value);
         }
@@ -137,7 +138,7 @@ namespace BasicDsp
             return Multiply((DataVector64)vector);
         }
 
-        IRealFrequencyDomainVector64 IRealFrequencyDomainVector64.Divide(double value)
+        IRealFrequencyDomainVector64 IRealFrequencyDomainVector64.Divide(float value)
         {
             return Divide(value);
         }
@@ -187,12 +188,12 @@ namespace BasicDsp
             return Square();
         }
 
-        IRealFrequencyDomainVector64 IRealFrequencyDomainVector64.Root(double value)
+        IRealFrequencyDomainVector64 IRealFrequencyDomainVector64.Root(float value)
         {
             return Root(value);
         }
 
-        IRealFrequencyDomainVector64 IRealFrequencyDomainVector64.Power(double value)
+        IRealFrequencyDomainVector64 IRealFrequencyDomainVector64.Power(float value)
         {
             return Power(value);
         }
@@ -207,12 +208,12 @@ namespace BasicDsp
             return Expn();
         }
 
-        IRealFrequencyDomainVector64 IRealFrequencyDomainVector64.Exp(double value)
+        IRealFrequencyDomainVector64 IRealFrequencyDomainVector64.Exp(float value)
         {
             return Exp(value);
         }
 
-        IRealFrequencyDomainVector64 IRealFrequencyDomainVector64.Log(double value)
+        IRealFrequencyDomainVector64 IRealFrequencyDomainVector64.Log(float value)
         {
             return Log(value);
         }
@@ -232,12 +233,12 @@ namespace BasicDsp
             return Cos();
         }
 
-        IRealFrequencyDomainVector64 IRealFrequencyDomainVector64.Wrap(double value)
+        IRealFrequencyDomainVector64 IRealFrequencyDomainVector64.Wrap(float value)
         {
             return Wrap(value);
         }
 
-        IRealFrequencyDomainVector64 IRealFrequencyDomainVector64.Unwrap(double value)
+        IRealFrequencyDomainVector64 IRealFrequencyDomainVector64.Unwrap(float value)
         {
             return Unwrap(value);
         }
@@ -259,10 +260,10 @@ namespace BasicDsp
 
         public IRealTimeDomainVector64 Add(IRealTimeDomainVector64 vector)
         {
-            return Add((DataVector64)vector);
+            return Add((DataVector64) vector);
         }
 
-        IRealTimeDomainVector64 IRealTimeDomainVector64.Subtract(double value)
+        IRealTimeDomainVector64 IRealTimeDomainVector64.Subtract(float value)
         {
             return Subtract(value);
         }
@@ -272,7 +273,7 @@ namespace BasicDsp
             return Subtract((DataVector64)vector);
         }
 
-        IRealTimeDomainVector64 IRealTimeDomainVector64.Multiply(double value)
+        IRealTimeDomainVector64 IRealTimeDomainVector64.Multiply(float value)
         {
             return Multiply(value);
         }
@@ -282,7 +283,7 @@ namespace BasicDsp
             return Multiply((DataVector64)vector);
         }
 
-        IRealTimeDomainVector64 IRealTimeDomainVector64.Divide(double value)
+        IRealTimeDomainVector64 IRealTimeDomainVector64.Divide(float value)
         {
             return Divide(value);
         }
@@ -332,12 +333,12 @@ namespace BasicDsp
             return Square();
         }
 
-        IRealTimeDomainVector64 IRealTimeDomainVector64.Root(double value)
+        IRealTimeDomainVector64 IRealTimeDomainVector64.Root(float value)
         {
             return Root(value);
         }
 
-        IRealTimeDomainVector64 IRealTimeDomainVector64.Power(double value)
+        IRealTimeDomainVector64 IRealTimeDomainVector64.Power(float value)
         {
             return Power(value);
         }
@@ -352,24 +353,24 @@ namespace BasicDsp
             return Expn();
         }
 
-        IRealTimeDomainVector64 IRealTimeDomainVector64.Exp(double value)
+        IRealTimeDomainVector64 IRealTimeDomainVector64.Exp(float value)
         {
             return Exp(value);
         }
 
-        IRealTimeDomainVector64 IRealTimeDomainVector64.Log(double value)
+        IRealTimeDomainVector64 IRealTimeDomainVector64.Log(float value)
         {
             return Log(value);
         }
 
         IRealTimeDomainVector64 IRealTimeDomainVector64.Sin()
         {
-            return Sin();
+          return Sin();
         }
 
         IRealTimeDomainVector64 IRealTimeDomainVector64.Cos()
         {
-            return Cos();
+          return Cos();
         }
 
         IComplexTimeDomainVector64 IRealTimeDomainVector64.ToComplex()
@@ -377,12 +378,12 @@ namespace BasicDsp
             return ToComplex();
         }
 
-        IRealTimeDomainVector64 IRealTimeDomainVector64.Wrap(double value)
+        IRealTimeDomainVector64 IRealTimeDomainVector64.Wrap(float value)
         {
             return Wrap(value);
         }
 
-        IRealTimeDomainVector64 IRealTimeDomainVector64.Unwrap(double value)
+        IRealTimeDomainVector64 IRealTimeDomainVector64.Unwrap(float value)
         {
             return Unwrap(value);
         }
@@ -402,7 +403,7 @@ namespace BasicDsp
             return PlainFft();
         }
 
-        public DataVector64 Add(double real, double imag)
+        public DataVector64 Add(float real, float imag)
         {
             Unwrap(DataVector64Native.ComplexOffset(_native, real, imag));
             return this;
@@ -410,10 +411,10 @@ namespace BasicDsp
 
         public IComplexFrequencyDomainVector64 Add(IComplexFrequencyDomainVector64 vector)
         {
-            return Add((DataVector64)vector);
+            return Add((DataVector64) vector);
         }
 
-        IComplexFrequencyDomainVector64 IComplexFrequencyDomainVector64.Subtract(double real, double imag)
+        IComplexFrequencyDomainVector64 IComplexFrequencyDomainVector64.Subtract(float real, float imag)
         {
             return Subtract(real, imag);
         }
@@ -423,7 +424,7 @@ namespace BasicDsp
             return Subtract((DataVector64)vector);
         }
 
-        IComplexFrequencyDomainVector64 IComplexFrequencyDomainVector64.Multiply(double real, double imag)
+        IComplexFrequencyDomainVector64 IComplexFrequencyDomainVector64.Multiply(float real, float imag)
         {
             return Multiply(real, imag);
         }
@@ -433,7 +434,7 @@ namespace BasicDsp
             return Multiply((DataVector64)vector);
         }
 
-        IComplexFrequencyDomainVector64 IComplexFrequencyDomainVector64.Divide(double real, double imag)
+        IComplexFrequencyDomainVector64 IComplexFrequencyDomainVector64.Divide(float real, float imag)
         {
             return Divide(real, imag);
         }
@@ -493,7 +494,7 @@ namespace BasicDsp
             return Add((DataVector64)vector);
         }
 
-        IComplexTimeDomainVector64 IComplexTimeDomainVector64.Subtract(double real, double imag)
+        IComplexTimeDomainVector64 IComplexTimeDomainVector64.Subtract(float real, float imag)
         {
             return Subtract(real, imag);
         }
@@ -503,7 +504,7 @@ namespace BasicDsp
             return Subtract((DataVector64)vector);
         }
 
-        IComplexTimeDomainVector64 IComplexTimeDomainVector64.Multiply(double real, double imag)
+        IComplexTimeDomainVector64 IComplexTimeDomainVector64.Multiply(float real, float imag)
         {
             return Multiply(real, imag);
         }
@@ -513,7 +514,7 @@ namespace BasicDsp
             return Multiply((DataVector64)vector);
         }
 
-        IComplexTimeDomainVector64 IComplexTimeDomainVector64.Divide(double real, double imag)
+        IComplexTimeDomainVector64 IComplexTimeDomainVector64.Divide(float real, float imag)
         {
             return Divide(real, imag);
         }
@@ -530,14 +531,14 @@ namespace BasicDsp
 
         IRealTimeDomainVector64 IRealTimeDomainVector64.SwapHalves()
         {
-            Unwrap(DataVector64Native.SwapHalves(_native));
-            return this;
+          Unwrap(DataVector64Native.SwapHalves(_native));
+          return this;
         }
 
         IComplexTimeDomainVector64 IComplexTimeDomainVector64.SwapHalves()
         {
-            Unwrap(DataVector64Native.SwapHalves(_native));
-            return this;
+          Unwrap(DataVector64Native.SwapHalves(_native));
+          return this;
         }
 
         public void GetComplexAbs(IRealTimeDomainVector64 destination)
@@ -581,136 +582,136 @@ namespace BasicDsp
         }
 
 
-        IRealTimeDomainVector64 IRealTimeDomainVector64.Add(double value)
+        IRealTimeDomainVector64 IRealTimeDomainVector64.Add(float value)
         {
             return Add(value);
         }
 
-        IRealFrequencyDomainVector64 IRealFrequencyDomainVector64.Add(double value)
+        IRealFrequencyDomainVector64 IRealFrequencyDomainVector64.Add(float value)
         {
             return Add(value);
         }
 
-        IComplexTimeDomainVector64 IComplexTimeDomainVector64.Add(double real, double imag)
+        IComplexTimeDomainVector64 IComplexTimeDomainVector64.Add(float real, float imag)
         {
             return Add(real, imag);
         }
 
-        IComplexFrequencyDomainVector64 IComplexFrequencyDomainVector64.Add(double real, double imag)
+        IComplexFrequencyDomainVector64 IComplexFrequencyDomainVector64.Add(float real, float imag)
         {
             return Add(real, imag);
         }
 
         IComplexTimeDomainVector64 IComplexTimeDomainVector64.Sqrt()
         {
-            return Sqrt();
+          return Sqrt();
         }
 
         IComplexTimeDomainVector64 IComplexTimeDomainVector64.Square()
         {
-            return Square();
+          return Square();
         }
 
-        IComplexTimeDomainVector64 IComplexTimeDomainVector64.Root(double value)
+        IComplexTimeDomainVector64 IComplexTimeDomainVector64.Root(float value)
         {
-            return Root(value);
+          return Root(value);
         }
 
-        IComplexTimeDomainVector64 IComplexTimeDomainVector64.Power(double value)
+        IComplexTimeDomainVector64 IComplexTimeDomainVector64.Power(float value)
         {
-            return Power(value);
+          return Power(value);
         }
 
         IComplexTimeDomainVector64 IComplexTimeDomainVector64.Logn()
         {
-            return Logn();
+          return Logn();
         }
 
         IComplexTimeDomainVector64 IComplexTimeDomainVector64.Expn()
         {
-            return Expn();
+          return Expn();
         }
 
-        IComplexTimeDomainVector64 IComplexTimeDomainVector64.Exp(double value)
+        IComplexTimeDomainVector64 IComplexTimeDomainVector64.Exp(float value)
         {
-            return Exp(value);
+          return Exp(value);
         }
 
-        IComplexTimeDomainVector64 IComplexTimeDomainVector64.Log(double value)
+        IComplexTimeDomainVector64 IComplexTimeDomainVector64.Log(float value)
         {
-            return Log(value);
+          return Log(value);
         }
 
         IComplexTimeDomainVector64 IComplexTimeDomainVector64.Sin()
         {
-            return Sin();
+          return Sin();
         }
 
         IComplexTimeDomainVector64 IComplexTimeDomainVector64.Cos()
         {
-            return Cos();
+          return Cos();
         }
 
         IComplexFrequencyDomainVector64 IComplexFrequencyDomainVector64.SwapHalves()
         {
-            Unwrap(DataVector64Native.SwapHalves(_native));
-            return this;
+          Unwrap(DataVector64Native.SwapHalves(_native));
+          return this;
         }
 
         IComplexFrequencyDomainVector64 IComplexFrequencyDomainVector64.Sqrt()
         {
-            return Sqrt();
+          return Sqrt();
         }
 
         IComplexFrequencyDomainVector64 IComplexFrequencyDomainVector64.Square()
         {
-            return Square();
+          return Square();
         }
 
-        IComplexFrequencyDomainVector64 IComplexFrequencyDomainVector64.Root(double value)
+        IComplexFrequencyDomainVector64 IComplexFrequencyDomainVector64.Root(float value)
         {
-            return Root(value);
+          return Root(value);
         }
 
-        IComplexFrequencyDomainVector64 IComplexFrequencyDomainVector64.Power(double value)
+        IComplexFrequencyDomainVector64 IComplexFrequencyDomainVector64.Power(float value)
         {
-            return Power(value);
+          return Power(value);
         }
 
         IComplexFrequencyDomainVector64 IComplexFrequencyDomainVector64.Logn()
         {
-            return Logn();
+          return Logn();
         }
 
         IComplexFrequencyDomainVector64 IComplexFrequencyDomainVector64.Expn()
         {
-            return Expn();
+          return Expn();
         }
 
-        IComplexFrequencyDomainVector64 IComplexFrequencyDomainVector64.Exp(double value)
+        IComplexFrequencyDomainVector64 IComplexFrequencyDomainVector64.Exp(float value)
         {
-            return Exp(value);
+          return Exp(value);
         }
 
-        IComplexFrequencyDomainVector64 IComplexFrequencyDomainVector64.Log(double value)
+        IComplexFrequencyDomainVector64 IComplexFrequencyDomainVector64.Log(float value)
         {
-            return Log(value);
+          return Log(value);
         }
 
         IComplexFrequencyDomainVector64 IComplexFrequencyDomainVector64.Sin()
         {
-            return Sin();
+          return Sin();
         }
 
         IComplexFrequencyDomainVector64 IComplexFrequencyDomainVector64.Cos()
         {
-            return Cos();
+          return Cos();
         }
 
         IRealFrequencyDomainVector64 IRealFrequencyDomainVector64.SwapHalves()
         {
-            Unwrap(DataVector64Native.SwapHalves(_native));
-            return this;
+          Unwrap(DataVector64Native.SwapHalves(_native));
+          return this;
         }
 
         public DataVector64 Add(DataVector64 vector)
@@ -719,13 +720,13 @@ namespace BasicDsp
             return this;
         }
 
-        public DataVector64 Subtract(double value)
+        public DataVector64 Subtract(float value)
         {
             Unwrap(DataVector64Native.RealOffset(_native, -value));
             return this;
         }
 
-        public DataVector64 Subtract(double real, double imag)
+        public DataVector64 Subtract(float real, float imag)
         {
             Unwrap(DataVector64Native.ComplexOffset(_native, -real, -imag));
             return this;
@@ -737,13 +738,13 @@ namespace BasicDsp
             return this;
         }
 
-        public DataVector64 Multiply(double value)
+        public DataVector64 Multiply(float value)
         {
             Unwrap(DataVector64Native.RealScale(_native, value));
             return this;
         }
 
-        public DataVector64 Multiply(double real, double imag)
+        public DataVector64 Multiply(float real, float imag)
         {
             Unwrap(DataVector64Native.ComplexScale(_native, real, imag));
             return this;
@@ -755,13 +756,13 @@ namespace BasicDsp
             return this;
         }
 
-        public DataVector64 Divide(double value)
+        public DataVector64 Divide(float value)
         {
             Unwrap(DataVector64Native.RealScale(_native, 1 / value));
             return this;
         }
 
-        public DataVector64 Divide(double real, double imag)
+        public DataVector64 Divide(float real, float imag)
         {
             Unwrap(DataVector64Native.ComplexDivide(_native, real, imag));
             return this;
@@ -811,9 +812,9 @@ namespace BasicDsp
         public DataVector64 Abs()
         {
             if (IsComplex)
-                Unwrap(DataVector64Native.ComplexAbs(_native));
+              Unwrap(DataVector64Native.ComplexAbs(_native));
             else
-                Unwrap(DataVector64Native.RealAbs(_native));
+              Unwrap(DataVector64Native.RealAbs(_native));
             return this;
         }
 
@@ -829,13 +830,13 @@ namespace BasicDsp
             return this;
         }
 
-        public DataVector64 Root(double value)
+        public DataVector64 Root(float value)
         {
             Unwrap(DataVector64Native.Root(_native, value));
             return this;
         }
 
-        public DataVector64 Power(double value)
+        public DataVector64 Power(float value)
         {
             Unwrap(DataVector64Native.Power(_native, value));
             return this;
@@ -853,13 +854,13 @@ namespace BasicDsp
             return this;
         }
 
-        public DataVector64 Exp(double value)
+        public DataVector64 Exp(float value)
         {
             Unwrap(DataVector64Native.Exp(_native, value));
             return this;
         }
 
-        public DataVector64 Log(double value)
+        public DataVector64 Log(float value)
         {
             Unwrap(DataVector64Native.Log(_native, value));
             return this;
@@ -885,17 +886,17 @@ namespace BasicDsp
 
         public DataVector64 SwapHalves()
         {
-            Unwrap(DataVector64Native.SwapHalves(_native));
-            return this;
+          Unwrap(DataVector64Native.SwapHalves(_native));
+          return this;
         }
 
-        public DataVector64 Wrap(double value)
+        public DataVector64 Wrap(float value)
         {
             Unwrap(DataVector64Native.Wrap(_native, value));
             return this;
         }
 
-        public DataVector64 Unwrap(double value)
+        public DataVector64 Unwrap(float value)
         {
             Unwrap(DataVector64Native.Unwrap(_native, value));
             return this;
@@ -993,19 +994,19 @@ namespace BasicDsp
             get { return DataVector64Native.GetDomain(_native) == 0 ? VectorDomain.Time : VectorDomain.Frequency; }
         }
 
-        public double Delta
-        {
-          get { return DataVector64Native.Delta(_native); }
-        }
+     public float Delta
+     {
+       get { return DataVector64Native.Delta(_native); }
+     }
 
-      public bool IsComplex
+     public bool IsComplex
         {
             get { return DataVector64Native.IsComplex(_native) != 0; }
         }
 
         public int Length
         {
-            get { return (int)DataVector64Native.GetLength(_native); }
+            get { return (int) DataVector64Native.GetLength(_native); }
         }
 
         public int AllocatedLength
@@ -1017,7 +1018,7 @@ namespace BasicDsp
         {
             get { return (int)DataVector64Native.GetPoints(_native); }
         }
-
+        
         public void Dispose()
         {
             if (_native != null)

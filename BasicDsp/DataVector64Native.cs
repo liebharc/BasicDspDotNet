@@ -1,3 +1,4 @@
+// Auto generated code, change DataVector32Native.cs and run create_64bit_impl.pl.pl
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -21,7 +22,7 @@ namespace BasicDsp
         /// This class is a placeholder, use <see cref="DataVector64Native"/> methods to talk to it.
         /// </summary>
         public struct DataVector64Struct
-        {
+        {         
         }
 
         private const CallingConvention RustConvention = CallingConvention.Cdecl;
@@ -31,17 +32,17 @@ namespace BasicDsp
         [DllImport(DllName,
             EntryPoint = "new64",
             CallingConvention = RustConvention)]
-        public static extern DataVector64Struct* New(int isComplex, int domain, double initValue, ulong length, double delta);
+        public static extern DataVector64Struct* New(int isComplex, int domain, float initValue, ulong length, float delta);
 
         [DllImport(DllName,
             EntryPoint = "get_value64",
             CallingConvention = RustConvention)]
-        public static extern double GetValue(DataVector64Struct* vector, ulong index);
+        public static extern float GetValue(DataVector64Struct* vector, ulong index);
 
         [DllImport(DllName,
             EntryPoint = "set_value64",
             CallingConvention = RustConvention)]
-        public static extern void SetValue(DataVector64Struct* vector, ulong index, double value);
+        public static extern void SetValue(DataVector64Struct* vector, ulong index, float value);
 
         [DllImport(DllName,
             EntryPoint = "delete_vector64",
@@ -71,7 +72,7 @@ namespace BasicDsp
         [DllImport(DllName,
               EntryPoint = "get_delta64",
               CallingConvention = RustConvention)]
-        public static extern double Delta(DataVector64Struct* vector);
+        public static extern float Delta(DataVector64Struct* vector);
 
         [DllImport(DllName,
             EntryPoint = "get_allocated_len64",
@@ -126,12 +127,12 @@ namespace BasicDsp
         [DllImport(DllName,
             EntryPoint = "real_offset64",
             CallingConvention = RustConvention)]
-        public static extern VectorResult64 RealOffset(DataVector64Struct* vector, double value);
+        public static extern VectorResult64 RealOffset(DataVector64Struct* vector, float value);
 
         [DllImport(DllName,
             EntryPoint = "real_scale64",
             CallingConvention = RustConvention)]
-        public static extern VectorResult64 RealScale(DataVector64Struct* vector, double value);
+        public static extern VectorResult64 RealScale(DataVector64Struct* vector, float value);
 
         [DllImport(DllName,
             EntryPoint = "abs64",
@@ -151,12 +152,12 @@ namespace BasicDsp
         [DllImport(DllName,
             EntryPoint = "root64",
             CallingConvention = RustConvention)]
-        public static extern VectorResult64 Root(DataVector64Struct* vector, double value);
+        public static extern VectorResult64 Root(DataVector64Struct* vector, float value);
 
         [DllImport(DllName,
             EntryPoint = "power64",
             CallingConvention = RustConvention)]
-        public static extern VectorResult64 Power(DataVector64Struct* vector, double value);
+        public static extern VectorResult64 Power(DataVector64Struct* vector, float value);
 
         [DllImport(DllName,
             EntryPoint = "logn64",
@@ -171,12 +172,12 @@ namespace BasicDsp
         [DllImport(DllName,
             EntryPoint = "log_base64",
             CallingConvention = RustConvention)]
-        public static extern VectorResult64 Log(DataVector64Struct* vector, double value);
+        public static extern VectorResult64 Log(DataVector64Struct* vector, float value);
 
         [DllImport(DllName,
             EntryPoint = "exp_base64",
             CallingConvention = RustConvention)]
-        public static extern VectorResult64 Exp(DataVector64Struct* vector, double value);
+        public static extern VectorResult64 Exp(DataVector64Struct* vector, float value);
 
         [DllImport(DllName,
             EntryPoint = "to_complex64",
@@ -201,27 +202,27 @@ namespace BasicDsp
         [DllImport(DllName,
             EntryPoint = "wrap64",
             CallingConvention = RustConvention)]
-        public static extern VectorResult64 Wrap(DataVector64Struct* vector, double value);
+        public static extern VectorResult64 Wrap(DataVector64Struct* vector, float value);
 
         [DllImport(DllName,
             EntryPoint = "unwrap64",
             CallingConvention = RustConvention)]
-        public static extern VectorResult64 Unwrap(DataVector64Struct* vector, double value);
+        public static extern VectorResult64 Unwrap(DataVector64Struct* vector, float value);
 
         [DllImport(DllName,
             EntryPoint = "complex_offset64",
             CallingConvention = RustConvention)]
-        public static extern VectorResult64 ComplexOffset(DataVector64Struct* vector, double real, double imag);
+        public static extern VectorResult64 ComplexOffset(DataVector64Struct* vector, float real, float imag);
 
         [DllImport(DllName,
             EntryPoint = "complex_scale64",
             CallingConvention = RustConvention)]
-        public static extern VectorResult64 ComplexScale(DataVector64Struct* vector, double real, double imag);
+        public static extern VectorResult64 ComplexScale(DataVector64Struct* vector, float real, float imag);
 
         [DllImport(DllName,
             EntryPoint = "complex_divide64",
             CallingConvention = RustConvention)]
-        public static extern VectorResult64 ComplexDivide(DataVector64Struct* vector, double real, double imag);
+        public static extern VectorResult64 ComplexDivide(DataVector64Struct* vector, float real, float imag);
 
         [DllImport(DllName,
             EntryPoint = "magnitude64",

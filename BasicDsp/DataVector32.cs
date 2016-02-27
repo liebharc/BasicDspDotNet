@@ -963,7 +963,7 @@ namespace BasicDsp
             return this;
         }
 
-        public DataVector32 PlainIfft()
+            public DataVector32 PlainIfft()
         {
             Unwrap(DataVector32Native.PlainIfft(_native));
             return this;
