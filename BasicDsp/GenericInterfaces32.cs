@@ -142,6 +142,8 @@ namespace BasicDsp
         DataVector32 SetMagPhase(DataVector32 /*REAL*/ mag, DataVector32 /*REAL*/ phase);
         
         ComplexStatistics32[] ComplexStatisticsSplitted(int length);
+        DataVector32 Reverse();
+        DataVector32 Decimatei(int factor, int delay);
     }
 
     public interface ITimeDomainVectorOperations32

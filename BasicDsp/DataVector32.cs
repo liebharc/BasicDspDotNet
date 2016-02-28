@@ -61,13 +61,20 @@ namespace BasicDsp
 
         private const int Real = 0;
 
+        private static void RejectIf(bool condition, string paramName, string message = "")
+        {
+            if (condition)
+            {
+                if (string.IsNullOrEmpty(message))
+                    throw new ArgumentException(message, paramName);
+                else
+                    throw new ArgumentException(paramName + " is invalid");
+            }
+        }
+
         public static DataVector32 NewGenericVector(bool isComplex, VectorDomain domain, int length)
         {
-            if (length < 0)
-            {
-                throw new ArgumentException("Vector length must be >= 0", nameof(length));
-            }
-
+            RejectIf(length < 0, nameof(length), "Vector length must be >= 0");
             return
                 new DataVector32(DataVector32Native.New(isComplex ? Complex : Real, (int) domain, 0.0f, (ulong) length,
                     1.0f));
@@ -88,11 +95,7 @@ namespace BasicDsp
 
         public static IRealTimeDomainVector32 NewRealTimeVectorFromConstant(float constant, int length)
         {
-            if (length < 0)
-            {
-                throw new ArgumentException("Vector length must be >= 0", nameof(length));
-            }
-
+            RejectIf(length < 0, nameof(length), "Vector length must be >= 0");
             return
                 new DataVector32(DataVector32Native.New(Real, (int) VectorDomain.Time, constant, (ulong) length, 1.0f));
         }
@@ -111,11 +114,7 @@ namespace BasicDsp
 
         public static IComplexTimeDomainVector32 NewComplexTimeVectorFromConstant(float constant, int length)
         {
-            if (length < 0)
-            {
-                throw new ArgumentException("Vector length must be >= 0", nameof(length));
-            }
-
+            RejectIf(length < 0, nameof(length), "Vector length must be >= 0");
             return
                 new DataVector32(DataVector32Native.New(Complex, (int) VectorDomain.Time, constant, (ulong) length, 1.0f));
         }
@@ -141,21 +140,13 @@ namespace BasicDsp
         {
             get
             {
-                if (index < 0 || index >= Length)
-                {
-                    throw new IndexOutOfRangeException("Index must be >= 0 and < " + Length);
-                }
-
+                RejectIf(index < 0 || index >= Length, nameof(index), "Index must be >= 0 and < " + Length);
                 return DataVector32Native.GetValue(_native, (ulong) index);
             }
 
             set
             {
-                if (index < 0 || index >= Length)
-                {
-                    throw new IndexOutOfRangeException("Index must be >= 0 and < " + Length);
-                }
-
+                RejectIf(index < 0 || index >= Length, nameof(index), "Index must be >= 0 and < " + Length);
                 DataVector32Native.SetValue(_native, (ulong) index, value);
             }
         }
@@ -258,11 +249,7 @@ namespace BasicDsp
 
         public DataVector32 ZeroPad(int points, PaddingOption paddingOption)
         {
-            if (points < 0)
-            {
-                throw new IndexOutOfRangeException("Points must be >= 0");
-            }
-
+            RejectIf(points < 0, nameof(points), "Points must be >= 0");
             Unwrap(DataVector32Native.ZeroPad(_native, (ulong) points, (int) paddingOption));
             return this;
         }
@@ -649,6 +636,20 @@ namespace BasicDsp
                 CheckResultCode(code);
                 return result;
             }
+        }
+
+        public DataVector32 Reverse()
+        {
+            Unwrap(DataVector32Native.Reverse(_native));
+            return this;
+        }
+
+        public DataVector32 Decimatei(int factor, int delay)
+        {
+            RejectIf(factor < 0, nameof(factor), "Factor must be >= 0");
+            RejectIf(delay < 0, nameof(delay), "Delay must be >= 0");
+            Unwrap(DataVector32Native.Decimatei(_native, (uint)factor, (uint)delay));
+            return this;
         }
 
         public DataVector32 Mirror()
