@@ -435,9 +435,9 @@ pub extern fn split_into32(vector: &DataVector32, targets: *mut Box<DataVector32
 }
 
 #[no_mangle]
-pub extern fn merge32(vector: Box<DataVector32>, sources: *Box<DataVector32>, len: usize) -> VectorResult<DataVector32> {
+pub extern fn merge32(vector: Box<DataVector32>, sources: *const Box<DataVector32>, len: usize) -> VectorResult<DataVector32> {
     unsafe {
-        let sources = slice::from_raw_parts(targets, len);
+        let sources = slice::from_raw_parts(sources, len);
         convert_vec!(vector.merge(sources))
     }
 }
@@ -672,6 +672,19 @@ pub extern fn windowed_custom_fft32(
     unsafe {
         let window = ForeignWindowFunction { window_function: window, window_data: mem::transmute(window_data), is_symmetric: is_symmetric };
         convert_vec!(vector.windowed_fft(&window))
+    }
+}
+
+/// See [`apply_custom_window32`](fn.apply_custom_window32.html) for a description of the `window` and `window_data` parameter.
+#[no_mangle]
+pub extern fn windowed_custom_sfft32(
+    vector: Box<DataVector32>, 
+    window: extern fn(*const c_void, usize, usize) -> f32, 
+    window_data: *const c_void,
+    is_symmetric: bool) -> VectorResult<DataVector32> {
+    unsafe {
+        let window = ForeignWindowFunction { window_function: window, window_data: mem::transmute(window_data), is_symmetric: is_symmetric };
+        convert_vec!(vector.windowed_sfft(&window))
     }
 }
 

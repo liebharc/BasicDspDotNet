@@ -55,5 +55,114 @@ namespace BasicDspTest
                 invalidMultiplication.ShouldThrow<VectorMustHaveTheSameSizeException>();
             }
         }
+
+        [TestMethod]
+        [DeploymentItem("basic_dsp.dll")]
+        public void RealDotProduct()
+        {
+            using (var vector1 = DataVector32.NewRealTimeVectorFromConstant(2, 3))
+            using (var vector2 = DataVector32.NewRealTimeVectorFromConstant(5, 3))
+            {
+                var result = vector1.RealDotProduct(vector2);
+                result.Should().BeApproximately((float)(5 * 2 * 3), (float)1e-6);
+            }
+        }
+
+        [TestMethod]
+        [DeploymentItem("basic_dsp.dll")]
+        public void ComplexDotProduct()
+        {
+            using (var vector1 = DataVector32.NewComplexTimeVectorFromConstant(2, 4))
+            using (var vector2 = DataVector32.NewComplexTimeVectorFromConstant(5, 4))
+            {
+                var result = vector1.ComplexDotProduct(vector2);
+                result.Real.Should().BeApproximately((float)(5 * 2 * 4), (float)1e-6);
+            }
+        }
+
+        [TestMethod]
+        [DeploymentItem("basic_dsp.dll")]
+        public void RealStatistics()
+        {
+            using (var vector1 = DataVector32.NewRealTimeVectorFromConstant(2, 3))
+            {
+                var result = vector1.RealStatistics();
+                result.Average.Should().BeApproximately(2.0f, (float)1e-6);
+                result.Sum.Should().BeApproximately(6.0f, (float)1e-6);
+            }
+        }
+
+        [TestMethod]
+        [DeploymentItem("basic_dsp.dll")]
+        public void ComplexStatistics()
+        {
+            using (var vector1 = DataVector32.NewComplexTimeVectorFromConstant(2, 4))
+            {
+                var result = vector1.ComplexStatistics();
+                result.Average.Real.Should().BeApproximately(2.0f, (float)1e-6);
+                result.Sum.Real.Should().BeApproximately(4.0f, (float)1e-6);
+            }
+        }
+
+        [TestMethod]
+        [DeploymentItem("basic_dsp.dll")]
+        public void SplitInto()
+        {
+            using (var vector1 = DataVector32.NewComplexTimeVectorFromConstant(2, 4))
+            using (var vector2 = DataVector32.NewComplexTimeVectorFromConstant(2, 4))
+            using (var vector3 = DataVector32.NewComplexTimeVectorFromConstant(2, 4))
+            {
+                vector1.SplitInto(new[] { vector2, vector3 });
+                vector2.Length.Should().Be(2);
+                vector3.Length.Should().Be(2);
+            }
+        }
+
+        [TestMethod]
+        [DeploymentItem("basic_dsp.dll")]
+        public void ComplexStatisticsSplitted()
+        {
+            using (var vector1 = DataVector32.NewComplexTimeVectorFromConstant(2, 4))
+            {
+                var result = vector1.ComplexStatisticsSplitted(2);
+                result.Should().HaveCount(2);
+                result[0].Count.Should().Be(1);
+            }
+        }
+
+        private class TestWindowFunction : WindowFunction32
+        {
+            public bool HasBeenCalled { get; private set; }
+
+            public override bool IsSymmetric => true;
+            public override float Calculate(ulong n, ulong length)
+            {
+                HasBeenCalled = true;
+                return 0.0f;
+            }
+        }
+
+        [TestMethod]
+        [DeploymentItem("basic_dsp.dll")]
+        public void ApplyCustomWindow()
+        {
+            using (var vector1 = (DataVector32)DataVector32.NewComplexTimeVectorFromConstant(2, 4))
+            {
+                var window = new TestWindowFunction();
+                vector1.ApplyWindow(window);
+                window.HasBeenCalled.Should().BeTrue();
+            }
+        }
+
+        [TestMethod]
+        [DeploymentItem("basic_dsp.dll")]
+        public void ZeroPad()
+        {
+            using (var vector1 = (DataVector32)DataVector32.NewComplexTimeVectorFromConstant(2, 4))
+            {
+                vector1.ZeroPad(10, PaddingOption.End);
+                vector1.Length.Should().Be(20);
+            }
+        }
     }
 }
