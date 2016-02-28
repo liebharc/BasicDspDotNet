@@ -74,7 +74,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="..\..\..\..\Rust\basic_dsp\target\release\basic_dsp.dll">
+    <Content Include="..\BasicDsp\RustDrop\basic_dsp.dll">
       <Link>basic_dsp.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

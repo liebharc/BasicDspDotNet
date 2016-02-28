@@ -304,18 +304,18 @@ namespace BasicDsp
             return this;
         }
 
-        public DataVector32 ComplexAbs()
+        public DataVector32 Magnitude()
         {
             Unwrap(DataVector32Native.ComplexAbs(_native));
             return this;
         }
 
-        public void GetComplexAbs(DataVector32 destination)
+        public void GetMagnitude(DataVector32 destination)
         {
             CheckResultCode(DataVector32Native.GetComplexAbs(_native, destination._native));
         }
 
-        public DataVector32 ComplexAbsSquared()
+        public DataVector32 MagnitudeSquared()
         {
             Unwrap(DataVector32Native.ComplexAbsSquared(_native));
             return this;

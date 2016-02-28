@@ -1,7 +1,7 @@
-﻿using System;
-// ReSharper disable MemberCanBePrivate.Global
+﻿// Auto generated code, change GenericInterfaces32.cs and run create_specialized_interfaces.pl.pl
+using System;
 // ReSharper disable UnusedMember.Global
-
+// ReSharper disable MemberCanBePrivate.Global
 namespace BasicDsp
 {
     partial class DataVector32 :
@@ -10,152 +10,12 @@ namespace BasicDsp
         IComplexTimeDomainVector32,
         IComplexFrequencyDomainVector32
     {
-        public IRealFrequencyDomainVector32 Add(IRealFrequencyDomainVector32 vector)
+        IRealTimeDomainVector32 IRealTimeDomainVector32.Add(float value)
         {
-            return Add((DataVector32)vector);
+            return Add(value);
         }
 
-        IRealFrequencyDomainVector32 IRealFrequencyDomainVector32.Subtract(float value)
-        {
-            return Subtract(value);
-        }
-
-        public IRealFrequencyDomainVector32 Subtract(IRealFrequencyDomainVector32 vector)
-        {
-            return Subtract((DataVector32)vector);
-        }
-
-        IRealFrequencyDomainVector32 IRealFrequencyDomainVector32.Multiply(float value)
-        {
-            return Multiply(value);
-        }
-
-        public IRealFrequencyDomainVector32 Multiply(IRealFrequencyDomainVector32 vector)
-        {
-            return Multiply((DataVector32)vector);
-        }
-
-        IRealFrequencyDomainVector32 IRealFrequencyDomainVector32.Divide(float value)
-        {
-            return Divide(value);
-        }
-
-        public IRealFrequencyDomainVector32 Divide(IRealFrequencyDomainVector32 vector)
-        {
-            return Divide((DataVector32)vector);
-        }
-
-        IRealFrequencyDomainVector32 IRealFrequencyDomainVector32.ZeroPad(int points, PaddingOption paddingOption)
-        {
-            return ZeroPad(points, paddingOption);
-        }
-
-        IRealFrequencyDomainVector32 IRealFrequencyDomainVector32.ZeroInterleave(int factor)
-        {
-            return ZeroInterleave(factor);
-        }
-
-        IRealFrequencyDomainVector32 IRealFrequencyDomainVector32.Diff()
-        {
-            return Diff();
-        }
-
-        IRealFrequencyDomainVector32 IRealFrequencyDomainVector32.DiffWithStart()
-        {
-            return DiffWithStart();
-        }
-
-        IRealFrequencyDomainVector32 IRealFrequencyDomainVector32.CumSum()
-        {
-            return CumSum();
-        }
-
-        IRealFrequencyDomainVector32 IRealFrequencyDomainVector32.Abs()
-        {
-            return Abs();
-        }
-
-        IRealFrequencyDomainVector32 IRealFrequencyDomainVector32.Sqrt()
-        {
-            return Sqrt();
-        }
-
-        IRealFrequencyDomainVector32 IRealFrequencyDomainVector32.Square()
-        {
-            return Square();
-        }
-
-        IRealFrequencyDomainVector32 IRealFrequencyDomainVector32.Root(float value)
-        {
-            return Root(value);
-        }
-
-        IRealFrequencyDomainVector32 IRealFrequencyDomainVector32.Power(float value)
-        {
-            return Power(value);
-        }
-
-        IRealFrequencyDomainVector32 IRealFrequencyDomainVector32.Logn()
-        {
-            return Logn();
-        }
-
-        IRealFrequencyDomainVector32 IRealFrequencyDomainVector32.Expn()
-        {
-            return Expn();
-        }
-
-        IRealFrequencyDomainVector32 IRealFrequencyDomainVector32.Exp(float value)
-        {
-            return Exp(value);
-        }
-
-        IRealFrequencyDomainVector32 IRealFrequencyDomainVector32.Log(float value)
-        {
-            return Log(value);
-        }
-
-        IComplexFrequencyDomainVector32 IRealFrequencyDomainVector32.ToComplex()
-        {
-            return ToComplex();
-        }
-
-        IRealFrequencyDomainVector32 IRealFrequencyDomainVector32.Sin()
-        {
-            return Sin();
-        }
-
-        IRealFrequencyDomainVector32 IRealFrequencyDomainVector32.Cos()
-        {
-            return Cos();
-        }
-
-        IRealFrequencyDomainVector32 IRealFrequencyDomainVector32.Wrap(float value)
-        {
-            return Wrap(value);
-        }
-
-        IRealFrequencyDomainVector32 IRealFrequencyDomainVector32.Unwrap(float value)
-        {
-            return Unwrap(value);
-        }
-
-        public void GetPhase(IRealFrequencyDomainVector32 destination)
-        {
-            GetPhase((DataVector32)destination);
-        }
-
-        IComplexTimeDomainVector32 IComplexFrequencyDomainVector32.PlainIfft()
-        {
-            return PlainIfft();
-        }
-
-        IComplexTimeDomainVector32 IRealFrequencyDomainVector32.PlainIfft()
-        {
-            return PlainIfft();
-        }
-
-        public IRealTimeDomainVector32 Add(IRealTimeDomainVector32 vector)
+        IRealTimeDomainVector32 IRealTimeDomainVector32.Add(IRealTimeDomainVector32 vector)
         {
             return Add((DataVector32)vector);
         }
@@ -165,7 +25,7 @@ namespace BasicDsp
             return Subtract(value);
         }
 
-        public IRealTimeDomainVector32 Subtract(IRealTimeDomainVector32 vector)
+        IRealTimeDomainVector32 IRealTimeDomainVector32.Subtract(IRealTimeDomainVector32 vector)
         {
             return Subtract((DataVector32)vector);
         }
@@ -175,7 +35,7 @@ namespace BasicDsp
             return Multiply(value);
         }
 
-        public IRealTimeDomainVector32 Multiply(IRealTimeDomainVector32 vector)
+        IRealTimeDomainVector32 IRealTimeDomainVector32.Multiply(IRealTimeDomainVector32 vector)
         {
             return Multiply((DataVector32)vector);
         }
@@ -185,7 +45,7 @@ namespace BasicDsp
             return Divide(value);
         }
 
-        public IRealTimeDomainVector32 Divide(IRealTimeDomainVector32 vector)
+        IRealTimeDomainVector32 IRealTimeDomainVector32.Divide(IRealTimeDomainVector32 vector)
         {
             return Divide((DataVector32)vector);
         }
@@ -195,7 +55,7 @@ namespace BasicDsp
             return ZeroPad(points, paddingOption);
         }
 
-        IRealTimeDomainVector32 IRealTimeDomainVector32.ZeroInterleave(int factor)
+        IRealTimeDomainVector32 IRealTimeDomainVector32.ZeroInterleave(int factor = 2)
         {
             return ZeroInterleave(factor);
         }
@@ -270,7 +130,7 @@ namespace BasicDsp
             return Cos();
         }
 
-        IComplexTimeDomainVector32 IRealTimeDomainVector32.ToComplex()
+        IComplexTimeDomainVector32/*COMPLEX*/ IRealTimeDomainVector32.ToComplex()
         {
             return ToComplex();
         }
@@ -285,102 +145,17 @@ namespace BasicDsp
             return Unwrap(value);
         }
 
-        public void GetPhase(IRealTimeDomainVector32 destination)
-        {
-            GetPhase((DataVector32)destination);
-        }
-
-        IComplexFrequencyDomainVector32 IComplexTimeDomainVector32.PlainFft()
+        IComplexFrequencyDomainVector32/*COMPLEXFREQ*/ IRealTimeDomainVector32.PlainFft()
         {
             return PlainFft();
         }
 
-        IComplexFrequencyDomainVector32 IRealTimeDomainVector32.PlainFft()
+        IComplexTimeDomainVector32 IComplexTimeDomainVector32.Add(float real, float imag)
         {
-            return PlainFft();
+            return Add(real, imag);
         }
 
-        public IComplexFrequencyDomainVector32 Add(IComplexFrequencyDomainVector32 vector)
-        {
-            return Add((DataVector32)vector);
-        }
-
-        IComplexFrequencyDomainVector32 IComplexFrequencyDomainVector32.Subtract(float real, float imag)
-        {
-            return Subtract(real, imag);
-        }
-
-        public IComplexFrequencyDomainVector32 Subtract(IComplexFrequencyDomainVector32 vector)
-        {
-            return Subtract((DataVector32)vector);
-        }
-
-        IComplexFrequencyDomainVector32 IComplexFrequencyDomainVector32.Multiply(float real, float imag)
-        {
-            return Multiply(real, imag);
-        }
-
-        public IComplexFrequencyDomainVector32 Multiply(IComplexFrequencyDomainVector32 vector)
-        {
-            return Multiply((DataVector32)vector);
-        }
-
-        IComplexFrequencyDomainVector32 IComplexFrequencyDomainVector32.Divide(float real, float imag)
-        {
-            return Divide(real, imag);
-        }
-
-        public IComplexFrequencyDomainVector32 Divide(IComplexFrequencyDomainVector32 vector)
-        {
-            return Divide((DataVector32)vector);
-        }
-
-        IRealFrequencyDomainVector32 IComplexFrequencyDomainVector32.Abs()
-        {
-            return ComplexAbs();
-        }
-
-        public void GetComplexAbs(IRealFrequencyDomainVector32 destination)
-        {
-            GetComplexAbs((DataVector32)destination);
-        }
-
-        IRealFrequencyDomainVector32 IComplexFrequencyDomainVector32.ComplexAbsSquared()
-        {
-            return ComplexAbsSquared();
-        }
-
-        IComplexFrequencyDomainVector32 IComplexFrequencyDomainVector32.ComplexConj()
-        {
-            return ComplexConj();
-        }
-
-        IRealFrequencyDomainVector32 IComplexFrequencyDomainVector32.ToReal()
-        {
-            return ToReal();
-        }
-
-        IRealFrequencyDomainVector32 IComplexFrequencyDomainVector32.ToImag()
-        {
-            return ToImag();
-        }
-
-        public void GetReal(IRealFrequencyDomainVector32 destination)
-        {
-            GetReal((DataVector32)destination);
-        }
-
-        public void GetImag(IRealFrequencyDomainVector32 destination)
-        {
-            GetImag((DataVector32)destination);
-        }
-
-        IRealFrequencyDomainVector32 IComplexFrequencyDomainVector32.Phase()
-        {
-            return Phase();
-        }
-
-        public IComplexTimeDomainVector32 Add(IComplexTimeDomainVector32 vector)
+        IComplexTimeDomainVector32 IComplexTimeDomainVector32.Add(IComplexTimeDomainVector32 vector)
         {
             return Add((DataVector32)vector);
         }
@@ -390,7 +165,7 @@ namespace BasicDsp
             return Subtract(real, imag);
         }
 
-        public IComplexTimeDomainVector32 Subtract(IComplexTimeDomainVector32 vector)
+        IComplexTimeDomainVector32 IComplexTimeDomainVector32.Subtract(IComplexTimeDomainVector32 vector)
         {
             return Subtract((DataVector32)vector);
         }
@@ -400,7 +175,7 @@ namespace BasicDsp
             return Multiply(real, imag);
         }
 
-        public IComplexTimeDomainVector32 Multiply(IComplexTimeDomainVector32 vector)
+        IComplexTimeDomainVector32 IComplexTimeDomainVector32.Multiply(IComplexTimeDomainVector32 vector)
         {
             return Multiply((DataVector32)vector);
         }
@@ -410,34 +185,24 @@ namespace BasicDsp
             return Divide(real, imag);
         }
 
-        public IComplexTimeDomainVector32 Divide(IComplexTimeDomainVector32 vector)
+        IComplexTimeDomainVector32 IComplexTimeDomainVector32.Divide(IComplexTimeDomainVector32 vector)
         {
             return Divide((DataVector32)vector);
         }
 
-        IRealTimeDomainVector32 IComplexTimeDomainVector32.Abs()
+        IRealTimeDomainVector32/*REAL*/ IComplexTimeDomainVector32.Magnitude()
         {
-            return ComplexAbs();
+            return Magnitude();
         }
 
-        IRealTimeDomainVector32 IRealTimeDomainVector32.SwapHalves()
+        void IComplexTimeDomainVector32.GetComplexAbs(IRealTimeDomainVector32/*REAL*/ destination)
         {
-            return ((DataVector32) this).SwapHalves();
+            GetMagnitude((DataVector32)destination);
         }
 
-        IComplexTimeDomainVector32 IComplexTimeDomainVector32.SwapHalves()
+        IRealTimeDomainVector32/*REAL*/ IComplexTimeDomainVector32.ComplexAbsSquared()
         {
-            return ((DataVector32)this).SwapHalves();
-        }
-
-        public void GetComplexAbs(IRealTimeDomainVector32 destination)
-        {
-            GetComplexAbs((DataVector32)destination);
-        }
-
-        IRealTimeDomainVector32 IComplexTimeDomainVector32.ComplexAbsSquared()
-        {
-            return ComplexAbsSquared();
+            return MagnitudeSquared();
         }
 
         IComplexTimeDomainVector32 IComplexTimeDomainVector32.ComplexConj()
@@ -445,35 +210,39 @@ namespace BasicDsp
             return ComplexConj();
         }
 
-        IRealTimeDomainVector32 IComplexTimeDomainVector32.ToReal()
+        IRealTimeDomainVector32/*REAL*/ IComplexTimeDomainVector32.ToReal()
         {
             return ToReal();
         }
 
-        IRealTimeDomainVector32 IComplexTimeDomainVector32.ToImag()
+        IRealTimeDomainVector32/*REAL*/ IComplexTimeDomainVector32.ToImag()
         {
             return ToImag();
         }
 
-        public void GetReal(IRealTimeDomainVector32 destination)
+        void IComplexTimeDomainVector32.GetReal(IRealTimeDomainVector32/*REAL*/ destination)
         {
             GetReal((DataVector32)destination);
         }
 
-        public void GetImag(IRealTimeDomainVector32 destination)
+        void IComplexTimeDomainVector32.GetImag(IRealTimeDomainVector32/*REAL*/ destination)
         {
             GetImag((DataVector32)destination);
         }
 
-        IRealTimeDomainVector32 IComplexTimeDomainVector32.Phase()
+        IRealTimeDomainVector32/*REAL*/ IComplexTimeDomainVector32.Phase()
         {
             return Phase();
         }
 
-
-        IRealTimeDomainVector32 IRealTimeDomainVector32.Add(float value)
+        void IComplexTimeDomainVector32.GetPhase(IRealTimeDomainVector32/*REAL*/ destination)
         {
-            return Add(value);
+            GetPhase((DataVector32)destination);
+        }
+
+        IComplexFrequencyDomainVector32/*COMPLEXFREQ*/ IComplexTimeDomainVector32.PlainFft()
+        {
+            return PlainFft();
         }
 
         IRealFrequencyDomainVector32 IRealFrequencyDomainVector32.Add(float value)
@@ -481,9 +250,139 @@ namespace BasicDsp
             return Add(value);
         }
 
-        IComplexTimeDomainVector32 IComplexTimeDomainVector32.Add(float real, float imag)
+        IRealFrequencyDomainVector32 IRealFrequencyDomainVector32.Add(IRealFrequencyDomainVector32 vector)
         {
-            return Add(real, imag);
+            return Add((DataVector32)vector);
+        }
+
+        IRealFrequencyDomainVector32 IRealFrequencyDomainVector32.Subtract(float value)
+        {
+            return Subtract(value);
+        }
+
+        IRealFrequencyDomainVector32 IRealFrequencyDomainVector32.Subtract(IRealFrequencyDomainVector32 vector)
+        {
+            return Subtract((DataVector32)vector);
+        }
+
+        IRealFrequencyDomainVector32 IRealFrequencyDomainVector32.Multiply(float value)
+        {
+            return Multiply(value);
+        }
+
+        IRealFrequencyDomainVector32 IRealFrequencyDomainVector32.Multiply(IRealFrequencyDomainVector32 vector)
+        {
+            return Multiply((DataVector32)vector);
+        }
+
+        IRealFrequencyDomainVector32 IRealFrequencyDomainVector32.Divide(float value)
+        {
+            return Divide(value);
+        }
+
+        IRealFrequencyDomainVector32 IRealFrequencyDomainVector32.Divide(IRealFrequencyDomainVector32 vector)
+        {
+            return Divide((DataVector32)vector);
+        }
+
+        IRealFrequencyDomainVector32 IRealFrequencyDomainVector32.ZeroPad(int points, PaddingOption paddingOption)
+        {
+            return ZeroPad(points, paddingOption);
+        }
+
+        IRealFrequencyDomainVector32 IRealFrequencyDomainVector32.ZeroInterleave(int factor = 2)
+        {
+            return ZeroInterleave(factor);
+        }
+
+        IRealFrequencyDomainVector32 IRealFrequencyDomainVector32.Diff()
+        {
+            return Diff();
+        }
+
+        IRealFrequencyDomainVector32 IRealFrequencyDomainVector32.DiffWithStart()
+        {
+            return DiffWithStart();
+        }
+
+        IRealFrequencyDomainVector32 IRealFrequencyDomainVector32.CumSum()
+        {
+            return CumSum();
+        }
+
+        IRealFrequencyDomainVector32 IRealFrequencyDomainVector32.Abs()
+        {
+            return Abs();
+        }
+
+        IRealFrequencyDomainVector32 IRealFrequencyDomainVector32.Sqrt()
+        {
+            return Sqrt();
+        }
+
+        IRealFrequencyDomainVector32 IRealFrequencyDomainVector32.Square()
+        {
+            return Square();
+        }
+
+        IRealFrequencyDomainVector32 IRealFrequencyDomainVector32.Root(float value)
+        {
+            return Root(value);
+        }
+
+        IRealFrequencyDomainVector32 IRealFrequencyDomainVector32.Power(float value)
+        {
+            return Power(value);
+        }
+
+        IRealFrequencyDomainVector32 IRealFrequencyDomainVector32.Logn()
+        {
+            return Logn();
+        }
+
+        IRealFrequencyDomainVector32 IRealFrequencyDomainVector32.Expn()
+        {
+            return Expn();
+        }
+
+        IRealFrequencyDomainVector32 IRealFrequencyDomainVector32.Exp(float value)
+        {
+            return Exp(value);
+        }
+
+        IRealFrequencyDomainVector32 IRealFrequencyDomainVector32.Log(float value)
+        {
+            return Log(value);
+        }
+
+        IRealFrequencyDomainVector32 IRealFrequencyDomainVector32.Sin()
+        {
+            return Sin();
+        }
+
+        IRealFrequencyDomainVector32 IRealFrequencyDomainVector32.Cos()
+        {
+            return Cos();
+        }
+
+        IComplexFrequencyDomainVector32/*COMPLEX*/ IRealFrequencyDomainVector32.ToComplex()
+        {
+            return ToComplex();
+        }
+
+        IRealFrequencyDomainVector32 IRealFrequencyDomainVector32.Wrap(float value)
+        {
+            return Wrap(value);
+        }
+
+        IRealFrequencyDomainVector32 IRealFrequencyDomainVector32.Unwrap(float value)
+        {
+            return Unwrap(value);
+        }
+
+        IComplexTimeDomainVector32/*COMPLEXTIME*/ IRealFrequencyDomainVector32.PlainIfft()
+        {
+            return PlainIfft();
         }
 
         IComplexFrequencyDomainVector32 IComplexFrequencyDomainVector32.Add(float real, float imag)
@@ -491,114 +390,95 @@ namespace BasicDsp
             return Add(real, imag);
         }
 
-        IComplexTimeDomainVector32 IComplexTimeDomainVector32.Sqrt()
+        IComplexFrequencyDomainVector32 IComplexFrequencyDomainVector32.Add(IComplexFrequencyDomainVector32 vector)
         {
-            return Sqrt();
+            return Add((DataVector32)vector);
         }
 
-        IComplexTimeDomainVector32 IComplexTimeDomainVector32.Square()
+        IComplexFrequencyDomainVector32 IComplexFrequencyDomainVector32.Subtract(float real, float imag)
         {
-            return Square();
+            return Subtract(real, imag);
         }
 
-        IComplexTimeDomainVector32 IComplexTimeDomainVector32.Root(float value)
+        IComplexFrequencyDomainVector32 IComplexFrequencyDomainVector32.Subtract(IComplexFrequencyDomainVector32 vector)
         {
-            return Root(value);
+            return Subtract((DataVector32)vector);
         }
 
-        IComplexTimeDomainVector32 IComplexTimeDomainVector32.Power(float value)
+        IComplexFrequencyDomainVector32 IComplexFrequencyDomainVector32.Multiply(float real, float imag)
         {
-            return Power(value);
+            return Multiply(real, imag);
         }
 
-        IComplexTimeDomainVector32 IComplexTimeDomainVector32.Logn()
+        IComplexFrequencyDomainVector32 IComplexFrequencyDomainVector32.Multiply(IComplexFrequencyDomainVector32 vector)
         {
-            return Logn();
+            return Multiply((DataVector32)vector);
         }
 
-        IComplexTimeDomainVector32 IComplexTimeDomainVector32.Expn()
+        IComplexFrequencyDomainVector32 IComplexFrequencyDomainVector32.Divide(float real, float imag)
         {
-            return Expn();
+            return Divide(real, imag);
         }
 
-        IComplexTimeDomainVector32 IComplexTimeDomainVector32.Exp(float value)
+        IComplexFrequencyDomainVector32 IComplexFrequencyDomainVector32.Divide(IComplexFrequencyDomainVector32 vector)
         {
-            return Exp(value);
+            return Divide((DataVector32)vector);
         }
 
-        IComplexTimeDomainVector32 IComplexTimeDomainVector32.Log(float value)
+        IRealFrequencyDomainVector32/*REAL*/ IComplexFrequencyDomainVector32.Magnitude()
         {
-            return Log(value);
+            return Magnitude();
         }
 
-        IComplexTimeDomainVector32 IComplexTimeDomainVector32.Sin()
+        void IComplexFrequencyDomainVector32.GetComplexAbs(IRealFrequencyDomainVector32/*REAL*/ destination)
         {
-            return Sin();
+            GetMagnitude((DataVector32)destination);
         }
 
-        IComplexTimeDomainVector32 IComplexTimeDomainVector32.Cos()
+        IRealFrequencyDomainVector32/*REAL*/ IComplexFrequencyDomainVector32.ComplexAbsSquared()
         {
-            return Cos();
+            return MagnitudeSquared();
         }
 
-        IComplexFrequencyDomainVector32 IComplexFrequencyDomainVector32.SwapHalves()
+        IComplexFrequencyDomainVector32 IComplexFrequencyDomainVector32.ComplexConj()
         {
-            return ((DataVector32)this).SwapHalves();
+            return ComplexConj();
         }
 
-        IComplexFrequencyDomainVector32 IComplexFrequencyDomainVector32.Sqrt()
+        IRealFrequencyDomainVector32/*REAL*/ IComplexFrequencyDomainVector32.ToReal()
         {
-            return Sqrt();
+            return ToReal();
         }
 
-        IComplexFrequencyDomainVector32 IComplexFrequencyDomainVector32.Square()
+        IRealFrequencyDomainVector32/*REAL*/ IComplexFrequencyDomainVector32.ToImag()
         {
-            return Square();
+            return ToImag();
         }
 
-        IComplexFrequencyDomainVector32 IComplexFrequencyDomainVector32.Root(float value)
+        void IComplexFrequencyDomainVector32.GetReal(IRealFrequencyDomainVector32/*REAL*/ destination)
         {
-            return Root(value);
+            GetReal((DataVector32)destination);
         }
 
-        IComplexFrequencyDomainVector32 IComplexFrequencyDomainVector32.Power(float value)
+        void IComplexFrequencyDomainVector32.GetImag(IRealFrequencyDomainVector32/*REAL*/ destination)
         {
-            return Power(value);
+            GetImag((DataVector32)destination);
         }
 
-        IComplexFrequencyDomainVector32 IComplexFrequencyDomainVector32.Logn()
+        IRealFrequencyDomainVector32/*REAL*/ IComplexFrequencyDomainVector32.Phase()
         {
-            return Logn();
+            return Phase();
         }
 
-        IComplexFrequencyDomainVector32 IComplexFrequencyDomainVector32.Expn()
+        void IComplexFrequencyDomainVector32.GetPhase(IRealFrequencyDomainVector32/*REAL*/ destination)
         {
-            return Expn();
+            GetPhase((DataVector32)destination);
         }
 
-        IComplexFrequencyDomainVector32 IComplexFrequencyDomainVector32.Exp(float value)
+        IComplexTimeDomainVector32/*COMPLEXTIME*/ IComplexFrequencyDomainVector32.PlainIfft()
         {
-            return Exp(value);
+            return PlainIfft();
         }
 
-        IComplexFrequencyDomainVector32 IComplexFrequencyDomainVector32.Log(float value)
-        {
-            return Log(value);
-        }
-
-        IComplexFrequencyDomainVector32 IComplexFrequencyDomainVector32.Sin()
-        {
-            return Sin();
-        }
-
-        IComplexFrequencyDomainVector32 IComplexFrequencyDomainVector32.Cos()
-        {
-            return Cos();
-        }
-
-        IRealFrequencyDomainVector32 IRealFrequencyDomainVector32.SwapHalves()
-        {
-            return ((DataVector32)this).SwapHalves();
-        }
     }
 }

@@ -60,7 +60,7 @@ namespace BasicDsp
         DataVector64 Multiply(DataVector64 vector);
         DataVector64 Divide(double real, double imag);
         DataVector64 Divide(DataVector64 vector);
-        DataVector64 ComplexAbs();
+        DataVector64 Magnitude();
         void GetComplexAbs(DataVector64 destination);
         DataVector64 ComplexAbsSquared();
         DataVector64 ComplexConj();
