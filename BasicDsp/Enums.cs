@@ -13,4 +13,16 @@ namespace BasicDsp
         HammingWindow,
         TriangularWindow
     }
+
+    public enum StandardImpulseResponse
+    { 
+        SincFunction,
+        RaisedCosineFunction
+    }
+
+    public enum StandardFrequencyResponse
+    {
+        SincFunction,
+        RaisedCosineFunction
+    }
 }

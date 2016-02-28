@@ -558,5 +558,59 @@ namespace BasicDsp
            EntryPoint = "windowed_custom_sifft32",
            CallingConvention = RustConvention)]
         public static extern VectorResult32 WindowedCustomSifft(DataVector32Struct* vector, CustomWindow window, object data, bool isSymmetric);
+
+        [DllImport(DllName,
+           EntryPoint = "prepare_argument32",
+           CallingConvention = RustConvention)]
+        public static extern VectorResult32 PrepareArgument(DataVector32Struct* vector);
+
+        [DllImport(DllName,
+           EntryPoint = "prepare_argument_padded32",
+           CallingConvention = RustConvention)]
+        public static extern VectorResult32 PrepareArgumentPadded(DataVector32Struct* vector);
+
+        [DllImport(DllName,
+           EntryPoint = "correlate32",
+           CallingConvention = RustConvention)]
+        public static extern VectorResult32 Correlate(DataVector32Struct* vector, DataVector32Struct* other);
+
+        [DllImport(DllName,
+           EntryPoint = "convolve_vector32",
+           CallingConvention = RustConvention)]
+        public static extern VectorResult32 ConvolveVector(DataVector32Struct* vector, DataVector32Struct* other);
+
+        [DllImport(DllName,
+           EntryPoint = "convolve32",
+           CallingConvention = RustConvention)]
+        public static extern VectorResult32 ConvolveFunction(DataVector32Struct* vector, int impulseResponse, float rollOff, float ratio, ulong length);
+
+        [DllImport(DllName,
+           EntryPoint = "multiply_frequency_response32",
+           CallingConvention = RustConvention)]
+        public static extern VectorResult32 MultiplyFrequencyResponse(DataVector32Struct* vector, int frequencyResponse, float rollOff, float ratio);
+
+        public delegate float RealConfOrFreqFunction(object data, float x);
+
+        [DllImport(DllName,
+           EntryPoint = "convolve_real32",
+           CallingConvention = RustConvention)]
+        public static extern VectorResult32 ConvolveRealFunction(DataVector32Struct* vector, RealConfOrFreqFunction window, object data, bool isSymmetric, float ratio, ulong length);
+
+        [DllImport(DllName,
+           EntryPoint = "multiply_frequency_response_real32",
+           CallingConvention = RustConvention)]
+        public static extern VectorResult32 MultiplyRealFrequencyResponse(DataVector32Struct* vector, RealConfOrFreqFunction window, object data, bool isSymmetric, float ratio);
+
+        public delegate Complex32 ComplexConfOrFreqFunction(object data, float x);
+
+        [DllImport(DllName,
+           EntryPoint = "convolve_complex32",
+           CallingConvention = RustConvention)]
+        public static extern VectorResult32 ConvolveComplexFunction(DataVector32Struct* vector, ComplexConfOrFreqFunction window, object data, bool isSymmetric, float ratio, ulong length);
+
+        [DllImport(DllName,
+           EntryPoint = "multiply_frequency_response_complex32",
+           CallingConvention = RustConvention)]
+        public static extern VectorResult32 MultiplyComplexFrequencyResponse(DataVector32Struct* vector, ComplexConfOrFreqFunction window, object data, bool isSymmetric, float ratio);
     }
 }

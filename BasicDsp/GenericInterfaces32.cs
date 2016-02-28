@@ -49,6 +49,34 @@ namespace BasicDsp
         public abstract float Calculate(ulong n, ulong length);
     }
 
+    public abstract class RealImpulseResponse32
+    {
+        public abstract bool IsSymmetric { get; }
+
+        public abstract float Calculate(float x);
+    }
+
+    public abstract class ComplexImpulseResponse32
+    {
+        public abstract bool IsSymmetric { get; }
+
+        public abstract Complex32 Calculate(float x);
+    }
+
+    public abstract class RealFrequencyResponse32
+    {
+        public abstract bool IsSymmetric { get; }
+
+        public abstract float Calculate(float x);
+    }
+
+    public abstract class ComplexFrequencyResponse32
+    {
+        public abstract bool IsSymmetric { get; }
+
+        public abstract Complex32 Calculate(float x);
+    }
+
     public interface IDataVector32 : ICloneable
     {
         float this[int index] { get; set; }
@@ -151,6 +179,9 @@ namespace BasicDsp
         ComplexStatistics32[] ComplexStatisticsSplitted(int length);
         DataVector32 Reverse();
         DataVector32 Decimatei(int factor, int delay);
+        DataVector32 PrepareArgument();
+        DataVector32 PrepareArgumentPadded();
+        DataVector32 Correlate(DataVector32 other);
     }
 
     public interface ITimeDomainVectorOperations32
@@ -178,6 +209,14 @@ namespace BasicDsp
         DataVector32 /*COMPLEXFREQ*/ Sfft(StandardWindowFunction window);
 
         DataVector32 /*COMPLEXFREQ*/ Sfft(WindowFunction32 window);
+
+        DataVector32 Convolve(DataVector32 impulseResponse);
+
+        DataVector32 Convolve(StandardImpulseResponse impulseResponse, float rollOff, float ratio, int length);
+
+        DataVector32 Convolve(RealImpulseResponse32 impulseResponse, float ratio, int length);
+
+        DataVector32 Convolve(ComplexImpulseResponse32 impulseResponse, float ratio, int length);
     }
 
     public interface IFrequencyDomainVectorOperations32
@@ -201,5 +240,11 @@ namespace BasicDsp
         DataVector32 /*REALTIME*/ Sifft(StandardWindowFunction window);
 
         DataVector32 /*REALTIME*/ Sifft(WindowFunction32 window);
+
+        DataVector32 MultiplyFrequencyResponse(StandardFrequencyResponse frequencyResponse, float rollOff, float ratio);
+
+        DataVector32 MultiplyFrequencyResponse(RealImpulseResponse32 frequencyResponse, float ratio);
+
+        DataVector32 MultiplyFrequencyResponse(ComplexImpulseResponse32 frequencyResponse, float ratio);
     }
 }

@@ -526,6 +526,30 @@ namespace BasicDsp
             return asWindow.Calculate(n, length);
         }
 
+        private float CallCustomRealTimeFunction(object function, float x)
+        {
+            var asFunction = (RealImpulseResponse32)function;
+            return asFunction.Calculate(x);
+        }
+
+        private float CallCustomRealFreqFunction(object function, float x)
+        {
+            var asFunction = (RealFrequencyResponse32)function;
+            return asFunction.Calculate(x);
+        }
+
+        private Complex32 CallCustomComplexFreqFunction(object function, float x)
+        {
+            var asFunction = (ComplexFrequencyResponse32)function;
+            return asFunction.Calculate(x);
+        }
+
+        private Complex32 CallCustomComplexTimeFunction(object function, float x)
+        {
+            var asFunction = (ComplexImpulseResponse32)function;
+            return asFunction.Calculate(x);
+        }
+
         public DataVector32 UnapplyWindow(StandardWindowFunction window)
         {
             Unwrap(DataVector32Native.UnapplyWindow(_native, (int)window));
@@ -559,6 +583,33 @@ namespace BasicDsp
         public DataVector32 Sfft(WindowFunction32 window)
         {
             Unwrap(DataVector32Native.WindowedCustomSfft(_native, CallCustomWindow, window, window.IsSymmetric));
+            return this;
+        }
+
+        public DataVector32 Convolve(DataVector32 impulseResponse)
+        {
+            Unwrap(DataVector32Native.ConvolveVector(_native, impulseResponse._native));
+            return this;
+        }
+
+        public DataVector32 Convolve(StandardImpulseResponse impulseResponse, float rollOff, float ratio, int length)
+        {
+            RejectIf(length < 0, nameof(length), "Length must be >= 0");
+            Unwrap(DataVector32Native.ConvolveFunction(_native, (int)impulseResponse, rollOff, ratio, (ulong)length));
+            return this;
+        }
+
+        public DataVector32 Convolve(RealImpulseResponse32 impulseResponse, float ratio, int length)
+        {
+            RejectIf(length < 0, nameof(length), "Length must be >= 0");
+            Unwrap(DataVector32Native.ConvolveRealFunction(_native, CallCustomRealTimeFunction, impulseResponse, impulseResponse.IsSymmetric, ratio, (ulong)length));
+            return this;
+        }
+
+        public DataVector32 Convolve(ComplexImpulseResponse32 impulseResponse, float ratio, int length)
+        {
+            RejectIf(length < 0, nameof(length), "Length must be >= 0");
+            Unwrap(DataVector32Native.ConvolveComplexFunction(_native, CallCustomComplexTimeFunction, impulseResponse, impulseResponse.IsSymmetric, ratio, (ulong)length));
             return this;
         }
 
@@ -619,6 +670,24 @@ namespace BasicDsp
         public DataVector32 Sifft(WindowFunction32 window)
         {
             Unwrap(DataVector32Native.WindowedCustomSifft(_native, CallCustomWindow, window, window.IsSymmetric));
+            return this;
+        }
+
+        public DataVector32 MultiplyFrequencyResponse(StandardFrequencyResponse frequencyResponse, float rollOff, float ratio)
+        {
+            Unwrap(DataVector32Native.MultiplyFrequencyResponse(_native, (int)frequencyResponse, rollOff, ratio));
+            return this;
+        }
+
+        public DataVector32 MultiplyFrequencyResponse(RealImpulseResponse32 frequencyResponse, float ratio)
+        {
+            Unwrap(DataVector32Native.MultiplyRealFrequencyResponse(_native, CallCustomRealFreqFunction, frequencyResponse, frequencyResponse.IsSymmetric, ratio));
+            return this;
+        }
+
+        public DataVector32 MultiplyFrequencyResponse(ComplexImpulseResponse32 frequencyResponse, float ratio)
+        {
+            Unwrap(DataVector32Native.MultiplyComplexFrequencyResponse(_native, CallCustomComplexFreqFunction, frequencyResponse, frequencyResponse.IsSymmetric, ratio));
             return this;
         }
 
@@ -727,6 +796,24 @@ namespace BasicDsp
             RejectIf(factor < 0, nameof(factor), "Factor must be >= 0");
             RejectIf(delay < 0, nameof(delay), "Delay must be >= 0");
             Unwrap(DataVector32Native.Decimatei(_native, (uint)factor, (uint)delay));
+            return this;
+        }
+
+        public DataVector32 PrepareArgument()
+        {
+            Unwrap(DataVector32Native.PrepareArgument(_native));
+            return this;
+        }
+
+        public DataVector32 PrepareArgumentPadded()
+        {
+            Unwrap(DataVector32Native.PrepareArgumentPadded(_native));
+            return this;
+        }
+
+        public DataVector32 Correlate(DataVector32 other)
+        {
+            Unwrap(DataVector32Native.Correlate(_native, other._native));
             return this;
         }
 
