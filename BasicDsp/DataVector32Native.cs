@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Runtime.InteropServices;
 
 namespace BasicDsp
 {
@@ -106,6 +107,26 @@ namespace BasicDsp
             EntryPoint = "divide_vector32",
             CallingConvention = RustConvention)]
         public static extern VectorResult32 DivideVector(DataVector32Struct* vector, DataVector32Struct* operand);
+
+        [DllImport(DllName,
+            EntryPoint = "add_smaller_vector32",
+            CallingConvention = RustConvention)]
+        public static extern VectorResult32 AddSmallerVector(DataVector32Struct* vector, DataVector32Struct* operand);
+
+        [DllImport(DllName,
+            EntryPoint = "subtract_smaller_vector32",
+            CallingConvention = RustConvention)]
+        public static extern VectorResult32 SubtractSmallerVector(DataVector32Struct* vector, DataVector32Struct* operand);
+
+        [DllImport(DllName,
+            EntryPoint = "multiply_smaller_vector32",
+            CallingConvention = RustConvention)]
+        public static extern VectorResult32 MultiplySmallerVector(DataVector32Struct* vector, DataVector32Struct* operand);
+
+        [DllImport(DllName,
+            EntryPoint = "divide_smaller_vector32",
+            CallingConvention = RustConvention)]
+        public static extern VectorResult32 DivideSmallerVector(DataVector32Struct* vector, DataVector32Struct* operand);
 
         [DllImport(DllName,
             EntryPoint = "zero_pad32",
@@ -375,5 +396,30 @@ namespace BasicDsp
             EntryPoint = "multiply_complex_exponential32",
             CallingConvention = RustConvention)]
         public static extern VectorResult32 MultiplyComplexExponential(DataVector32Struct* vector, float a, float b);
+
+        [DllImport(DllName,
+            EntryPoint = "get_real_imag32",
+            CallingConvention = RustConvention)]
+        public static extern int GetRealImag(DataVector32Struct* vector, DataVector32Struct* dest1, DataVector32Struct* dest2);
+
+        [DllImport(DllName,
+            EntryPoint = "get_mag_phase32",
+            CallingConvention = RustConvention)]
+        public static extern int GetMagPhase(DataVector32Struct* vector, DataVector32Struct* dest1, DataVector32Struct* dest2);
+
+        [DllImport(DllName,
+            EntryPoint = "set_real_imag32",
+            CallingConvention = RustConvention)]
+        public static extern VectorResult32 SetRealImag(DataVector32Struct* vector, DataVector32Struct* src1, DataVector32Struct* src2);
+
+        [DllImport(DllName,
+            EntryPoint = "set_mag_phase32",
+            CallingConvention = RustConvention)]
+        public static extern VectorResult32 SetMagPhase(DataVector32Struct* vector, DataVector32Struct* src1, DataVector32Struct* src2);
+
+        [DllImport(DllName,
+            EntryPoint = "split_into32",
+            CallingConvention = RustConvention)]
+        public static extern int SplitInto(DataVector32Struct* vector, IntPtr targets, ulong len);
     }
 }

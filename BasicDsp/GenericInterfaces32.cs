@@ -62,6 +62,10 @@ namespace BasicDsp
         DataVector32 Multiply(DataVector32 vector);
         DataVector32 Divide(float value);
         DataVector32 Divide(DataVector32 vector);
+        DataVector32 AddSmaller(DataVector32 vector);
+        DataVector32 SubtractSmaller(DataVector32 vector);
+        DataVector32 MultiplySmaller(DataVector32 vector);
+        DataVector32 DivideSmaller(DataVector32 vector);
         DataVector32 ZeroPad(int points, PaddingOption paddingOption);
         DataVector32 ZeroInterleave(int factor = 2);
         DataVector32 Diff();
@@ -93,6 +97,7 @@ namespace BasicDsp
         DataVector32 Unwrap(float value);
         float RealDotProduct(DataVector32 vector);
         RealStatistics32 RealStatistics();
+        void SplitInto(DataVector32[] targets);
     }
 
     public interface IComplexVectorOperations32
@@ -105,6 +110,10 @@ namespace BasicDsp
         DataVector32 Multiply(DataVector32 vector);
         DataVector32 Divide(float real, float imag);
         DataVector32 Divide(DataVector32 vector);
+        DataVector32 AddSmaller(DataVector32 vector);
+        DataVector32 SubtractSmaller(DataVector32 vector);
+        DataVector32 MultiplySmaller(DataVector32 vector);
+        DataVector32 DivideSmaller(DataVector32 vector);
         DataVector32 /*REAL*/ Magnitude();
         void GetMagnitude(DataVector32 /*REAL*/ destination);
         DataVector32 /*REAL*/ MagnitudeSquared();
@@ -119,6 +128,15 @@ namespace BasicDsp
         ComplexStatistics32 ComplexStatistics();
 
         DataVector32 MultiplyComplexExponential(float a, float b);
+
+        void GetRealImag(DataVector32 /*REAL*/ real, DataVector32 /*REAL*/ imag);
+
+        void GetMagPhase(DataVector32 /*REAL*/ mag, DataVector32 /*REAL*/ phase);
+
+        DataVector32 SetRealImag(DataVector32 /*REAL*/ real, DataVector32 /*REAL*/ imag);
+
+        DataVector32 SetMagPhase(DataVector32 /*REAL*/ mag, DataVector32 /*REAL*/ phase);
+        void SplitInto(DataVector32[] targets);
     }
 
     public interface ITimeDomainVectorOperations32

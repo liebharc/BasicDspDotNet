@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using System.Runtime.InteropServices;
 
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable UnusedMember.Global
@@ -11,6 +13,33 @@ namespace BasicDsp
         IFrequencyDomainVectorOperations32,
         ITimeDomainVectorOperations32
     {
+        private sealed class VectorArrayToIntPtr : IDisposable
+        {
+            private GCHandle? _pinned;
+
+            public VectorArrayToIntPtr(DataVector32[] array)
+            {
+                var natives = new IntPtr[array.Length];
+                for (int i = 0; i < array.Length; i++)
+                {
+                    natives[i] = (IntPtr)array[i]._native;
+                }
+
+                _pinned = GCHandle.Alloc(natives, GCHandleType.Pinned);
+            }
+
+            public IntPtr IntPtr => _pinned.Value.AddrOfPinnedObject();
+
+            public void Dispose()
+            {
+                if (_pinned.HasValue)
+                {
+                    _pinned.Value.Free();
+                    _pinned = null;
+                }
+            }
+        }
+
         private DataVector32Native.DataVector32Struct* _native;
 
         private const int Complex = 1;
@@ -185,6 +214,30 @@ namespace BasicDsp
         public DataVector32 Divide(DataVector32 vector)
         {
             Unwrap(DataVector32Native.DivideVector(_native, vector._native));
+            return this;
+        }
+
+        public DataVector32 AddSmaller(DataVector32 vector)
+        {
+            Unwrap(DataVector32Native.AddSmallerVector(_native, vector._native));
+            return this;
+        }
+
+        public DataVector32 SubtractSmaller(DataVector32 vector)
+        {
+            Unwrap(DataVector32Native.SubtractSmallerVector(_native, vector._native));
+            return this;
+        }
+
+        public DataVector32 MultiplySmaller(DataVector32 vector)
+        {
+            Unwrap(DataVector32Native.MultiplySmallerVector(_native, vector._native));
+            return this;
+        }
+
+        public DataVector32 DivideSmaller(DataVector32 vector)
+        {
+            Unwrap(DataVector32Native.DivideSmallerVector(_native, vector._native));
             return this;
         }
 
@@ -475,6 +528,39 @@ namespace BasicDsp
         {
             Unwrap(DataVector32Native.MultiplyComplexExponential(_native, a, b));
             return this;
+        }
+
+        public void GetRealImag(DataVector32 real, DataVector32 imag)
+        {
+            var result = DataVector32Native.GetRealImag(_native, real._native, imag._native);
+            CheckResultCode(result);
+        }
+
+        public void GetMagPhase(DataVector32 mag, DataVector32 phase)
+        {
+            var result = DataVector32Native.GetMagPhase(_native, mag._native, phase._native);
+            CheckResultCode(result);
+        }
+
+        public DataVector32 SetRealImag(DataVector32 real, DataVector32 imag)
+        {
+            Unwrap(DataVector32Native.SetRealImag(_native, real._native, imag._native));
+            return this;
+        }
+
+        public DataVector32 SetMagPhase(DataVector32 mag, DataVector32 phase)
+        {
+            Unwrap(DataVector32Native.SetMagPhase(_native, mag._native, phase._native));
+            return this;
+        }
+
+        public void SplitInto(DataVector32[] targets)
+        {
+            using (var intPtr = new VectorArrayToIntPtr(targets))
+            {
+                var result = DataVector32Native.SplitInto(_native, intPtr.IntPtr, (ulong)targets.Length);
+                CheckResultCode(result);
+            }
         }
 
         private void Unwrap(DataVector32Native.VectorResult32 result)
