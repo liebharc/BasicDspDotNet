@@ -969,6 +969,24 @@ namespace BasicDsp
                     break;
                 case 1:
                     throw new VectorMustHaveTheSameSizeException();
+                case 2:
+                    throw new VectorMetaDataMustAgreeException();
+                case 3:
+                    throw new VectorMustBeComplexException();
+                case 4:
+                    throw new VectorMustBeRealException();
+                case 5:
+                    throw new VectorMustBeInTimeDomainException();
+                case 6:
+                    throw new VectorMustBeInFrquencyDomainException();
+                case 7:
+                    throw new InvalidArgumentLengthException();
+                case 8:
+                    throw new VectorMustBeConjSymmetricException();
+                case 9:
+                    throw new VectorMustHaveAnOddLengthException();
+                case 10:
+                    throw new ArgumentFunctionMustBeSymmetricException();
                 default:
                     throw new UnknownResultCode();
             }
