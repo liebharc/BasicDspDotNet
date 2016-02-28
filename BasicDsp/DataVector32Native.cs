@@ -496,5 +496,67 @@ namespace BasicDsp
            EntryPoint = "decimatei32",
            CallingConvention = RustConvention)]
         public static extern VectorResult32 Decimatei(DataVector32Struct* vector, uint factor, uint delay);
+
+        public delegate float CustomWindow(object data, ulong n, ulong length);
+
+        [DllImport(DllName,
+           EntryPoint = "apply_window32",
+           CallingConvention = RustConvention)]
+        public static extern VectorResult32 ApplyWindow(DataVector32Struct* vector, int window);
+
+        [DllImport(DllName,
+           EntryPoint = "unapply_window32",
+           CallingConvention = RustConvention)]
+        public static extern VectorResult32 UnapplyWindow(DataVector32Struct* vector, int window);
+
+        [DllImport(DllName,
+           EntryPoint = "windowed_fft32",
+           CallingConvention = RustConvention)]
+        public static extern VectorResult32 WindowedFft(DataVector32Struct* vector, int window);
+
+        [DllImport(DllName,
+           EntryPoint = "windowed_sfft32",
+           CallingConvention = RustConvention)]
+        public static extern VectorResult32 WindowedSfft(DataVector32Struct* vector, int window);
+
+        [DllImport(DllName,
+           EntryPoint = "windowed_ifft32",
+           CallingConvention = RustConvention)]
+        public static extern VectorResult32 WindowedIfft(DataVector32Struct* vector, int window);
+
+        [DllImport(DllName,
+           EntryPoint = "windowed_sifft32",
+           CallingConvention = RustConvention)]
+        public static extern VectorResult32 WindowedSifft(DataVector32Struct* vector, int window);
+
+        [DllImport(DllName,
+           EntryPoint = "apply_custom_window32",
+           CallingConvention = RustConvention)]
+        public static extern VectorResult32 ApplyCustomWindow(DataVector32Struct* vector, CustomWindow window, object data, bool isSymmetric);
+
+        [DllImport(DllName,
+           EntryPoint = "unapply_custom_window32",
+           CallingConvention = RustConvention)]
+        public static extern VectorResult32 UnpplyCustomWindow(DataVector32Struct* vector, CustomWindow window, object data, bool isSymmetric);
+
+        [DllImport(DllName,
+            EntryPoint = "windowed_custom_fft32",
+            CallingConvention = RustConvention)]
+        public static extern VectorResult32 WindowedCustomFft(DataVector32Struct* vector, CustomWindow window, object data, bool isSymmetric);
+
+            [DllImport(DllName,
+           EntryPoint = "windowed_custom_sfft32",
+           CallingConvention = RustConvention)]
+        public static extern VectorResult32 WindowedCustomSfft(DataVector32Struct* vector, CustomWindow window, object data, bool isSymmetric);
+
+        [DllImport(DllName,
+           EntryPoint = "windowed_custom_ifft32",
+           CallingConvention = RustConvention)]
+        public static extern VectorResult32 WindowedCustomIfft(DataVector32Struct* vector, CustomWindow window, object data, bool isSymmetric);
+
+        [DllImport(DllName,
+           EntryPoint = "windowed_custom_sifft32",
+           CallingConvention = RustConvention)]
+        public static extern VectorResult32 WindowedCustomSifft(DataVector32Struct* vector, CustomWindow window, object data, bool isSymmetric);
     }
 }

@@ -42,6 +42,13 @@ namespace BasicDsp
         public Complex32 MaxIndex { get; }
     }
 
+    public abstract class WindowFunction32
+    {
+        public abstract bool IsSymmetric { get; }
+
+        public abstract float Calculate(ulong n, ulong length);
+    }
+
     public interface IDataVector32 : ICloneable
     {
         float this[int index] { get; set; }
@@ -155,6 +162,22 @@ namespace BasicDsp
         DataVector32 /*COMPLEXFREQ*/ Fft();
 
         DataVector32 /*COMPLEXFREQ*/ Sfft();
+
+        DataVector32 ApplyWindow(StandardWindowFunction window);
+
+        DataVector32 ApplyWindow(WindowFunction32 window);
+
+        DataVector32 UnapplyWindow(StandardWindowFunction window);
+
+        DataVector32 UnapplyWindow(WindowFunction32 window);
+
+        DataVector32 /*COMPLEXFREQ*/ Fft(StandardWindowFunction window);
+
+        DataVector32 /*COMPLEXFREQ*/ Fft(WindowFunction32 window);
+
+        DataVector32 /*COMPLEXFREQ*/ Sfft(StandardWindowFunction window);
+
+        DataVector32 /*COMPLEXFREQ*/ Sfft(WindowFunction32 window);
     }
 
     public interface IFrequencyDomainVectorOperations32
@@ -170,5 +193,13 @@ namespace BasicDsp
         DataVector32 FftShift();
 
         DataVector32 IfftShift();
+
+        DataVector32 /*COMPLEXTIME*/ Ifft(StandardWindowFunction window);
+
+        DataVector32 /*COMPLEXTIME*/ Ifft(WindowFunction32 window);
+
+        DataVector32 /*REALTIME*/ Sifft(StandardWindowFunction window);
+
+        DataVector32 /*REALTIME*/ Sifft(WindowFunction32 window);
     }
 }

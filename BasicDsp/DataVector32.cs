@@ -508,6 +508,60 @@ namespace BasicDsp
             return this;
         }
 
+        public DataVector32 ApplyWindow(StandardWindowFunction window)
+        {
+            Unwrap(DataVector32Native.ApplyWindow(_native, (int)window));
+            return this;
+        }
+
+        public DataVector32 ApplyWindow(WindowFunction32 window)
+        {
+            Unwrap(DataVector32Native.ApplyCustomWindow(_native, CallCustomWindow, window, window.IsSymmetric));
+            return this;
+        }
+
+        private float CallCustomWindow(object window, ulong n, ulong length)
+        {
+            var asWindow = (WindowFunction32) window;
+            return asWindow.Calculate(n, length);
+        }
+
+        public DataVector32 UnapplyWindow(StandardWindowFunction window)
+        {
+            Unwrap(DataVector32Native.UnapplyWindow(_native, (int)window));
+            return this;
+        }
+
+        public DataVector32 UnapplyWindow(WindowFunction32 window)
+        {
+            Unwrap(DataVector32Native.UnpplyCustomWindow(_native, CallCustomWindow, window, window.IsSymmetric));
+            return this;
+        }
+
+        public DataVector32 Fft(StandardWindowFunction window)
+        {
+            Unwrap(DataVector32Native.WindowedFft(_native, (int)window));
+            return this;
+        }
+
+        public DataVector32 Fft(WindowFunction32 window)
+        {
+            Unwrap(DataVector32Native.WindowedCustomFft(_native, CallCustomWindow, window, window.IsSymmetric));
+            return this;
+        }
+
+        public DataVector32 Sfft(StandardWindowFunction window)
+        {
+            Unwrap(DataVector32Native.WindowedSfft(_native, (int)window));
+            return this;
+        }
+
+        public DataVector32 Sfft(WindowFunction32 window)
+        {
+            Unwrap(DataVector32Native.WindowedCustomSfft(_native, CallCustomWindow, window, window.IsSymmetric));
+            return this;
+        }
+
         public DataVector32 PlainIfft()
         {
             Unwrap(DataVector32Native.PlainIfft(_native));
@@ -541,6 +595,30 @@ namespace BasicDsp
         public DataVector32 IfftShift()
         {
             Unwrap(DataVector32Native.IFftShift(_native));
+            return this;
+        }
+
+        public DataVector32 Ifft(StandardWindowFunction window)
+        {
+            Unwrap(DataVector32Native.WindowedIfft(_native, (int)window));
+            return this;
+        }
+
+        public DataVector32 Ifft(WindowFunction32 window)
+        {
+            Unwrap(DataVector32Native.WindowedCustomIfft(_native, CallCustomWindow, window, window.IsSymmetric));
+            return this;
+        }
+
+        public DataVector32 Sifft(StandardWindowFunction window)
+        {
+            Unwrap(DataVector32Native.WindowedSifft(_native, (int)window));
+            return this;
+        }
+
+        public DataVector32 Sifft(WindowFunction32 window)
+        {
+            Unwrap(DataVector32Native.WindowedCustomSifft(_native, CallCustomWindow, window, window.IsSymmetric));
             return this;
         }
 
