@@ -2,6 +2,7 @@
 
 // Some comments in this class are type definitions hints for the code generator Perl scripts
 // ReSharper disable UnusedMemberInSuper.Global
+
 namespace BasicDsp
 {
     public interface IDataVector32
@@ -41,7 +42,7 @@ namespace BasicDsp
         DataVector32 Log(float value);
         DataVector32 Sin();
         DataVector32 Cos();
-        DataVector32/*COMPLEX*/ ToComplex();
+        DataVector32 /*COMPLEX*/ ToComplex();
         DataVector32 Wrap(float value);
         DataVector32 Unwrap(float value);
     }
@@ -56,25 +57,25 @@ namespace BasicDsp
         DataVector32 Multiply(DataVector32 vector);
         DataVector32 Divide(float real, float imag);
         DataVector32 Divide(DataVector32 vector);
-        DataVector32/*REAL*/ Magnitude();
-        void GetMagnitude(DataVector32/*REAL*/ destination);
-        DataVector32/*REAL*/ MagnitudeSquared();
+        DataVector32 /*REAL*/ Magnitude();
+        void GetMagnitude(DataVector32 /*REAL*/ destination);
+        DataVector32 /*REAL*/ MagnitudeSquared();
         DataVector32 ComplexConj();
-        DataVector32/*REAL*/ ToReal();
-        DataVector32/*REAL*/ ToImag();
-        void GetReal(DataVector32/*REAL*/ destination);
-        void GetImag(DataVector32/*REAL*/ destination);
-        DataVector32/*REAL*/ Phase();
-        void GetPhase(DataVector32/*REAL*/ destination);
+        DataVector32 /*REAL*/ ToReal();
+        DataVector32 /*REAL*/ ToImag();
+        void GetReal(DataVector32 /*REAL*/ destination);
+        void GetImag(DataVector32 /*REAL*/ destination);
+        DataVector32 /*REAL*/ Phase();
+        void GetPhase(DataVector32 /*REAL*/ destination);
     }
 
     public interface ITimeDomainVectorOperations32
     {
-        DataVector32/*COMPLEXFREQ*/ PlainFft();
+        DataVector32 /*COMPLEXFREQ*/ PlainFft();
     }
 
     public interface IFrequencyDomainVectorOperations32
     {
-        DataVector32/*COMPLEXTIME*/ PlainIfft();
+        DataVector32 /*COMPLEXTIME*/ PlainIfft();
     }
 }

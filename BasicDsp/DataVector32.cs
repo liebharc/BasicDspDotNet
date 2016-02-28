@@ -1,10 +1,17 @@
 ﻿using System;
+
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable UnusedMember.Global
 
 namespace BasicDsp
 {
-   public sealed unsafe partial class DataVector32 : 
+    public struct Complex32
+    {
+        public float Imag { get; }
+        public float Real { get; }
+    }
+
+    public sealed unsafe partial class DataVector32 :
         IComplexVectorOperations32,
         IRealVectorOperations32,
         IFrequencyDomainVectorOperations32,
@@ -16,26 +23,30 @@ namespace BasicDsp
 
         private const int Real = 0;
 
-       public static DataVector32 NewGenericVector(bool isComplex, VectorDomain domain, int length)
-       {
-           if (length < 0)
-           {
-               throw new ArgumentException("Vector length must be >= 0", nameof(length));
-           }
+        public static DataVector32 NewGenericVector(bool isComplex, VectorDomain domain, int length)
+        {
+            if (length < 0)
+            {
+                throw new ArgumentException("Vector length must be >= 0", nameof(length));
+            }
 
-           return new DataVector32(DataVector32Native.New(isComplex ? Complex : Real, (int)domain, 0.0f, (ulong)length, 1.0f));
-       }
+            return
+                new DataVector32(DataVector32Native.New(isComplex ? Complex : Real, (int) domain, 0.0f, (ulong) length,
+                    1.0f));
+        }
 
-       public static DataVector32 NewGenericVector(bool isComplex, VectorDomain domain, float[] data)
-       {
-           var vector = new DataVector32(DataVector32Native.New(isComplex ? Complex : Real, (int)domain, 0.0f, (ulong)data.Length, 1.0f));
-           for (int i = 0; i < data.Length; i++)
-           {
-               vector[i] = data[i];
-           }
+        public static DataVector32 NewGenericVector(bool isComplex, VectorDomain domain, float[] data)
+        {
+            var vector =
+                new DataVector32(DataVector32Native.New(isComplex ? Complex : Real, (int) domain, 0.0f,
+                    (ulong) data.Length, 1.0f));
+            for (int i = 0; i < data.Length; i++)
+            {
+                vector[i] = data[i];
+            }
 
-           return vector;
-       }
+            return vector;
+        }
 
         public static IRealTimeDomainVector32 NewRealTimeVectorFromConstant(float constant, int length)
         {
@@ -44,12 +55,14 @@ namespace BasicDsp
                 throw new ArgumentException("Vector length must be >= 0", nameof(length));
             }
 
-            return new DataVector32(DataVector32Native.New(Real, (int)VectorDomain.Time, constant, (ulong)length, 1.0f));
+            return
+                new DataVector32(DataVector32Native.New(Real, (int) VectorDomain.Time, constant, (ulong) length, 1.0f));
         }
 
         public static IRealTimeDomainVector32 NewRealTimeVectorFromArray(float[] data)
         {
-            var vector = new DataVector32(DataVector32Native.New(Real, (int)VectorDomain.Time, 0.0f, (ulong)data.Length, 1.0f));
+            var vector =
+                new DataVector32(DataVector32Native.New(Real, (int) VectorDomain.Time, 0.0f, (ulong) data.Length, 1.0f));
             for (int i = 0; i < data.Length; i++)
             {
                 vector[i] = data[i];
@@ -65,12 +78,14 @@ namespace BasicDsp
                 throw new ArgumentException("Vector length must be >= 0", nameof(length));
             }
 
-            return new DataVector32(DataVector32Native.New(Complex, (int)VectorDomain.Time, constant, (ulong)length, 1.0f));
+            return
+                new DataVector32(DataVector32Native.New(Complex, (int) VectorDomain.Time, constant, (ulong) length, 1.0f));
         }
 
         public static IComplexTimeDomainVector32 NewComplexTimeVectorFromInterleaved(float[] data)
         {
-            var vector = new DataVector32(DataVector32Native.New(Real, (int)VectorDomain.Time, 0.0f, (ulong)data.Length, 1.0f));
+            var vector =
+                new DataVector32(DataVector32Native.New(Real, (int) VectorDomain.Time, 0.0f, (ulong) data.Length, 1.0f));
             for (int i = 0; i < data.Length; i++)
             {
                 vector[i] = data[i];
@@ -93,7 +108,7 @@ namespace BasicDsp
                     throw new IndexOutOfRangeException("Index must be >= 0 and < " + Length);
                 }
 
-                return DataVector32Native.GetValue(_native, (ulong)index);
+                return DataVector32Native.GetValue(_native, (ulong) index);
             }
 
             set
@@ -103,7 +118,7 @@ namespace BasicDsp
                     throw new IndexOutOfRangeException("Index must be >= 0 and < " + Length);
                 }
 
-                DataVector32Native.SetValue(_native, (ulong)index, value);
+                DataVector32Native.SetValue(_native, (ulong) index, value);
             }
         }
 
@@ -163,7 +178,7 @@ namespace BasicDsp
 
         public DataVector32 Divide(float value)
         {
-            Unwrap(DataVector32Native.RealScale(_native, 1 / value));
+            Unwrap(DataVector32Native.RealScale(_native, 1/value));
             return this;
         }
 
@@ -186,7 +201,7 @@ namespace BasicDsp
                 throw new IndexOutOfRangeException("Points must be >= 0");
             }
 
-            Unwrap(DataVector32Native.ZeroPad(_native, (ulong)points, (int)paddingOption));
+            Unwrap(DataVector32Native.ZeroPad(_native, (ulong) points, (int) paddingOption));
             return this;
         }
 
@@ -220,7 +235,7 @@ namespace BasicDsp
             return this;
         }
 
-       public DataVector32 Sqrt()
+        public DataVector32 Sqrt()
         {
             Unwrap(DataVector32Native.Sqrt(_native));
             return this;
@@ -288,8 +303,8 @@ namespace BasicDsp
 
         public DataVector32 SwapHalves()
         {
-          Unwrap(DataVector32Native.SwapHalves(_native));
-          return this;
+            Unwrap(DataVector32Native.SwapHalves(_native));
+            return this;
         }
 
         public DataVector32 Wrap(float value)
@@ -366,7 +381,7 @@ namespace BasicDsp
             return this;
         }
 
-            public DataVector32 PlainIfft()
+        public DataVector32 PlainIfft()
         {
             Unwrap(DataVector32Native.PlainIfft(_native));
             return this;
@@ -391,19 +406,20 @@ namespace BasicDsp
             }
         }
 
-        public VectorDomain Domain => DataVector32Native.GetDomain(_native) == 0 ? VectorDomain.Time : VectorDomain.Frequency;
+        public VectorDomain Domain
+            => DataVector32Native.GetDomain(_native) == 0 ? VectorDomain.Time : VectorDomain.Frequency;
 
-       public float Delta => DataVector32Native.Delta(_native);
+        public float Delta => DataVector32Native.Delta(_native);
 
-       public bool IsComplex => DataVector32Native.IsComplex(_native) != 0;
+        public bool IsComplex => DataVector32Native.IsComplex(_native) != 0;
 
-       public int Length => (int) DataVector32Native.GetLength(_native);
+        public int Length => (int) DataVector32Native.GetLength(_native);
 
-       public int AllocatedLength => (int)DataVector32Native.GetAllocatedLength(_native);
+        public int AllocatedLength => (int) DataVector32Native.GetAllocatedLength(_native);
 
-       public int Points => (int)DataVector32Native.GetPoints(_native);
+        public int Points => (int) DataVector32Native.GetPoints(_native);
 
-       public void Dispose()
+        public void Dispose()
         {
             if (_native != null)
             {

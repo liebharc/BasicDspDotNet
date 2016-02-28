@@ -22,7 +22,7 @@ namespace BasicDsp
         /// This class is a placeholder, use <see cref="DataVector32Native"/> methods to talk to it.
         /// </summary>
         public struct DataVector32Struct
-        {         
+        {
         }
 
         private const CallingConvention RustConvention = CallingConvention.Cdecl;
@@ -32,7 +32,8 @@ namespace BasicDsp
         [DllImport(DllName,
             EntryPoint = "new32",
             CallingConvention = RustConvention)]
-        public static extern DataVector32Struct* New(int isComplex, int domain, float initValue, ulong length, float delta);
+        public static extern DataVector32Struct* New(int isComplex, int domain, float initValue, ulong length,
+            float delta);
 
         [DllImport(DllName,
             EntryPoint = "get_value32",
@@ -70,8 +71,8 @@ namespace BasicDsp
         public static extern ulong GetPoints(DataVector32Struct* vector);
 
         [DllImport(DllName,
-              EntryPoint = "get_delta32",
-              CallingConvention = RustConvention)]
+            EntryPoint = "get_delta32",
+            CallingConvention = RustConvention)]
         public static extern float Delta(DataVector32Struct* vector);
 
         [DllImport(DllName,
@@ -195,8 +196,8 @@ namespace BasicDsp
         public static extern VectorResult32 Cos(DataVector32Struct* vector);
 
         [DllImport(DllName,
-              EntryPoint = "swap_halves32",
-              CallingConvention = RustConvention)]
+            EntryPoint = "swap_halves32",
+            CallingConvention = RustConvention)]
         public static extern VectorResult32 SwapHalves(DataVector32Struct* vector);
 
         [DllImport(DllName,
@@ -285,8 +286,8 @@ namespace BasicDsp
         public static extern VectorResult32 PlainIfft(DataVector32Struct* vector);
 
         [DllImport(DllName,
-           EntryPoint = "real_dot_product32",
-           CallingConvention = RustConvention)]
+            EntryPoint = "real_dot_product32",
+            CallingConvention = RustConvention)]
         public static extern ScalarResult<float> RealDotProduct(DataVector32Struct* vector, DataVector32Struct* operand);
     }
 }
