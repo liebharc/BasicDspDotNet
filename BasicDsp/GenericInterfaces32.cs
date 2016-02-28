@@ -3,9 +3,45 @@
 // Some comments in this class are type definitions hints for the code generator Perl scripts
 // ReSharper disable UnusedMemberInSuper.Global
 
+using System;
+using System.Runtime.InteropServices;
+
 namespace BasicDsp
 {
-    public interface IDataVector32
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
+    public struct Complex32
+    {
+        public float Imag { get; }
+        public float Real { get; }
+    }
+
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
+    public struct RealStatistics32
+    {
+        public float Sum { get; }
+        public ulong Count { get; }
+        public float Average { get; }
+        public float RootMeanSquare { get; }
+        public float Min { get; }
+        public ulong MinIndex { get; }
+        public float Max { get; }
+        public ulong MaxIndex { get; }
+    }
+
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
+    public struct ComplexStatistics32
+    {
+        public Complex32 Sum { get; }
+        public ulong Count { get; }
+        public Complex32 Average { get; }
+        public Complex32 RootMeanSquare { get; }
+        public Complex32 Min { get; }
+        public ulong MinIndex { get; }
+        public float Max { get; }
+        public Complex32 MaxIndex { get; }
+    }
+
+    public interface IDataVector32 : ICloneable
     {
         float this[int index] { get; set; }
         VectorDomain Domain { get; }
@@ -42,9 +78,21 @@ namespace BasicDsp
         DataVector32 Log(float value);
         DataVector32 Sin();
         DataVector32 Cos();
+        DataVector32 Tan();
+        DataVector32 ASin();
+        DataVector32 ACos();
+        DataVector32 ATan();
+        DataVector32 Sinh();
+        DataVector32 Cosh();
+        DataVector32 Tanh();
+        DataVector32 ASinh();
+        DataVector32 ACosh();
+        DataVector32 ATanh();
         DataVector32 /*COMPLEX*/ ToComplex();
         DataVector32 Wrap(float value);
         DataVector32 Unwrap(float value);
+        float RealDotProduct(DataVector32 vector);
+        RealStatistics32 RealStatistics();
     }
 
     public interface IComplexVectorOperations32
@@ -67,11 +115,17 @@ namespace BasicDsp
         void GetImag(DataVector32 /*REAL*/ destination);
         DataVector32 /*REAL*/ Phase();
         void GetPhase(DataVector32 /*REAL*/ destination);
+        Complex32 ComplexDotProduct(DataVector32 vector);
+        ComplexStatistics32 ComplexStatistics();
+
+        DataVector32 MultiplyComplexExponential(float a, float b);
     }
 
     public interface ITimeDomainVectorOperations32
     {
         DataVector32 /*COMPLEXFREQ*/ PlainFft();
+
+        DataVector32 /*COMPLEXFREQ*/ PlainSfft();
     }
 
     public interface IFrequencyDomainVectorOperations32

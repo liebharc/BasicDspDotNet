@@ -12,10 +12,17 @@ namespace BasicDsp
         }
 
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
-        public struct ScalarResult<T>
+        public struct FloatResult
         {
             public readonly int resultCode;
-            public readonly T vector;
+            public readonly float result;
+        }
+
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
+        public struct ComplexResult
+        {
+            public readonly int resultCode;
+            public readonly Complex32 result;
         }
 
         /// <summary>
@@ -288,6 +295,85 @@ namespace BasicDsp
         [DllImport(DllName,
             EntryPoint = "real_dot_product32",
             CallingConvention = RustConvention)]
-        public static extern ScalarResult<float> RealDotProduct(DataVector32Struct* vector, DataVector32Struct* operand);
+        public static extern FloatResult RealDotProduct(DataVector32Struct* vector, DataVector32Struct* operand);
+
+        [DllImport(DllName,
+            EntryPoint = "complex_dot_product32",
+            CallingConvention = RustConvention)]
+        public static extern ComplexResult ComplexDotProduct(DataVector32Struct* vector, DataVector32Struct* operand);
+
+        [DllImport(DllName,
+            EntryPoint = "real_statistics32",
+            CallingConvention = RustConvention)]
+        public static extern RealStatistics32 RealStatistics(DataVector32Struct* vector);
+
+        [DllImport(DllName,
+            EntryPoint = "complex_statistics32",
+            CallingConvention = RustConvention)]
+        public static extern ComplexStatistics32 ComplexStatistics(DataVector32Struct* vector);
+
+        [DllImport(DllName,
+            EntryPoint = "tan32",
+            CallingConvention = RustConvention)]
+        public static extern VectorResult32 Tan(DataVector32Struct* vector);
+
+        [DllImport(DllName,
+            EntryPoint = "asin32",
+            CallingConvention = RustConvention)]
+        public static extern VectorResult32 ASin(DataVector32Struct* vector);
+
+        [DllImport(DllName,
+            EntryPoint = "acos32",
+            CallingConvention = RustConvention)]
+        public static extern VectorResult32 ACos(DataVector32Struct* vector);
+
+        [DllImport(DllName,
+            EntryPoint = "atan32",
+            CallingConvention = RustConvention)]
+        public static extern VectorResult32 ATan(DataVector32Struct* vector);
+        [DllImport(DllName,
+            EntryPoint = "sinh32",
+            CallingConvention = RustConvention)]
+        public static extern VectorResult32 Sinh(DataVector32Struct* vector);
+
+        [DllImport(DllName,
+            EntryPoint = "cosh32",
+            CallingConvention = RustConvention)]
+        public static extern VectorResult32 Cosh(DataVector32Struct* vector);
+
+        [DllImport(DllName,
+            EntryPoint = "tanh32",
+            CallingConvention = RustConvention)]
+        public static extern VectorResult32 Tanh(DataVector32Struct* vector);
+
+        [DllImport(DllName,
+            EntryPoint = "asinh32",
+            CallingConvention = RustConvention)]
+        public static extern VectorResult32 ASinh(DataVector32Struct* vector);
+
+        [DllImport(DllName,
+            EntryPoint = "acosh32",
+            CallingConvention = RustConvention)]
+        public static extern VectorResult32 ACosh(DataVector32Struct* vector);
+
+        [DllImport(DllName,
+            EntryPoint = "atanh32",
+            CallingConvention = RustConvention)]
+        public static extern VectorResult32 ATanh(DataVector32Struct* vector);
+
+        [DllImport(DllName,
+            EntryPoint = "plain_sfft32",
+            CallingConvention = RustConvention)]
+        public static extern VectorResult32 PlainSfft(DataVector32Struct* vector);
+
+        [DllImport(DllName,
+            EntryPoint = "clone32",
+            CallingConvention = RustConvention)]
+        public static extern DataVector32Struct* Clone(DataVector32Struct* vector);
+
+        [DllImport(DllName,
+            EntryPoint = "multiply_complex_exponential32",
+            CallingConvention = RustConvention)]
+        public static extern VectorResult32 MultiplyComplexExponential(DataVector32Struct* vector, float a, float b);
     }
 }

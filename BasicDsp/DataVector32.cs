@@ -5,12 +5,6 @@
 
 namespace BasicDsp
 {
-    public struct Complex32
-    {
-        public float Imag { get; }
-        public float Real { get; }
-    }
-
     public sealed unsafe partial class DataVector32 :
         IComplexVectorOperations32,
         IRealVectorOperations32,
@@ -283,6 +277,12 @@ namespace BasicDsp
             return this;
         }
 
+        public DataVector32 ATanh()
+        {
+            Unwrap(DataVector32Native.ATanh(_native));
+            return this;
+        }
+
         public DataVector32 ToComplex()
         {
             Unwrap(DataVector32Native.ToComplex(_native));
@@ -298,6 +298,60 @@ namespace BasicDsp
         public DataVector32 Cos()
         {
             Unwrap(DataVector32Native.Cos(_native));
+            return this;
+        }
+
+        public DataVector32 Tan()
+        {
+            Unwrap(DataVector32Native.Tan(_native));
+            return this;
+        }
+
+        public DataVector32 ASin()
+        {
+            Unwrap(DataVector32Native.ASin(_native));
+            return this;
+        }
+
+        public DataVector32 ACos()
+        {
+            Unwrap(DataVector32Native.ACos(_native));
+            return this;
+        }
+
+        public DataVector32 ATan()
+        {
+            Unwrap(DataVector32Native.ATan(_native));
+            return this;
+        }
+
+        public DataVector32 Sinh()
+        {
+            Unwrap(DataVector32Native.Sinh(_native));
+            return this;
+        }
+
+        public DataVector32 Cosh()
+        {
+            Unwrap(DataVector32Native.Cosh(_native));
+            return this;
+        }
+
+        public DataVector32 Tanh()
+        {
+            Unwrap(DataVector32Native.Tanh(_native));
+            return this;
+        }
+
+        public DataVector32 ASinh()
+        {
+            Unwrap(DataVector32Native.ASinh(_native));
+            return this;
+        }
+
+        public DataVector32 ACosh()
+        {
+            Unwrap(DataVector32Native.ACosh(_native));
             return this;
         }
 
@@ -381,9 +435,45 @@ namespace BasicDsp
             return this;
         }
 
+        public DataVector32 PlainSfft()
+        {
+            Unwrap(DataVector32Native.PlainSfft(_native));
+            return this;
+        }
+
         public DataVector32 PlainIfft()
         {
             Unwrap(DataVector32Native.PlainIfft(_native));
+            return this;
+        }
+
+        public float RealDotProduct(DataVector32 vector)
+        {
+            var result = DataVector32Native.RealDotProduct(_native, vector._native);
+            CheckResultCode(result.resultCode);
+            return result.result;
+        }
+
+        public Complex32 ComplexDotProduct(DataVector32 vector)
+        {
+            var result = DataVector32Native.ComplexDotProduct(_native, vector._native);
+            CheckResultCode(result.resultCode);
+            return result.result;
+        }
+
+        public RealStatistics32 RealStatistics()
+        {
+            return DataVector32Native.RealStatistics(_native);
+        }
+
+        public ComplexStatistics32 ComplexStatistics()
+        {
+            return DataVector32Native.ComplexStatistics(_native);
+        }
+
+        public DataVector32 MultiplyComplexExponential(float a, float b)
+        {
+            Unwrap(DataVector32Native.MultiplyComplexExponential(_native, a, b));
             return this;
         }
 
@@ -426,6 +516,13 @@ namespace BasicDsp
                 DataVector32Native.DeleteVector(_native);
                 _native = null;
             }
+        }
+
+        public object Clone()
+        {
+            var nativeClone = DataVector32Native.Clone(_native);
+            var clone = new DataVector32(nativeClone);
+            return clone;
         }
     }
 }
