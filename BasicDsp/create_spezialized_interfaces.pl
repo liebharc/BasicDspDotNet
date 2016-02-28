@@ -37,6 +37,7 @@ sub parse_generic_interface {
 
 my %generic = parse_generic_interface();
 # We expect the following keys: 
+# IGenericVectorOperations32
 # IComplexVectorOperations32
 # IFrequencyDomainVectorOperations32
 # IDataVector32
@@ -225,10 +226,10 @@ sub create_specific_interface {
     print SPEC32 "      }\n";
 }
 
-create_specific_interface("IRealTimeDomainVector32", ["IRealVectorOperations32", "ITimeDomainVectorOperations32"], \%generic);
-create_specific_interface("IComplexTimeDomainVector32", ["IComplexVectorOperations32", "ITimeDomainVectorOperations32"], \%generic);
-create_specific_interface("IRealFrequencyDomainVector32", ["IRealVectorOperations32", "IFrequencyDomainVectorOperations32"], \%generic);
-create_specific_interface("IComplexFrequencyDomainVector32", ["IComplexVectorOperations32", "IFrequencyDomainVectorOperations32"], \%generic);
+create_specific_interface("IRealTimeDomainVector32", ["IGenericVectorOperations32", "IRealVectorOperations32", "ITimeDomainVectorOperations32"], \%generic);
+create_specific_interface("IComplexTimeDomainVector32", ["IGenericVectorOperations32", "IComplexVectorOperations32", "ITimeDomainVectorOperations32"], \%generic);
+create_specific_interface("IRealFrequencyDomainVector32", ["IGenericVectorOperations32", "IRealVectorOperations32", "IFrequencyDomainVectorOperations32"], \%generic);
+create_specific_interface("IComplexFrequencyDomainVector32", ["IGenericVectorOperations32", "IComplexVectorOperations32", "IFrequencyDomainVectorOperations32"], \%generic);
 
 print SPEC32 "}\n";
 close SPEC32;

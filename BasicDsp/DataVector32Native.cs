@@ -486,5 +486,15 @@ namespace BasicDsp
             EntryPoint = "complex_statistics_splitted32",
             CallingConvention = RustConvention)]
         public static extern int ComplexStatisticsSplitted(DataVector32Struct* vector, IntPtr targets, ulong len);
+
+        [DllImport(DllName,
+            EntryPoint = "reverse32",
+            CallingConvention = RustConvention)]
+        public static extern VectorResult32 Reverse(DataVector32Struct* vector);
+
+        [DllImport(DllName,
+           EntryPoint = "decimatei32",
+           CallingConvention = RustConvention)]
+        public static extern VectorResult32 Decimatei(DataVector32Struct* vector, uint factor, uint delay);
     }
 }

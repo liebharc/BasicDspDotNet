@@ -11,7 +11,8 @@ namespace BasicDsp
         IComplexVectorOperations32,
         IRealVectorOperations32,
         IFrequencyDomainVectorOperations32,
-        ITimeDomainVectorOperations32
+        ITimeDomainVectorOperations32,
+        IGenericVectorOperations32
     {
         private class DisposableHandle : IDisposable
         {

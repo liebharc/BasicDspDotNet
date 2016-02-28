@@ -1,7 +1,8 @@
-﻿// ReSharper disable UnusedMember.Global
+﻿// Some comments in this class are type definitions hints for the code generator Perl scripts
 
-// Some comments in this class are type definitions hints for the code generator Perl scripts
+// ReSharper disable UnusedMember.Global
 // ReSharper disable UnusedMemberInSuper.Global
+// ReSharper disable UnassignedGetOnlyAutoProperty
 
 using System;
 using System.Runtime.InteropServices;
@@ -56,7 +57,7 @@ namespace BasicDsp
         void ForceLen(int length);
     }
 
-    public interface IRealVectorOperations32
+    public interface IGenericVectorOperations32
     {
         DataVector32 Add(float value);
         DataVector32 Add(DataVector32 vector);
@@ -75,6 +76,13 @@ namespace BasicDsp
         DataVector32 Diff();
         DataVector32 DiffWithStart();
         DataVector32 CumSum();
+        void SplitInto(DataVector32[] targets);
+        DataVector32 Merge(DataVector32[] sources);
+        DataVector32 Mirror();
+    }
+
+    public interface IRealVectorOperations32
+    {
         DataVector32 Abs();
         DataVector32 Sqrt();
         DataVector32 Square();
@@ -101,25 +109,15 @@ namespace BasicDsp
         DataVector32 Unwrap(float value);
         float RealDotProduct(DataVector32 vector);
         RealStatistics32 RealStatistics();
-        void SplitInto(DataVector32[] targets);
         RealStatistics32[] RealStatisticsSplitted(int length);
-        DataVector32 Mirror();
     }
 
     public interface IComplexVectorOperations32
     {
         DataVector32 Add(float real, float imag);
-        DataVector32 Add(DataVector32 vector);
         DataVector32 Subtract(float real, float imag);
-        DataVector32 Subtract(DataVector32 vector);
         DataVector32 Multiply(float real, float imag);
-        DataVector32 Multiply(DataVector32 vector);
         DataVector32 Divide(float real, float imag);
-        DataVector32 Divide(DataVector32 vector);
-        DataVector32 AddSmaller(DataVector32 vector);
-        DataVector32 SubtractSmaller(DataVector32 vector);
-        DataVector32 MultiplySmaller(DataVector32 vector);
-        DataVector32 DivideSmaller(DataVector32 vector);
         DataVector32 /*REAL*/ Magnitude();
         void GetMagnitude(DataVector32 /*REAL*/ destination);
         DataVector32 /*REAL*/ MagnitudeSquared();
@@ -142,11 +140,8 @@ namespace BasicDsp
         DataVector32 SetRealImag(DataVector32 /*REAL*/ real, DataVector32 /*REAL*/ imag);
 
         DataVector32 SetMagPhase(DataVector32 /*REAL*/ mag, DataVector32 /*REAL*/ phase);
-        void SplitInto(DataVector32[] targets);
-
-        DataVector32 Merge(DataVector32[] sources);
+        
         ComplexStatistics32[] ComplexStatisticsSplitted(int length);
-        DataVector32 Mirror();
     }
 
     public interface ITimeDomainVectorOperations32
