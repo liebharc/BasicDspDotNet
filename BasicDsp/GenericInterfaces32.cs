@@ -114,6 +114,12 @@ namespace BasicDsp
         void SplitInto(DataVector32[] targets);
         DataVector32 Merge(DataVector32[] sources);
         DataVector32 Mirror();
+        DataVector32 Interpolatef(StandardImpulseResponse impulseResponse, float rollOFf, float interpolationFactor, float delay, int length);
+        DataVector32 Interpolatef(RealImpulseResponse32 impulseResponse, float interpolationFactor, float delay, int length);
+        DataVector32 Interpolatei(StandardFrequencyResponse frequencyResponse, float rollOff, int interpolationFactor);
+        DataVector32 Interpolatei(RealFrequencyResponse32 frequencyResponse, int interpolationFactor);
+        DataVector32 InterpolateLin(float interpolationFactor, float delay);
+        DataVector32 InterpolateHermite(float interpolationFactor, float delay);
     }
 
     public interface IRealVectorOperations32

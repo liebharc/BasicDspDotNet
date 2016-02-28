@@ -612,5 +612,35 @@ namespace BasicDsp
            EntryPoint = "multiply_frequency_response_complex32",
            CallingConvention = RustConvention)]
         public static extern VectorResult32 MultiplyComplexFrequencyResponse(DataVector32Struct* vector, ComplexConfOrFreqFunction window, object data, bool isSymmetric, float ratio);
+
+        [DllImport(DllName,
+            EntryPoint = "interpolatef_custom32",
+            CallingConvention = RustConvention)]
+        public static extern VectorResult32 Interpolatef(DataVector32Struct* vector, RealConfOrFreqFunction function, object data, bool isSymmetric, float interpolationFactor, float delay, ulong length);
+
+        [DllImport(DllName,
+            EntryPoint = "interpolatef32",
+            CallingConvention = RustConvention)]
+        public static extern VectorResult32 Interpolatef(DataVector32Struct* vector, int impulseResponse, float rollOFf, float interpolationFactor, float delay, ulong length);
+
+        [DllImport(DllName,
+            EntryPoint = "interpolatei_custom32",
+            CallingConvention = RustConvention)]
+        public static extern VectorResult32 Interpolatei(DataVector32Struct* vector, RealConfOrFreqFunction function, object data, bool isSymmetric, int interpolationFactor);
+
+        [DllImport(DllName,
+            EntryPoint = "interpolatei32",
+            CallingConvention = RustConvention)]
+        public static extern VectorResult32 Interpolatei(DataVector32Struct* vector, int frequencyResponse, float rollOFf, int interpolationFactor);
+
+        [DllImport(DllName,
+            EntryPoint = "interpolate_lin32",
+            CallingConvention = RustConvention)]
+        public static extern VectorResult32 InterpolateLin(DataVector32Struct* vector, float interpolationFactor, float delay);
+
+        [DllImport(DllName,
+            EntryPoint = "interpolate_hermite32",
+            CallingConvention = RustConvention)]
+        public static extern VectorResult32 InterpolateHermite(DataVector32Struct* vector, float interpolationFactor, float delay);
     }
 }

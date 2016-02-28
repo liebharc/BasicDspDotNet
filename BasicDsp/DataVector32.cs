@@ -823,6 +823,44 @@ namespace BasicDsp
             return this;
         }
 
+        public DataVector32 Interpolatef(StandardImpulseResponse impulseResponse, float rollOFf, float interpolationFactor, float delay, int length)
+        {
+            RejectIf(length < 0, nameof(length), "Length must be >= 0");
+            Unwrap(DataVector32Native.Interpolatef(_native, (int)impulseResponse, rollOFf, interpolationFactor, delay, (ulong)length));
+            return this;
+        }
+
+        public DataVector32 Interpolatef(RealImpulseResponse32 impulseResponse, float interpolationFactor, float delay, int length)
+        {
+            RejectIf(length < 0, nameof(length), "Length must be >= 0");
+            Unwrap(DataVector32Native.Interpolatef(_native, CallCustomRealTimeFunction, impulseResponse, impulseResponse.IsSymmetric, interpolationFactor, delay, (ulong)length));
+            return this;
+        }
+
+        public DataVector32 Interpolatei(StandardFrequencyResponse frequencyResponse, float rollOff, int interpolationFactor)
+        {
+            Unwrap(DataVector32Native.Interpolatei(_native, (int)frequencyResponse, rollOff, interpolationFactor));
+            return this;
+        }
+
+        public DataVector32 Interpolatei(RealFrequencyResponse32 frequencyResponse, int interpolationFactor)
+        {
+            Unwrap(DataVector32Native.Interpolatei(_native, CallCustomRealFreqFunction, frequencyResponse, frequencyResponse.IsSymmetric, interpolationFactor));
+            return this;
+        }
+
+        public DataVector32 InterpolateLin(float interpolationFactor, float delay)
+        {
+            Unwrap(DataVector32Native.InterpolateLin(_native, interpolationFactor, delay));
+            return this;
+        }
+
+        public DataVector32 InterpolateHermite(float interpolationFactor, float delay)
+        {
+            Unwrap(DataVector32Native.InterpolateHermite(_native, interpolationFactor, delay));
+            return this;
+        }
+
         private void Unwrap(DataVector32Native.VectorResult32 result)
         {
             _native = result.vector;
