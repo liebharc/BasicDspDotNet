@@ -29,7 +29,7 @@ namespace BasicDspTest
         [DeploymentItem("basic_dsp.dll")]
         public void AddComplexValue()
         {
-            using (var vector = DataVector32.NewComplexTimeVectorFromConstant(2, 10))
+            using (var vector = DataVector32.NewComplexTimeVectorFromConstant(new Complex32(2, 2), 5))
             {
                 vector.IsComplex.Should().BeTrue();
                 vector.Length.Should().Be(10);
@@ -72,8 +72,8 @@ namespace BasicDspTest
         [DeploymentItem("basic_dsp.dll")]
         public void ComplexDotProduct()
         {
-            using (var vector1 = DataVector32.NewComplexTimeVectorFromConstant(2, 4))
-            using (var vector2 = DataVector32.NewComplexTimeVectorFromConstant(5, 4))
+            using (var vector1 = DataVector32.NewComplexTimeVectorFromConstant(new Complex32(2, 2), 2))
+            using (var vector2 = DataVector32.NewComplexTimeVectorFromConstant(new Complex32(5, 5), 2))
             {
                 var result = vector1.ComplexDotProduct(vector2);
                 result.Real.Should().BeApproximately((float)(5 * 2 * 4), (float)1e-6);
@@ -96,7 +96,7 @@ namespace BasicDspTest
         [DeploymentItem("basic_dsp.dll")]
         public void ComplexStatistics()
         {
-            using (var vector1 = DataVector32.NewComplexTimeVectorFromConstant(2, 4))
+            using (var vector1 = DataVector32.NewComplexTimeVectorFromConstant(new Complex32(2, 2), 2))
             {
                 var result = vector1.ComplexStatistics();
                 result.Average.Real.Should().BeApproximately(2.0f, (float)1e-6);
@@ -108,9 +108,9 @@ namespace BasicDspTest
         [DeploymentItem("basic_dsp.dll")]
         public void SplitInto()
         {
-            using (var vector1 = DataVector32.NewComplexTimeVectorFromConstant(2, 4))
-            using (var vector2 = DataVector32.NewComplexTimeVectorFromConstant(2, 4))
-            using (var vector3 = DataVector32.NewComplexTimeVectorFromConstant(2, 4))
+            using (var vector1 = DataVector32.NewRealTimeVectorFromConstant(2, 4))
+            using (var vector2 = DataVector32.NewRealTimeVectorFromConstant(2, 4))
+            using (var vector3 = DataVector32.NewRealTimeVectorFromConstant(2, 4))
             {
                 vector1.SplitInto(new[] { vector2, vector3 });
                 vector2.Length.Should().Be(2);
@@ -122,7 +122,7 @@ namespace BasicDspTest
         [DeploymentItem("basic_dsp.dll")]
         public void ComplexStatisticsSplitted()
         {
-            using (var vector1 = DataVector32.NewComplexTimeVectorFromConstant(2, 4))
+            using (var vector1 = DataVector32.NewComplexTimeVectorFromConstant(new Complex32(2, 2), 2))
             {
                 var result = vector1.ComplexStatisticsSplitted(2);
                 result.Should().HaveCount(2);
@@ -146,7 +146,7 @@ namespace BasicDspTest
         [DeploymentItem("basic_dsp.dll")]
         public void ApplyCustomWindow()
         {
-            using (var vector1 = (DataVector32)DataVector32.NewComplexTimeVectorFromConstant(2, 4))
+            using (var vector1 = DataVector32.NewComplexTimeVectorFromConstant(new Complex32(2, 2), 2))
             {
                 var window = new TestWindowFunction();
                 vector1.ApplyWindow(window);
@@ -158,7 +158,7 @@ namespace BasicDspTest
         [DeploymentItem("basic_dsp.dll")]
         public void ZeroPad()
         {
-            using (var vector1 = (DataVector32)DataVector32.NewComplexTimeVectorFromConstant(2, 4))
+            using (var vector1 = DataVector32.NewComplexTimeVectorFromConstant(new Complex32(2, 2), 2))
             {
                 vector1.ZeroPad(10, PaddingOption.End);
                 vector1.Length.Should().Be(20);

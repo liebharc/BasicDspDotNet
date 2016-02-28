@@ -12,7 +12,9 @@ namespace BasicDsp
         IRealVectorOperations32,
         IFrequencyDomainVectorOperations32,
         ITimeDomainVectorOperations32,
-        IGenericVectorOperations32
+        IGenericVectorOperations32,
+        IComplexTimeVectorOperations32,
+        IComplexFrequencyVectorOperations32
     {
         private class DisposableHandle : IDisposable
         {
@@ -72,19 +74,43 @@ namespace BasicDsp
             }
         }
 
-        public static DataVector32 NewGenericVector(bool isComplex, VectorDomain domain, int length)
+        private static DataVector32 NewGenericVector(
+            bool isComplex, 
+            VectorDomain domain, 
+            float initValue, 
+            int length, 
+            float delta = 1.0f, 
+            PerformanceSettings performanceSettings = null)
         {
             RejectIf(length < 0, nameof(length), "Vector length must be >= 0");
-            return
-                new DataVector32(DataVector32Native.New(isComplex ? Complex : Real, (int) domain, 0.0f, (ulong) length,
-                    1.0f));
+            DataVector32Native.DataVector32Struct* native;
+            if (performanceSettings == null)
+                native = DataVector32Native.New(
+                    isComplex ? Complex : Real,
+                    (int) domain,
+                    initValue,
+                    (ulong) length,
+                    delta);
+            else
+                native = DataVector32Native.New(
+                    isComplex ? Complex : Real, 
+                    (int) domain, 
+                    initValue, 
+                    (ulong) length, 
+                    delta,
+                    (ulong) performanceSettings.CoreLimit, 
+                    performanceSettings.EarlyTempAllocation);
+            return new DataVector32(native);
         }
 
-        public static DataVector32 NewGenericVector(bool isComplex, VectorDomain domain, float[] data)
+        public static DataVector32 NewGenericVector(bool isComplex, VectorDomain domain, int length, PerformanceSettings performanceSettings = null)
         {
-            var vector =
-                new DataVector32(DataVector32Native.New(isComplex ? Complex : Real, (int) domain, 0.0f,
-                    (ulong) data.Length, 1.0f));
+            return NewGenericVector(isComplex, domain, 0.0f, length, performanceSettings: performanceSettings);
+        }
+
+        public static DataVector32 NewGenericVector(bool isComplex, VectorDomain domain, float[] data, PerformanceSettings performanceSettings = null)
+        {
+            var vector = NewGenericVector(isComplex, domain, 0.0f, data.Length, performanceSettings: performanceSettings);
             for (int i = 0; i < data.Length; i++)
             {
                 vector[i] = data[i];
@@ -93,17 +119,14 @@ namespace BasicDsp
             return vector;
         }
 
-        public static IRealTimeDomainVector32 NewRealTimeVectorFromConstant(float constant, int length)
+        public static IRealTimeDomainVector32 NewRealTimeVectorFromConstant(float constant, int points, PerformanceSettings performanceSettings = null)
         {
-            RejectIf(length < 0, nameof(length), "Vector length must be >= 0");
-            return
-                new DataVector32(DataVector32Native.New(Real, (int) VectorDomain.Time, constant, (ulong) length, 1.0f));
+            return NewGenericVector(false, VectorDomain.Time, constant, points, performanceSettings: performanceSettings);
         }
 
-        public static IRealTimeDomainVector32 NewRealTimeVectorFromArray(float[] data)
+        public static IRealTimeDomainVector32 NewRealTimeVectorFromArray(float[] data, PerformanceSettings performanceSettings = null)
         {
-            var vector =
-                new DataVector32(DataVector32Native.New(Real, (int) VectorDomain.Time, 0.0f, (ulong) data.Length, 1.0f));
+            var vector = NewGenericVector(false, VectorDomain.Time, 0.0f, data.Length, performanceSettings: performanceSettings);
             for (int i = 0; i < data.Length; i++)
             {
                 vector[i] = data[i];
@@ -112,20 +135,91 @@ namespace BasicDsp
             return vector;
         }
 
-        public static IComplexTimeDomainVector32 NewComplexTimeVectorFromConstant(float constant, int length)
+        public static IRealFrequencyDomainVector32 NewRealFrequencyVectorFromConstant(float constant, int points, PerformanceSettings performanceSettings = null)
         {
-            RejectIf(length < 0, nameof(length), "Vector length must be >= 0");
-            return
-                new DataVector32(DataVector32Native.New(Complex, (int) VectorDomain.Time, constant, (ulong) length, 1.0f));
+            return NewGenericVector(false, VectorDomain.Frequency, constant, points, performanceSettings: performanceSettings);
         }
 
-        public static IComplexTimeDomainVector32 NewComplexTimeVectorFromInterleaved(float[] data)
+        public static IRealFrequencyDomainVector32 NewRealFrequencyVectorFromArray(float[] data, PerformanceSettings performanceSettings = null)
         {
-            var vector =
-                new DataVector32(DataVector32Native.New(Real, (int) VectorDomain.Time, 0.0f, (ulong) data.Length, 1.0f));
+            var vector = NewGenericVector(false, VectorDomain.Frequency, 0.0f, data.Length, performanceSettings: performanceSettings);
             for (int i = 0; i < data.Length; i++)
             {
                 vector[i] = data[i];
+            }
+
+            return vector;
+        }
+
+        public static IComplexTimeDomainVector32 NewComplexTimeVectorFromConstant(Complex32 constant, int points, PerformanceSettings performanceSettings = null)
+        {
+            RejectIf(points < 0, nameof(points), "Vector length must be >= 0");
+            var vector = NewGenericVector(true, VectorDomain.Time, 0.0f, 2 * points, performanceSettings: performanceSettings);
+            for (int i = 0; i < points; i++)
+            {
+                vector[2 * i] = constant.Real;
+                vector[2 * i + 1] = constant.Imag;
+            }
+
+            return vector;
+        }
+
+        public static IComplexTimeDomainVector32 NewComplexTimeVectorFromInterleaved(float[] data, PerformanceSettings performanceSettings = null)
+        {
+            var vector = NewGenericVector(true, VectorDomain.Time, 0.0f, data.Length, performanceSettings: performanceSettings);
+            for (int i = 0; i < data.Length; i++)
+            {
+                vector[i] = data[i];
+            }
+
+            return vector;
+        }
+
+        public static IComplexTimeDomainVector32 NewComplexTimeVectorFromRealAndImag(float[] real, float[] imag, PerformanceSettings performanceSettings = null)
+        {
+            RejectIf(real.Length != imag.Length, nameof(imag), "Real and imag need to have the same length");
+            var vector = NewGenericVector(true, VectorDomain.Time, 0.0f, 2 * real.Length, performanceSettings: performanceSettings);
+            for (int i = 0; i < real.Length; i++)
+            {
+                vector[2 * i] = real[i];
+                vector[2 * i + 1] = imag[i];
+            }
+
+            return vector;
+        }
+
+        public static IComplexFrequencyDomainVector32 NewComplexFrequencyVectorFromConstant(Complex32 constant, int points, PerformanceSettings performanceSettings = null)
+        {
+            RejectIf(points < 0, nameof(points), "Vector length must be >= 0");
+            var vector = NewGenericVector(true, VectorDomain.Frequency, 0.0f, 2 * points, performanceSettings: performanceSettings);
+            for (int i = 0; i < points; i++)
+            {
+                vector[2 * i] = constant.Real;
+                vector[2 * i + 1] = constant.Imag;
+            }
+
+            return vector;
+        }
+
+        public static IComplexFrequencyDomainVector32 NewComplexFrequencyVectorFromInterleaved(float[] data, PerformanceSettings performanceSettings = null)
+        {
+            var vector = NewGenericVector(true, VectorDomain.Frequency, 0.0f, data.Length, performanceSettings: performanceSettings);
+            for (int i = 0; i < data.Length; i++)
+            {
+                vector[i] = data[i];
+            }
+
+            return vector;
+        }
+
+        public static IComplexFrequencyDomainVector32 NewComplexFrequencyVectorFromRealAndImag(float[] real, float[] imag, PerformanceSettings performanceSettings = null)
+        {
+            RejectIf(real.Length != imag.Length, nameof(imag), "Real and imag need to have the same length");
+            var vector = NewGenericVector(true, VectorDomain.Frequency, 0.0f, 2 * real.Length, performanceSettings: performanceSettings);
+            for (int i = 0; i < real.Length; i++)
+            {
+                vector[2 * i] = real[i];
+                vector[2 * i + 1] = imag[i];
             }
 
             return vector;

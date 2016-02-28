@@ -25,4 +25,10 @@ namespace BasicDsp
         SincFunction,
         RaisedCosineFunction
     }
+
+    public enum VectorDomain
+    {
+        Time,
+        Frequency
+    }
 }

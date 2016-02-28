@@ -40,8 +40,12 @@ namespace BasicDsp
         [DllImport(DllName,
             EntryPoint = "new32",
             CallingConvention = RustConvention)]
-        public static extern DataVector32Struct* New(int isComplex, int domain, float initValue, ulong length,
-            float delta);
+        public static extern DataVector32Struct* New(int isComplex, int domain, float initValue, ulong length, float delta);
+
+        [DllImport(DllName,
+            EntryPoint = "new_with_performance_options32",
+            CallingConvention = RustConvention)]
+        public static extern DataVector32Struct* New(int isComplex, int domain, float initValue, ulong length, float delta, ulong coreLimit, bool earlyTempAllocation);
 
         [DllImport(DllName,
             EntryPoint = "get_value32",

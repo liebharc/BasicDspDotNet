@@ -12,6 +12,12 @@ namespace BasicDsp
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
     public struct Complex32
     {
+        public Complex32(float real, float imag)
+        {
+            Real = real;
+            Imag = imag;
+        }
+
         public float Imag { get; }
         public float Real { get; }
     }
@@ -221,7 +227,11 @@ namespace BasicDsp
         DataVector32 Convolve(StandardImpulseResponse impulseResponse, float rollOff, float ratio, int length);
 
         DataVector32 Convolve(RealImpulseResponse32 impulseResponse, float ratio, int length);
+        
+    }
 
+    public interface IComplexTimeVectorOperations32
+    {
         DataVector32 Convolve(ComplexImpulseResponse32 impulseResponse, float ratio, int length);
     }
 
@@ -250,7 +260,11 @@ namespace BasicDsp
         DataVector32 MultiplyFrequencyResponse(StandardFrequencyResponse frequencyResponse, float rollOff, float ratio);
 
         DataVector32 MultiplyFrequencyResponse(RealImpulseResponse32 frequencyResponse, float ratio);
+        
+    }
 
+    public interface IComplexFrequencyVectorOperations32
+    {
         DataVector32 MultiplyFrequencyResponse(ComplexImpulseResponse32 frequencyResponse, float ratio);
     }
 }
