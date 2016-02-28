@@ -103,6 +103,7 @@ namespace BasicDsp
         RealStatistics32 RealStatistics();
         void SplitInto(DataVector32[] targets);
         RealStatistics32[] RealStatisticsSplitted(int length);
+        DataVector32 Mirror();
     }
 
     public interface IComplexVectorOperations32
@@ -145,6 +146,7 @@ namespace BasicDsp
 
         DataVector32 Merge(DataVector32[] sources);
         ComplexStatistics32[] ComplexStatisticsSplitted(int length);
+        DataVector32 Mirror();
     }
 
     public interface ITimeDomainVectorOperations32
@@ -152,10 +154,24 @@ namespace BasicDsp
         DataVector32 /*COMPLEXFREQ*/ PlainFft();
 
         DataVector32 /*COMPLEXFREQ*/ PlainSfft();
+
+        DataVector32 /*COMPLEXFREQ*/ Fft();
+
+        DataVector32 /*COMPLEXFREQ*/ Sfft();
     }
 
     public interface IFrequencyDomainVectorOperations32
     {
         DataVector32 /*COMPLEXTIME*/ PlainIfft();
+
+        DataVector32 /*COMPLEXTIME*/ Ifft();
+
+        DataVector32 /*REALTIME*/ PlainSifft();
+
+        DataVector32 /*REALTIME*/ Sifft();
+
+        DataVector32 FftShift();
+
+        DataVector32 IfftShift();
     }
 }

@@ -508,9 +508,51 @@ namespace BasicDsp
             return this;
         }
 
+        public DataVector32 Fft()
+        {
+            Unwrap(DataVector32Native.FFt(_native));
+            return this;
+        }
+
+        public DataVector32 Sfft()
+        {
+            Unwrap(DataVector32Native.SFft(_native));
+            return this;
+        }
+
         public DataVector32 PlainIfft()
         {
             Unwrap(DataVector32Native.PlainIfft(_native));
+            return this;
+        }
+
+        public DataVector32 Ifft()
+        {
+            Unwrap(DataVector32Native.IFft(_native));
+            return this;
+        }
+
+        public DataVector32 PlainSifft()
+        {
+            Unwrap(DataVector32Native.PlainSifft(_native));
+            return this;
+        }
+
+        public DataVector32 Sifft()
+        {
+            Unwrap(DataVector32Native.Sifft(_native));
+            return this;
+        }
+
+        public DataVector32 FftShift()
+        {
+            Unwrap(DataVector32Native.FftShift(_native));
+            return this;
+        }
+
+        public DataVector32 IfftShift()
+        {
+            Unwrap(DataVector32Native.IFftShift(_native));
             return this;
         }
 
@@ -587,7 +629,7 @@ namespace BasicDsp
                 return result;
             }
         }
-
+        
         public DataVector32 Merge(DataVector32[] sources)
         {
             using (var intPtr = new VectorArrayToIntPtr(sources))
@@ -606,6 +648,12 @@ namespace BasicDsp
                 CheckResultCode(code);
                 return result;
             }
+        }
+
+        public DataVector32 Mirror()
+        {
+            Unwrap(DataVector32Native.Mirror(_native));
+            return this;
         }
 
         private void Unwrap(DataVector32Native.VectorResult32 result)

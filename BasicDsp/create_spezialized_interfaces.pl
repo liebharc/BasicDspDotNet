@@ -117,6 +117,11 @@ sub process_annotations {
         $line =~ s/DataVector32/$complex_time/g;
         return ($line);
     }
+    elsif ($line =~ m{/\*REALTIME\*/}) {
+        my $real_time = to_time(to_real($name));
+        $line =~ s/DataVector32/$real_time/g;
+        return ($line);
+    }
     elsif ($line =~ m{/\*COMPLEXFREQ\*/}) {
         my $complex_freq = to_freq(to_complex($name));
         $line =~ s/DataVector32/$complex_freq/g;

@@ -314,6 +314,46 @@ namespace BasicDsp
         public static extern VectorResult32 PlainIfft(DataVector32Struct* vector);
 
         [DllImport(DllName,
+            EntryPoint = "fft32",
+            CallingConvention = RustConvention)]
+        public static extern VectorResult32 FFt(DataVector32Struct* vector);
+
+        [DllImport(DllName,
+            EntryPoint = "sfft32",
+            CallingConvention = RustConvention)]
+        public static extern VectorResult32 SFft(DataVector32Struct* vector);
+
+        [DllImport(DllName,
+            EntryPoint = "ifft32",
+            CallingConvention = RustConvention)]
+        public static extern VectorResult32 IFft(DataVector32Struct* vector);
+
+        [DllImport(DllName,
+            EntryPoint = "plain_sifft32",
+            CallingConvention = RustConvention)]
+        public static extern VectorResult32 PlainSifft(DataVector32Struct* vector);
+
+        [DllImport(DllName,
+            EntryPoint = "sifft32",
+            CallingConvention = RustConvention)]
+        public static extern VectorResult32 Sifft(DataVector32Struct* vector);
+
+        [DllImport(DllName,
+            EntryPoint = "mirror32",
+            CallingConvention = RustConvention)]
+        public static extern VectorResult32 Mirror(DataVector32Struct* vector);
+
+        [DllImport(DllName,
+            EntryPoint = "fft_shift32",
+            CallingConvention = RustConvention)]
+        public static extern VectorResult32 FftShift(DataVector32Struct* vector);
+
+        [DllImport(DllName,
+            EntryPoint = "ifft_shift32",
+            CallingConvention = RustConvention)]
+        public static extern VectorResult32 IFftShift(DataVector32Struct* vector);
+
+        [DllImport(DllName,
             EntryPoint = "real_dot_product32",
             CallingConvention = RustConvention)]
         public static extern FloatResult RealDotProduct(DataVector32Struct* vector, DataVector32Struct* operand);
