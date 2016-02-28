@@ -13,19 +13,19 @@ namespace BasicDsp
         IFrequencyDomainVectorOperations32,
         ITimeDomainVectorOperations32
     {
-        private sealed class VectorArrayToIntPtr : IDisposable
+        private class DisposableHandle : IDisposable
         {
             private GCHandle? _pinned;
-
-            public VectorArrayToIntPtr(DataVector32[] array)
+            public DisposableHandle(GCHandle gcHandle)
             {
-                var natives = new IntPtr[array.Length];
-                for (int i = 0; i < array.Length; i++)
-                {
-                    natives[i] = (IntPtr)array[i]._native;
-                }
+                _pinned = gcHandle;
+            }
 
-                _pinned = GCHandle.Alloc(natives, GCHandleType.Pinned);
+            public DisposableHandle() { }
+
+            protected void SetHandle(GCHandle handle)
+            {
+                _pinned = handle;
             }
 
             public IntPtr IntPtr => _pinned.Value.AddrOfPinnedObject();
@@ -37,6 +37,20 @@ namespace BasicDsp
                     _pinned.Value.Free();
                     _pinned = null;
                 }
+            }
+        }
+
+        private sealed class VectorArrayToIntPtr : DisposableHandle
+        {
+            public VectorArrayToIntPtr(DataVector32[] array)
+            {
+                var natives = new IntPtr[array.Length];
+                for (int i = 0; i < array.Length; i++)
+                {
+                    natives[i] = (IntPtr)array[i]._native;
+                }
+
+                SetHandle(GCHandle.Alloc(natives, GCHandleType.Pinned));
             }
         }
 
@@ -563,6 +577,37 @@ namespace BasicDsp
             }
         }
 
+        public RealStatistics32[] RealStatisticsSplitted(int length)
+        {
+            var result = new RealStatistics32[length];
+            using (var intPtr = new DisposableHandle(GCHandle.Alloc(result, GCHandleType.Pinned)))
+            {
+                var code = DataVector32Native.RealStatisticsSplitted(_native, intPtr.IntPtr, (ulong)length);
+                CheckResultCode(code);
+                return result;
+            }
+        }
+
+        public DataVector32 Merge(DataVector32[] sources)
+        {
+            using (var intPtr = new VectorArrayToIntPtr(sources))
+            {
+                Unwrap(DataVector32Native.Merge(_native, intPtr.IntPtr, (ulong)sources.Length));
+                return this;
+            }
+        }
+
+        public ComplexStatistics32[] ComplexStatisticsSplitted(int length)
+        {
+            var result = new ComplexStatistics32[length];
+            using (var intPtr = new DisposableHandle(GCHandle.Alloc(result, GCHandleType.Pinned)))
+            {
+                var code = DataVector32Native.ComplexStatisticsSplitted(_native, intPtr.IntPtr, (ulong)length);
+                CheckResultCode(code);
+                return result;
+            }
+        }
+
         private void Unwrap(DataVector32Native.VectorResult32 result)
         {
             _native = result.vector;
@@ -594,6 +639,19 @@ namespace BasicDsp
         public int AllocatedLength => (int) DataVector32Native.GetAllocatedLength(_native);
 
         public int Points => (int) DataVector32Native.GetPoints(_native);
+        public DataVector32 OverrideData(float[] data)
+        {
+            using (var intPtr = new DisposableHandle(GCHandle.Alloc(data, GCHandleType.Pinned)))
+            {
+                Unwrap(DataVector32Native.OverrideData(_native, intPtr.IntPtr, (ulong)data.Length));
+                return this;
+            }
+        }
+
+        public void ForceLen(int length)
+        {
+            DataVector32Native.SetLen(_native, (ulong) length);
+        }
 
         public void Dispose()
         {

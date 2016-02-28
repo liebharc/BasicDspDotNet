@@ -421,5 +421,30 @@ namespace BasicDsp
             EntryPoint = "split_into32",
             CallingConvention = RustConvention)]
         public static extern int SplitInto(DataVector32Struct* vector, IntPtr targets, ulong len);
+
+        [DllImport(DllName,
+            EntryPoint = "merge32",
+            CallingConvention = RustConvention)]
+        public static extern VectorResult32 Merge(DataVector32Struct* vector, IntPtr sources, ulong len);
+
+        [DllImport(DllName,
+            EntryPoint = "override_data32",
+            CallingConvention = RustConvention)]
+        public static extern VectorResult32 OverrideData(DataVector32Struct* vector, IntPtr data, ulong len);
+
+        [DllImport(DllName,
+            EntryPoint = "set_len32",
+            CallingConvention = RustConvention)]
+        public static extern VectorResult32 SetLen(DataVector32Struct* vector, ulong len);
+
+        [DllImport(DllName,
+            EntryPoint = "real_statistics_splitted32",
+            CallingConvention = RustConvention)]
+        public static extern int RealStatisticsSplitted(DataVector32Struct* vector, IntPtr targets, ulong len);
+
+        [DllImport(DllName,
+            EntryPoint = "complex_statistics_splitted32",
+            CallingConvention = RustConvention)]
+        public static extern int ComplexStatisticsSplitted(DataVector32Struct* vector, IntPtr targets, ulong len);
     }
 }

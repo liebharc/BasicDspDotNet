@@ -50,6 +50,10 @@ namespace BasicDsp
         int Length { get; }
         int AllocatedLength { get; }
         int Points { get; }
+
+        DataVector32 OverrideData(float[] data);
+
+        void ForceLen(int length);
     }
 
     public interface IRealVectorOperations32
@@ -98,6 +102,7 @@ namespace BasicDsp
         float RealDotProduct(DataVector32 vector);
         RealStatistics32 RealStatistics();
         void SplitInto(DataVector32[] targets);
+        RealStatistics32[] RealStatisticsSplitted(int length);
     }
 
     public interface IComplexVectorOperations32
@@ -137,6 +142,9 @@ namespace BasicDsp
 
         DataVector32 SetMagPhase(DataVector32 /*REAL*/ mag, DataVector32 /*REAL*/ phase);
         void SplitInto(DataVector32[] targets);
+
+        DataVector32 Merge(DataVector32[] sources);
+        ComplexStatistics32[] ComplexStatisticsSplitted(int length);
     }
 
     public interface ITimeDomainVectorOperations32
