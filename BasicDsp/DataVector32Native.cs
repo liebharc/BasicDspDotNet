@@ -188,29 +188,29 @@ namespace BasicDsp
         public static extern VectorResult32 Root(DataVector32Struct* vector, float value);
 
         [DllImport(DllName,
-            EntryPoint = "power32",
+            EntryPoint = "powf32",
             CallingConvention = RustConvention)]
-        public static extern VectorResult32 Power(DataVector32Struct* vector, float value);
+        public static extern VectorResult32 Powf(DataVector32Struct* vector, float value);
 
         [DllImport(DllName,
-            EntryPoint = "logn32",
+            EntryPoint = "ln32",
             CallingConvention = RustConvention)]
-        public static extern VectorResult32 Logn(DataVector32Struct* vector);
+        public static extern VectorResult32 Ln(DataVector32Struct* vector);
 
         [DllImport(DllName,
-            EntryPoint = "expn32",
+            EntryPoint = "exp32",
             CallingConvention = RustConvention)]
-        public static extern VectorResult32 Expn(DataVector32Struct* vector);
+        public static extern VectorResult32 Expf(DataVector32Struct* vector);
 
         [DllImport(DllName,
-            EntryPoint = "log_base32",
+            EntryPoint = "log32",
             CallingConvention = RustConvention)]
         public static extern VectorResult32 Log(DataVector32Struct* vector, float value);
 
         [DllImport(DllName,
-            EntryPoint = "exp_base32",
+            EntryPoint = "expf32",
             CallingConvention = RustConvention)]
-        public static extern VectorResult32 Exp(DataVector32Struct* vector, float value);
+        public static extern VectorResult32 Expf(DataVector32Struct* vector, float value);
 
         [DllImport(DllName,
             EntryPoint = "to_complex32",
@@ -273,9 +273,9 @@ namespace BasicDsp
         public static extern VectorResult32 ComplexAbsSquared(DataVector32Struct* vector);
 
         [DllImport(DllName,
-            EntryPoint = "complex_conj32",
+            EntryPoint = "conj32",
             CallingConvention = RustConvention)]
-        public static extern VectorResult32 ComplexConj(DataVector32Struct* vector);
+        public static extern VectorResult32 Complex(DataVector32Struct* vector);
 
         [DllImport(DllName,
             EntryPoint = "to_real32",

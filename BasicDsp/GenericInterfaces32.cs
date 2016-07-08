@@ -134,9 +134,9 @@ namespace BasicDsp
         DataVector32 Sqrt();
         DataVector32 Square();
         DataVector32 Root(float value);
-        DataVector32 Power(float value);
-        DataVector32 Logn();
-        DataVector32 Expn();
+        DataVector32 Powf(float value);
+        DataVector32 Ln();
+        DataVector32 Exp();
         DataVector32 Exp(float value);
         DataVector32 Log(float value);
         DataVector32 Sin();
@@ -168,7 +168,7 @@ namespace BasicDsp
         DataVector32 /*REAL*/ Magnitude();
         void GetMagnitude(DataVector32 /*REAL*/ destination);
         DataVector32 /*REAL*/ MagnitudeSquared();
-        DataVector32 ComplexConj();
+        DataVector32 Conj();
         DataVector32 /*REAL*/ ToReal();
         DataVector32 /*REAL*/ ToImag();
         void GetReal(DataVector32 /*REAL*/ destination);

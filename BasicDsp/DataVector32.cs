@@ -396,27 +396,27 @@ namespace BasicDsp
             return this;
         }
 
-        public DataVector32 Power(float value)
+        public DataVector32 Powf(float value)
         {
-            Unwrap(DataVector32Native.Power(_native, value));
+            Unwrap(DataVector32Native.Powf(_native, value));
             return this;
         }
 
-        public DataVector32 Logn()
+        public DataVector32 Ln()
         {
-            Unwrap(DataVector32Native.Logn(_native));
+            Unwrap(DataVector32Native.Ln(_native));
             return this;
         }
 
-        public DataVector32 Expn()
+        public DataVector32 Exp()
         {
-            Unwrap(DataVector32Native.Expn(_native));
+            Unwrap(DataVector32Native.Expf(_native));
             return this;
         }
 
         public DataVector32 Exp(float value)
         {
-            Unwrap(DataVector32Native.Exp(_native, value));
+            Unwrap(DataVector32Native.Expf(_native, value));
             return this;
         }
 
@@ -539,9 +539,9 @@ namespace BasicDsp
             return this;
         }
 
-        public DataVector32 ComplexConj()
+        public DataVector32 Conj()
         {
-            Unwrap(DataVector32Native.ComplexConj(_native));
+            Unwrap(DataVector32Native.Complex(_native));
             return this;
         }
 
