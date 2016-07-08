@@ -2,264 +2,264 @@
 
 namespace BasicDsp
 {
-    public sealed unsafe class GenericIdentifier
+    public sealed unsafe class GenericIdentifier32
     {
         private readonly PreparedOps1F32 _owner;
         private readonly ulong _arg;
 
-        internal GenericIdentifier(PreparedOps1F32 owner, ulong arg)
+        internal GenericIdentifier32(PreparedOps1F32 owner, ulong arg)
         {
             _owner = owner;
             _arg = arg;
         }
 
-        public GenericIdentifier AddReal(float value)
+        public GenericIdentifier32 AddReal(float value)
         {
             DataVector32Native.AddReal(_owner.Native, _arg, value);
             return this;
         }
 
-        public GenericIdentifier MultiplyReal(float value)
+        public GenericIdentifier32 MultiplyReal(float value)
         {
             DataVector32Native.MultiplyReal(_owner.Native, _arg, value);
             return this; 
         }
 
-        public GenericIdentifier Abs()
+        public GenericIdentifier32 Abs()
         {
             DataVector32Native.Abs(_owner.Native, _arg);
             return this;
         }
 
-        public GenericIdentifier ToComplex()
+        public GenericIdentifier32 ToComplex()
         {
             DataVector32Native.ToComplex(_owner.Native, _arg);
             return this; 
         }
 
-        public GenericIdentifier AddComplex(Complex32 value)
+        public GenericIdentifier32 AddComplex(Complex32 value)
         {
             DataVector32Native.AddComplex(_owner.Native, _arg, value.Real, value.Imag);
             return this; 
         }
 
-        public GenericIdentifier MultiplyComplex(Complex32 value)
+        public GenericIdentifier32 MultiplyComplex(Complex32 value)
         {
             DataVector32Native.MultiplyComplex(_owner.Native, _arg, value.Real, value.Imag);
             return this;
         }
 
-        public GenericIdentifier Magnitude()
+        public GenericIdentifier32 Magnitude()
         {
             DataVector32Native.Magnitude(_owner.Native, _arg);
             return this;
         }
 
-        public GenericIdentifier MagnitudeSquared()
+        public GenericIdentifier32 MagnitudeSquared()
         {
             DataVector32Native.MagnitudeSquared(_owner.Native, _arg);
             return this;
         }
 
-        public GenericIdentifier Conj()
+        public GenericIdentifier32 Conj()
         {
             DataVector32Native.ComplexConj(_owner.Native, _arg);
             return this;
         }
 
-        public GenericIdentifier ToReal()
+        public GenericIdentifier32 ToReal()
         {
             DataVector32Native.ToReal(_owner.Native, _arg);
             return this;
         }
 
-        public GenericIdentifier ToImag()
+        public GenericIdentifier32 ToImag()
         {
             DataVector32Native.ToImag(_owner.Native, _arg);
             return this;
         }
 
-        public GenericIdentifier Phase()
+        public GenericIdentifier32 Phase()
         {
             DataVector32Native.Phase(_owner.Native, _arg);
             return this;
         }
 
-        public GenericIdentifier MultiplyComplexExponential(float a, float b)
+        public GenericIdentifier32 MultiplyComplexExponential(float a, float b)
         {
             DataVector32Native.MultiplyComplexExponential(_owner.Native, _arg, a, b);
             return this;
         }
 
-        public GenericIdentifier AddVector(GenericIdentifier other)
+        public GenericIdentifier32 AddVector(GenericIdentifier32 other)
         {
             DataVector32Native.AddVector(_owner.Native, _arg, other._arg);
             return this;
         }
 
-        public GenericIdentifier SubVector(GenericIdentifier other)
+        public GenericIdentifier32 SubVector(GenericIdentifier32 other)
         {
             DataVector32Native.SubVector(_owner.Native, _arg, other._arg);
             return this;
         }
 
-        public GenericIdentifier MulVector(GenericIdentifier other)
+        public GenericIdentifier32 MulVector(GenericIdentifier32 other)
         {
             DataVector32Native.MulVector(_owner.Native, _arg, other._arg);
             return this;
         }
 
-        public GenericIdentifier DivVector(GenericIdentifier other)
+        public GenericIdentifier32 DivVector(GenericIdentifier32 other)
         {
             DataVector32Native.DivVector(_owner.Native, _arg, other._arg);
             return this;
         }
 
-        public GenericIdentifier Sqrt()
+        public GenericIdentifier32 Sqrt()
         {
             DataVector32Native.Sqrt(_owner.Native, _arg);
             return this;
         }
 
-        public GenericIdentifier Square()
+        public GenericIdentifier32 Square()
         {
             DataVector32Native.Square(_owner.Native, _arg);
             return this;
         }
 
-        public GenericIdentifier Root(float value)
+        public GenericIdentifier32 Root(float value)
         {
             DataVector32Native.Root(_owner.Native, _arg, value);
             return this;
         }
 
-        public GenericIdentifier Powf(float value)
+        public GenericIdentifier32 Powf(float value)
         {
             DataVector32Native.Powf(_owner.Native, _arg, value);
             return this;
         }
 
-        public GenericIdentifier Ln()
+        public GenericIdentifier32 Ln()
         {
             DataVector32Native.Ln(_owner.Native, _arg);
             return this;
         }
 
-        public GenericIdentifier Exp()
+        public GenericIdentifier32 Exp()
         {
             DataVector32Native.Exp(_owner.Native, _arg);
             return this;
         }
 
-        public GenericIdentifier Log(float value)
+        public GenericIdentifier32 Log(float value)
         {
             DataVector32Native.Log(_owner.Native, _arg, value);
             return this;
         }
 
-        public GenericIdentifier Expf(float value)
+        public GenericIdentifier32 Expf(float value)
         {
             DataVector32Native.Expf(_owner.Native, _arg, value);
             return this;
         }
 
-        public GenericIdentifier Sin()
+        public GenericIdentifier32 Sin()
         {
             DataVector32Native.Sin(_owner.Native, _arg);
             return this;
         }
 
-        public GenericIdentifier Cos()
+        public GenericIdentifier32 Cos()
         {
             DataVector32Native.Cos(_owner.Native, _arg);
             return this;
         }
 
-        public GenericIdentifier Tan()
+        public GenericIdentifier32 Tan()
         {
             DataVector32Native.Tan(_owner.Native, _arg);
             return this;
         }
 
-        public GenericIdentifier ASin()
+        public GenericIdentifier32 ASin()
         {
             DataVector32Native.ASin(_owner.Native, _arg);
             return this;
         }
 
-        public GenericIdentifier ACos()
+        public GenericIdentifier32 ACos()
         {
             DataVector32Native.ACos(_owner.Native, _arg);
             return this;
         }
 
-        public GenericIdentifier ATan()
+        public GenericIdentifier32 ATan()
         {
             DataVector32Native.ATan(_owner.Native, _arg);
             return this;
         }
 
-        public GenericIdentifier Sinh()
+        public GenericIdentifier32 Sinh()
         {
             DataVector32Native.Sinh(_owner.Native, _arg);
             return this;
         }
 
-        public GenericIdentifier Cosh()
+        public GenericIdentifier32 Cosh()
         {
             DataVector32Native.Cosh(_owner.Native, _arg);
             return this;
         }
 
-        public GenericIdentifier Tanh()
+        public GenericIdentifier32 Tanh()
         {
             DataVector32Native.Tanh(_owner.Native, _arg);
             return this;
         }
 
-        public GenericIdentifier ASinh()
+        public GenericIdentifier32 ASinh()
         {
             DataVector32Native.ASinh(_owner.Native, _arg);
             return this;
         }
 
-        public GenericIdentifier ACosh()
+        public GenericIdentifier32 ACosh()
         {
             DataVector32Native.ACosh(_owner.Native, _arg);
             return this;
         }
 
-        public GenericIdentifier ATanh()
+        public GenericIdentifier32 ATanh()
         {
             DataVector32Native.ATanh(_owner.Native, _arg);
             return this;
         }
 
-        public GenericIdentifier CloneFrom(GenericIdentifier other)
+        public GenericIdentifier32 CloneFrom(GenericIdentifier32 other)
         {
             DataVector32Native.CloneFrom(_owner.Native, _arg, other._arg);
             return this;
         }
 
-        public GenericIdentifier AddPoints()
+        public GenericIdentifier32 AddPoints()
         {
             DataVector32Native.AddPoints(_owner.Native, _arg);
             return this;
         }
 
-        public GenericIdentifier SubPoints()
+        public GenericIdentifier32 SubPoints()
         {
             DataVector32Native.SubPoints(_owner.Native, _arg);
             return this;
         }
 
-        public GenericIdentifier MulPoints()
+        public GenericIdentifier32 MulPoints()
         {
             DataVector32Native.MulPoints(_owner.Native, _arg);
             return this;
         }
 
-        public GenericIdentifier DivPoints()
+        public GenericIdentifier32 DivPoints()
         {
             DataVector32Native.DivPoints(_owner.Native, _arg);
             return this;
@@ -280,9 +280,9 @@ namespace BasicDsp
             _native = DataVector32Native.Prepare1();
         }
 
-        public void AddOps(Func<GenericIdentifier, GenericIdentifier> ops)
+        public void AddOps(Func<GenericIdentifier32, GenericIdentifier32> ops)
         {
-            var identifier = new GenericIdentifier(this, 0);
+            var identifier = new GenericIdentifier32(this, 0);
             var _ = ops(identifier);
         }
 
