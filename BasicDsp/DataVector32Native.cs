@@ -13,6 +13,14 @@ namespace BasicDsp
         }
 
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
+        public struct BinaryVectorResult32
+        {
+            public readonly int resultCode;
+            public readonly DataVector32Struct* vector1;
+            public readonly DataVector32Struct* vector2;
+        }
+
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
         public struct FloatResult
         {
             public readonly int resultCode;
@@ -30,6 +38,20 @@ namespace BasicDsp
         /// This class is a placeholder, use <see cref="DataVector32Native"/> methods to talk to it.
         /// </summary>
         public struct DataVector32Struct
+        {
+        }
+
+        /// <summary>
+        /// This class is a placeholder, use <see cref="DataVector32Native"/> methods to talk to it.
+        /// </summary>
+        public struct PreparedOps1F32Struct
+        {
+        }
+
+        /// <summary>
+        /// This class is a placeholder, use <see cref="DataVector32Native"/> methods to talk to it.
+        /// </summary>
+        public struct PreparedOps2F32Struct
         {
         }
 
@@ -646,5 +668,472 @@ namespace BasicDsp
             EntryPoint = "interpolate_hermite32",
             CallingConvention = RustConvention)]
         public static extern VectorResult32 InterpolateHermite(DataVector32Struct* vector, float interpolationFactor, float delay);
+
+        [DllImport(DllName,
+            EntryPoint = "extend_prepared_ops1_f32",
+            CallingConvention = RustConvention)]
+        public static extern PreparedOps2F32Struct* ExtendPrepare1To2(PreparedOps1F32Struct* ops);
+
+        [DllImport(DllName,
+            EntryPoint = "prepared_ops1_f32",
+            CallingConvention = RustConvention)]
+        public static extern PreparedOps1F32Struct* Prepare1();
+
+        [DllImport(DllName,
+            EntryPoint = "exec_prepared_ops1_f32",
+            CallingConvention = RustConvention)]
+        public static extern VectorResult32 Exec(PreparedOps1F32Struct* ops, DataVector32Struct* vector);
+
+        [DllImport(DllName,
+            EntryPoint = "delete_ops1_f32",
+            CallingConvention = RustConvention)]
+        public static extern void DeletePreparedOps(PreparedOps1F32Struct* vector);
+
+        [DllImport(DllName,
+            EntryPoint = "prepared_ops2_f32",
+            CallingConvention = RustConvention)]
+        public static extern PreparedOps2F32Struct* Prepare2();
+
+        [DllImport(DllName,
+            EntryPoint = "exec_prepared_ops2_f32",
+            CallingConvention = RustConvention)]
+        public static extern BinaryVectorResult32 Exec(PreparedOps2F32Struct* ops, DataVector32Struct* vector1, DataVector32Struct* vector2);
+
+        [DllImport(DllName,
+            EntryPoint = "delete_ops2_f32",
+            CallingConvention = RustConvention)]
+        public static extern void DeletePreparedOps(PreparedOps2F32Struct* vector);
+
+        //----------------------------------------------
+        // PreparedOp12F32
+        //----------------------------------------------
+        [DllImport(DllName,
+            EntryPoint = "add_real_ops1_f32",
+            CallingConvention = RustConvention)]
+        public static extern void AddReal(PreparedOps1F32Struct* ops, ulong arg, float value);
+
+        [DllImport(DllName,
+            EntryPoint = "multiply_real_ops1_f32",
+            CallingConvention = RustConvention)]
+        public static extern void MultiplyReal(PreparedOps1F32Struct* ops, ulong arg, float value);
+
+        [DllImport(DllName,
+            EntryPoint = "abs_ops1_f32",
+            CallingConvention = RustConvention)]
+        public static extern void Abs(PreparedOps1F32Struct* ops, ulong arg);
+
+        [DllImport(DllName,
+            EntryPoint = "to_complex_ops1_f32",
+            CallingConvention = RustConvention)]
+        public static extern void ToComplex(PreparedOps1F32Struct* ops, ulong arg);
+
+        [DllImport(DllName,
+            EntryPoint = "add_complex_ops1_f32",
+            CallingConvention = RustConvention)]
+        public static extern void ToComplex(PreparedOps1F32Struct* ops, ulong arg, float value);
+
+        [DllImport(DllName,
+            EntryPoint = "multiply_real_ops1_f32",
+            CallingConvention = RustConvention)]
+        public static extern void AddComplex(PreparedOps1F32Struct* ops, ulong arg, float re, float im);
+
+        [DllImport(DllName,
+            EntryPoint = "multiply_complex_ops1_f32",
+            CallingConvention = RustConvention)]
+        public static extern void MultiplyComplex(PreparedOps1F32Struct* ops, ulong arg, float re, float im);
+
+        [DllImport(DllName,
+            EntryPoint = "magnitude_ops1_f32",
+            CallingConvention = RustConvention)]
+        public static extern void Magnitude(PreparedOps1F32Struct* ops, ulong arg);
+
+        [DllImport(DllName,
+            EntryPoint = "magnitude_squared_ops1_f32",
+            CallingConvention = RustConvention)]
+        public static extern void MagnitudeSquared(PreparedOps1F32Struct* ops, ulong arg);
+
+        [DllImport(DllName,
+            EntryPoint = "complex_conj_ops1_f32",
+            CallingConvention = RustConvention)]
+        public static extern void ComplexConj(PreparedOps1F32Struct* ops, ulong arg);
+
+        [DllImport(DllName,
+            EntryPoint = "to_real_ops1_f32",
+            CallingConvention = RustConvention)]
+        public static extern void ToReal(PreparedOps1F32Struct* ops, ulong arg);
+
+        [DllImport(DllName,
+            EntryPoint = "to_imag_ops1_f32",
+            CallingConvention = RustConvention)]
+        public static extern void ToImag(PreparedOps1F32Struct* ops, ulong arg);
+
+        [DllImport(DllName,
+            EntryPoint = "phase_ops1_f32",
+            CallingConvention = RustConvention)]
+        public static extern void Phase(PreparedOps1F32Struct* ops, ulong arg);
+
+        [DllImport(DllName,
+            EntryPoint = "multiply_complex_exponential_ops1_f32",
+            CallingConvention = RustConvention)]
+        public static extern void MultiplyComplexExponential(PreparedOps1F32Struct* ops, ulong arg, float a, float b);
+
+        [DllImport(DllName,
+            EntryPoint = "add_vector_ops1_f32",
+            CallingConvention = RustConvention)]
+        public static extern void AddVector(PreparedOps1F32Struct* ops, ulong arg, ulong other);
+
+        [DllImport(DllName,
+            EntryPoint = "mul_vector_ops1_f32",
+            CallingConvention = RustConvention)]
+        public static extern void MulVector(PreparedOps1F32Struct* ops, ulong arg, ulong other);
+
+        [DllImport(DllName,
+            EntryPoint = "sub_vector_ops1_f32",
+            CallingConvention = RustConvention)]
+        public static extern void SubVector(PreparedOps1F32Struct* ops, ulong arg, ulong other);
+
+        [DllImport(DllName,
+            EntryPoint = "div_vector_ops1_f32",
+            CallingConvention = RustConvention)]
+        public static extern void DivVector(PreparedOps1F32Struct* ops, ulong arg, ulong other);
+
+        [DllImport(DllName,
+            EntryPoint = "square_ops1_f32",
+            CallingConvention = RustConvention)]
+        public static extern void Square(PreparedOps1F32Struct* ops, ulong arg);
+
+        [DllImport(DllName,
+            EntryPoint = "sqrt_ops1_f32",
+            CallingConvention = RustConvention)]
+        public static extern void Sqrt(PreparedOps1F32Struct* ops, ulong arg);
+
+        [DllImport(DllName,
+            EntryPoint = "root_ops1_f32",
+            CallingConvention = RustConvention)]
+        public static extern void Root(PreparedOps1F32Struct* ops, ulong arg, float value);
+
+        [DllImport(DllName,
+            EntryPoint = "powf_ops1_f32",
+            CallingConvention = RustConvention)]
+        public static extern void Powf(PreparedOps1F32Struct* ops, ulong arg, float value);
+
+        [DllImport(DllName,
+            EntryPoint = "ln_ops1_f32",
+            CallingConvention = RustConvention)]
+        public static extern void Ln(PreparedOps1F32Struct* ops, ulong arg);
+
+        [DllImport(DllName,
+            EntryPoint = "exp_ops1_f32",
+            CallingConvention = RustConvention)]
+        public static extern void Exp(PreparedOps1F32Struct* ops, ulong arg);
+        [DllImport(DllName,
+            EntryPoint = "log_ops1_f32",
+            CallingConvention = RustConvention)]
+        public static extern void Log(PreparedOps1F32Struct* ops, ulong arg, float value);
+        [DllImport(DllName,
+            EntryPoint = "expf_ops1_f32",
+            CallingConvention = RustConvention)]
+        public static extern void Expf(PreparedOps1F32Struct* ops, ulong arg, float value);
+
+        [DllImport(DllName,
+            EntryPoint = "sin_ops1_f32",
+            CallingConvention = RustConvention)]
+        public static extern void Sin(PreparedOps1F32Struct* ops, ulong arg);
+
+        [DllImport(DllName,
+            EntryPoint = "cos_ops1_f32",
+            CallingConvention = RustConvention)]
+        public static extern void Cos(PreparedOps1F32Struct* ops, ulong arg);
+
+        [DllImport(DllName,
+            EntryPoint = "tan_ops1_f32",
+            CallingConvention = RustConvention)]
+        public static extern void Tan(PreparedOps1F32Struct* ops, ulong arg);
+
+        [DllImport(DllName,
+            EntryPoint = "asin_ops1_f32",
+            CallingConvention = RustConvention)]
+        public static extern void ASin(PreparedOps1F32Struct* ops, ulong arg);
+
+        [DllImport(DllName,
+            EntryPoint = "acos_ops1_f32",
+            CallingConvention = RustConvention)]
+        public static extern void ACos(PreparedOps1F32Struct* ops, ulong arg);
+
+        [DllImport(DllName,
+            EntryPoint = "atan_ops1_f32",
+            CallingConvention = RustConvention)]
+        public static extern void ATan(PreparedOps1F32Struct* ops, ulong arg);
+
+        [DllImport(DllName,
+            EntryPoint = "sinh_ops1_f32",
+            CallingConvention = RustConvention)]
+        public static extern void Sinh(PreparedOps1F32Struct* ops, ulong arg);
+
+        [DllImport(DllName,
+            EntryPoint = "cosh_ops1_f32",
+            CallingConvention = RustConvention)]
+        public static extern void Cosh(PreparedOps1F32Struct* ops, ulong arg);
+
+        [DllImport(DllName,
+            EntryPoint = "tanh_ops1_f32",
+            CallingConvention = RustConvention)]
+        public static extern void Tanh(PreparedOps1F32Struct* ops, ulong arg);
+
+        [DllImport(DllName,
+            EntryPoint = "asinh_ops1_f32",
+            CallingConvention = RustConvention)]
+        public static extern void ASinh(PreparedOps1F32Struct* ops, ulong arg);
+
+        [DllImport(DllName,
+            EntryPoint = "acosh_ops1_f32",
+            CallingConvention = RustConvention)]
+        public static extern void ACosh(PreparedOps1F32Struct* ops, ulong arg);
+
+        [DllImport(DllName,
+            EntryPoint = "atanh_ops1_f32",
+            CallingConvention = RustConvention)]
+        public static extern void ATanh(PreparedOps1F32Struct* ops, ulong arg);
+
+        [DllImport(DllName,
+            EntryPoint = "clone_from_ops1_f32",
+            CallingConvention = RustConvention)]
+        public static extern void CloneFrom(PreparedOps1F32Struct* ops, ulong arg, ulong source);
+
+        [DllImport(DllName,
+            EntryPoint = "add_points_ops1_f32",
+            CallingConvention = RustConvention)]
+        public static extern void AddPoints(PreparedOps1F32Struct* ops, ulong arg);
+
+        [DllImport(DllName,
+            EntryPoint = "sub_points_ops1_f32",
+            CallingConvention = RustConvention)]
+        public static extern void SubPoints(PreparedOps1F32Struct* ops, ulong arg);
+
+        [DllImport(DllName,
+            EntryPoint = "mul_points_ops1_f32",
+            CallingConvention = RustConvention)]
+        public static extern void MulPoints(PreparedOps1F32Struct* ops, ulong arg);
+
+        [DllImport(DllName,
+            EntryPoint = "div_points_ops1_f32",
+            CallingConvention = RustConvention)]
+        public static extern void DivPoints(PreparedOps1F32Struct* ops, ulong arg);
+
+        //----------------------------------------------
+        // PreparedOp1F32
+        //----------------------------------------------
+        [DllImport(DllName,
+            EntryPoint = "add_real_ops2_f32",
+            CallingConvention = RustConvention)]
+        public static extern void AddReal(PreparedOps2F32Struct* ops, ulong arg, float value);
+
+        [DllImport(DllName,
+            EntryPoint = "multiply_real_ops2_f32",
+            CallingConvention = RustConvention)]
+        public static extern void MultiplyReal(PreparedOps2F32Struct* ops, ulong arg, float value);
+
+        [DllImport(DllName,
+            EntryPoint = "abs_ops2_f32",
+            CallingConvention = RustConvention)]
+        public static extern void Abs(PreparedOps2F32Struct* ops, ulong arg);
+
+        [DllImport(DllName,
+            EntryPoint = "to_complex_ops2_f32",
+            CallingConvention = RustConvention)]
+        public static extern void ToComplex(PreparedOps2F32Struct* ops, ulong arg);
+
+        [DllImport(DllName,
+            EntryPoint = "add_complex_ops2_f32",
+            CallingConvention = RustConvention)]
+        public static extern void ToComplex(PreparedOps2F32Struct* ops, ulong arg, float value);
+
+        [DllImport(DllName,
+            EntryPoint = "multiply_real_ops2_f32",
+            CallingConvention = RustConvention)]
+        public static extern void AddComplex(PreparedOps2F32Struct* ops, ulong arg, float re, float im);
+
+        [DllImport(DllName,
+            EntryPoint = "multiply_complex_ops2_f32",
+            CallingConvention = RustConvention)]
+        public static extern void MultiplyComplex(PreparedOps2F32Struct* ops, ulong arg, float re, float im);
+
+        [DllImport(DllName,
+            EntryPoint = "magnitude_ops2_f32",
+            CallingConvention = RustConvention)]
+        public static extern void Magnitude(PreparedOps2F32Struct* ops, ulong arg);
+
+        [DllImport(DllName,
+            EntryPoint = "magnitude_squared_ops2_f32",
+            CallingConvention = RustConvention)]
+        public static extern void MagnitudeSquared(PreparedOps2F32Struct* ops, ulong arg);
+
+        [DllImport(DllName,
+            EntryPoint = "complex_conj_ops2_f32",
+            CallingConvention = RustConvention)]
+        public static extern void ComplexConj(PreparedOps2F32Struct* ops, ulong arg);
+
+        [DllImport(DllName,
+            EntryPoint = "to_real_ops2_f32",
+            CallingConvention = RustConvention)]
+        public static extern void ToReal(PreparedOps2F32Struct* ops, ulong arg);
+
+        [DllImport(DllName,
+            EntryPoint = "to_imag_ops2_f32",
+            CallingConvention = RustConvention)]
+        public static extern void ToImag(PreparedOps2F32Struct* ops, ulong arg);
+
+        [DllImport(DllName,
+            EntryPoint = "phase_ops2_f32",
+            CallingConvention = RustConvention)]
+        public static extern void Phase(PreparedOps2F32Struct* ops, ulong arg);
+
+        [DllImport(DllName,
+            EntryPoint = "multiply_complex_exponential_ops2_f32",
+            CallingConvention = RustConvention)]
+        public static extern void MultiplyComplexExponential(PreparedOps2F32Struct* ops, ulong arg, float a, float b);
+
+        [DllImport(DllName,
+            EntryPoint = "add_vector_ops2_f32",
+            CallingConvention = RustConvention)]
+        public static extern void AddVector(PreparedOps2F32Struct* ops, ulong arg, ulong other);
+
+        [DllImport(DllName,
+            EntryPoint = "mul_vector_ops2_f32",
+            CallingConvention = RustConvention)]
+        public static extern void MulVector(PreparedOps2F32Struct* ops, ulong arg, ulong other);
+
+        [DllImport(DllName,
+            EntryPoint = "sub_vector_ops2_f32",
+            CallingConvention = RustConvention)]
+        public static extern void SubVector(PreparedOps2F32Struct* ops, ulong arg, ulong other);
+
+        [DllImport(DllName,
+            EntryPoint = "div_vector_ops2_f32",
+            CallingConvention = RustConvention)]
+        public static extern void DivVector(PreparedOps2F32Struct* ops, ulong arg, ulong other);
+
+        [DllImport(DllName,
+            EntryPoint = "square_ops2_f32",
+            CallingConvention = RustConvention)]
+        public static extern void Square(PreparedOps2F32Struct* ops, ulong arg);
+
+        [DllImport(DllName,
+            EntryPoint = "sqrt_ops2_f32",
+            CallingConvention = RustConvention)]
+        public static extern void Sqrt(PreparedOps2F32Struct* ops, ulong arg);
+
+        [DllImport(DllName,
+            EntryPoint = "root_ops2_f32",
+            CallingConvention = RustConvention)]
+        public static extern void Root(PreparedOps2F32Struct* ops, ulong arg, float value);
+
+        [DllImport(DllName,
+            EntryPoint = "powf_ops2_f32",
+            CallingConvention = RustConvention)]
+        public static extern void Powf(PreparedOps2F32Struct* ops, ulong arg, float value);
+
+        [DllImport(DllName,
+            EntryPoint = "ln_ops2_f32",
+            CallingConvention = RustConvention)]
+        public static extern void Ln(PreparedOps2F32Struct* ops, ulong arg);
+
+        [DllImport(DllName,
+            EntryPoint = "exp_ops2_f32",
+            CallingConvention = RustConvention)]
+        public static extern void Exp(PreparedOps2F32Struct* ops, ulong arg);
+        [DllImport(DllName,
+            EntryPoint = "log_ops2_f32",
+            CallingConvention = RustConvention)]
+        public static extern void Log(PreparedOps2F32Struct* ops, ulong arg, float value);
+        [DllImport(DllName,
+            EntryPoint = "expf_ops2_f32",
+            CallingConvention = RustConvention)]
+        public static extern void Expf(PreparedOps2F32Struct* ops, ulong arg, float value);
+
+        [DllImport(DllName,
+            EntryPoint = "sin_ops2_f32",
+            CallingConvention = RustConvention)]
+        public static extern void Sin(PreparedOps2F32Struct* ops, ulong arg);
+
+        [DllImport(DllName,
+            EntryPoint = "cos_ops2_f32",
+            CallingConvention = RustConvention)]
+        public static extern void Cos(PreparedOps2F32Struct* ops, ulong arg);
+
+        [DllImport(DllName,
+            EntryPoint = "tan_ops2_f32",
+            CallingConvention = RustConvention)]
+        public static extern void Tan(PreparedOps2F32Struct* ops, ulong arg);
+
+        [DllImport(DllName,
+            EntryPoint = "asin_ops2_f32",
+            CallingConvention = RustConvention)]
+        public static extern void ASin(PreparedOps2F32Struct* ops, ulong arg);
+
+        [DllImport(DllName,
+            EntryPoint = "acos_ops2_f32",
+            CallingConvention = RustConvention)]
+        public static extern void ACos(PreparedOps2F32Struct* ops, ulong arg);
+
+        [DllImport(DllName,
+            EntryPoint = "atan_ops2_f32",
+            CallingConvention = RustConvention)]
+        public static extern void ATan(PreparedOps2F32Struct* ops, ulong arg);
+
+        [DllImport(DllName,
+            EntryPoint = "sinh_ops2_f32",
+            CallingConvention = RustConvention)]
+        public static extern void Sinh(PreparedOps2F32Struct* ops, ulong arg);
+
+        [DllImport(DllName,
+            EntryPoint = "cosh_ops2_f32",
+            CallingConvention = RustConvention)]
+        public static extern void Cosh(PreparedOps2F32Struct* ops, ulong arg);
+
+        [DllImport(DllName,
+            EntryPoint = "tanh_ops2_f32",
+            CallingConvention = RustConvention)]
+        public static extern void Tanh(PreparedOps2F32Struct* ops, ulong arg);
+
+        [DllImport(DllName,
+            EntryPoint = "asinh_ops2_f32",
+            CallingConvention = RustConvention)]
+        public static extern void ASinh(PreparedOps2F32Struct* ops, ulong arg);
+
+        [DllImport(DllName,
+            EntryPoint = "acosh_ops2_f32",
+            CallingConvention = RustConvention)]
+        public static extern void ACosh(PreparedOps2F32Struct* ops, ulong arg);
+
+        [DllImport(DllName,
+            EntryPoint = "atanh_ops2_f32",
+            CallingConvention = RustConvention)]
+        public static extern void ATanh(PreparedOps2F32Struct* ops, ulong arg);
+
+        [DllImport(DllName,
+            EntryPoint = "clone_from_ops2_f32",
+            CallingConvention = RustConvention)]
+        public static extern void CloneFrom(PreparedOps2F32Struct* ops, ulong arg, ulong source);
+
+        [DllImport(DllName,
+            EntryPoint = "add_points_ops2_f32",
+            CallingConvention = RustConvention)]
+        public static extern void AddPoints(PreparedOps2F32Struct* ops, ulong arg);
+
+        [DllImport(DllName,
+            EntryPoint = "sub_points_ops2_f32",
+            CallingConvention = RustConvention)]
+        public static extern void SubPoints(PreparedOps2F32Struct* ops, ulong arg);
+
+        [DllImport(DllName,
+            EntryPoint = "mul_points_ops2_f32",
+            CallingConvention = RustConvention)]
+        public static extern void MulPoints(PreparedOps2F32Struct* ops, ulong arg);
+
+        [DllImport(DllName,
+            EntryPoint = "div_points_ops2_f32",
+            CallingConvention = RustConvention)]
+        public static extern void DivPoints(PreparedOps2F32Struct* ops, ulong arg);
     }
 }

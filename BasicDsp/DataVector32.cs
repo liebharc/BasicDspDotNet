@@ -59,6 +59,20 @@ namespace BasicDsp
 
         private DataVector32Native.DataVector32Struct* _native;
 
+        internal DataVector32Native.DataVector32Struct* Native
+        {
+            get
+            {
+                if (_native == null)
+                {
+                    throw new ObjectDisposedException(nameof(DataVector32));
+                }
+
+                return _native;
+            }
+            set { _native = value; }
+        }
+
         private const int Complex = 1;
 
         private const int Real = 0;
@@ -961,7 +975,7 @@ namespace BasicDsp
             CheckResultCode(result.resultCode);
         }
 
-        private void CheckResultCode(int resultCode)
+        internal static void CheckResultCode(int resultCode)
         {
             switch (resultCode)
             {
@@ -987,6 +1001,10 @@ namespace BasicDsp
                     throw new VectorMustHaveAnOddLengthException();
                 case 10:
                     throw new ArgumentFunctionMustBeSymmetricException();
+                case 11:
+                    throw new InvalidNumberOfArgumentsForCombinedOpException();
+                case 12:
+                    throw new VectorMustNotBeEmptyException();
                 default:
                     throw new UnknownResultCode();
             }

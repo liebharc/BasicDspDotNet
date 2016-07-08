@@ -14,7 +14,7 @@ use std::sync::Arc;
 pub extern fn delete_vector32(vector: Box<DataVector32>) {
     drop(vector);
 }
- 
+
 #[no_mangle]
 pub extern fn new32(is_complex: i32, domain: i32, init_value: f32, length: usize, delta: f32) -> Box<DataVector32> {
     let domain = if domain == 0 {
@@ -878,12 +878,22 @@ pub extern fn prepared_ops1_f32() -> Box<PreparedOp1F32> {
     Box::new(prepare1::<f32, DataVector32>())
 }
 
+#[no_mangle]
+pub extern fn delete_ops1_f32(ops: Box<PreparedOp1F32>) {
+    drop(ops);
+}
+
 /// Prepares an operation.
 /// multi_ops2 will not be made available in for interop since the same functionality 
 /// can be created with prepared ops, and internally this is what this lib does too.
 #[no_mangle]
 pub extern fn prepared_ops2_f32() -> Box<PreparedOp2F32> {
     Box::new(prepare2::<f32, DataVector32, DataVector32>())
+}
+
+#[no_mangle]
+pub extern fn delete_ops2_f32(ops: Box<PreparedOp2F32>) {
+    drop(ops);
 }
 
 /// Prepares an operation.
