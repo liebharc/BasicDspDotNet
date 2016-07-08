@@ -62,6 +62,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="DataVector32Test.cs" />
+    <Compile Include="PreparedOperations1F32Test.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
