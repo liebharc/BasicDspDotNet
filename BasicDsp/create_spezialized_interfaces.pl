@@ -19,9 +19,9 @@ sub parse_generic_interface {
         chomp $line;
         if ($line =~ /public interface (.+)/) {
             $interface = $1;
-        } elsif ($line =~ /\{/) {
+        } elsif ($line =~ /\{/ and $interface) {
             $in_interface = 1;
-        } elsif ($line =~ /\}/ and scalar(@$methods) > 0) {
+        } elsif ($line =~ /\}/ and scalar(@$methods) > 0 and $in_interface) {
             $in_interface = 0;
             $result{$interface} = $methods;
             $methods = [];
@@ -171,7 +171,9 @@ sub generate_implementation {
     $interface_line =~ /^\s*(\S+)/;
     my $return_type = $1;
     if (not $method) {
-        print STDERR "WARNING: Skipping $interface_line\n";
+		if ($interface_line !~ /^\s*$/) {
+			print STDERR "WARNING: Skipping $interface_line\n";
+		}
         return;
     }
     
@@ -184,6 +186,9 @@ sub generate_implementation {
         print IMPL32 "            return $method(";
     }
     
+	while ($parameters =~ /</) {
+		$parameters =~ s/<.*?>//g;
+	}
     my @all_params = split(",", $parameters);
     my $i = 0;
     foreach my $parameter (@all_params) {

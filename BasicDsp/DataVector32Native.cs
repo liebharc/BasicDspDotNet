@@ -28,6 +28,13 @@ namespace BasicDsp
         }
 
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
+        public struct ObjectResult
+        {
+            public readonly int resultCode;
+            public readonly long result;
+        }
+
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
         public struct ComplexResult
         {
             public readonly int resultCode;
@@ -669,6 +676,37 @@ namespace BasicDsp
             CallingConvention = RustConvention)]
         public static extern VectorResult32 InterpolateHermite(DataVector32Struct* vector, float interpolationFactor, float delay);
 
+        public delegate float MapInplaceRealFunc(float x, ulong point);
+
+        public delegate void* MapRealFunc(float x, ulong point);
+
+        public delegate void* AggregateFunc(void* a, void* b);
+
+        [DllImport(DllName,
+            EntryPoint = "map_inplace_real32",
+            CallingConvention = RustConvention)]
+        public static extern VectorResult32 MapInplaceReal(DataVector32Struct* vector, MapInplaceRealFunc map);
+
+        [DllImport(DllName,
+            EntryPoint = "map_aggregate_real32",
+            CallingConvention = RustConvention)]
+        public static extern  ObjectResult MapAggregateReal(DataVector32Struct* vector, MapRealFunc map, AggregateFunc aggregate);
+
+        public delegate Complex32 MapInplaceComplexFunc(Complex32 x, ulong point);
+
+        public delegate void* MapComplexFunc(Complex32 x, ulong point);
+
+        [DllImport(DllName,
+            EntryPoint = "map_inplace_complex32",
+            CallingConvention = RustConvention)]
+        public static extern VectorResult32 MapInplaceComplex(DataVector32Struct* vector, MapInplaceComplexFunc map);
+
+        [DllImport(DllName,
+            EntryPoint = "map_aggregate_complex32",
+            CallingConvention = RustConvention)]
+        public static extern ObjectResult MapAggregateComplex(DataVector32Struct* vector, MapComplexFunc map, AggregateFunc aggregate);
+
+
         [DllImport(DllName,
             EntryPoint = "extend_prepared_ops1_f32",
             CallingConvention = RustConvention)]
@@ -946,11 +984,6 @@ namespace BasicDsp
         [DllImport(DllName,
             EntryPoint = "add_complex_ops2_f32",
             CallingConvention = RustConvention)]
-        public static extern void ToComplex(PreparedOps2F32Struct* ops, ulong arg, float value);
-
-        [DllImport(DllName,
-            EntryPoint = "multiply_real_ops2_f32",
-            CallingConvention = RustConvention)]
         public static extern void AddComplex(PreparedOps2F32Struct* ops, ulong arg, float re, float im);
 
         [DllImport(DllName,
@@ -1135,5 +1168,15 @@ namespace BasicDsp
             EntryPoint = "div_points_ops2_f32",
             CallingConvention = RustConvention)]
         public static extern void DivPoints(PreparedOps2F32Struct* ops, ulong arg);
+
+        [DllImport(DllName,
+            EntryPoint = "map_real_ops1_f32",
+            CallingConvention = RustConvention)]
+        public static extern void MapReal(PreparedOps2F32Struct* ops, MapRealFunc map);
+
+        [DllImport(DllName,
+            EntryPoint = "map_complex_ops1_f32",
+            CallingConvention = RustConvention)]
+        public static extern void MapComplex(PreparedOps2F32Struct* ops, MapComplexFunc map);
     }
 }

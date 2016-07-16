@@ -113,7 +113,7 @@ namespace BasicDsp
         DataVector32 MultiplySmaller(DataVector32 vector);
         DataVector32 DivideSmaller(DataVector32 vector);
         DataVector32 ZeroPad(int points, PaddingOption paddingOption);
-        DataVector32 ZeroInterleave(int factor = 2);
+        DataVector32 ZeroInterleave(int factor);
         DataVector32 Diff();
         DataVector32 DiffWithStart();
         DataVector32 CumSum();
@@ -154,6 +154,8 @@ namespace BasicDsp
         DataVector32 /*COMPLEX*/ ToComplex();
         DataVector32 Wrap(float value);
         DataVector32 Unwrap(float value);
+        DataVector32 MapInplace(Func<float, ulong, float> map);
+        T MapAggregate<T>(Func<float, ulong, T> map, Func<T, T, T> aggregate);
         float RealDotProduct(DataVector32 vector);
         RealStatistics32 RealStatistics();
         RealStatistics32[] RealStatisticsSplitted(int length);
@@ -165,6 +167,8 @@ namespace BasicDsp
         DataVector32 Subtract(float real, float imag);
         DataVector32 Multiply(float real, float imag);
         DataVector32 Divide(float real, float imag);
+        DataVector32 MapInplace(Func<float, float, ulong, Tuple<float, float>> map);
+        T MapAggregate<T>(Func<float, float, ulong, T> map, Func<T, T, T> aggregate);
         DataVector32 /*REAL*/ Magnitude();
         void GetMagnitude(DataVector32 /*REAL*/ destination);
         DataVector32 /*REAL*/ MagnitudeSquared();

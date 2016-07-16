@@ -1,0 +1,1 @@
+cp ..\..\..\Rust\basic_dsp\target\release\basic_dsp.dll .\BasicDsp\RustDrop\basic_dsp.dll; msbuild /p:Configuration=Release /p:Platform=x64

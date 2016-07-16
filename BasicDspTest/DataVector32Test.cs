@@ -46,6 +46,36 @@ namespace BasicDspTest
 
         [TestMethod]
         [DeploymentItem("basic_dsp.dll")]
+        public void MapInplace()
+        {
+            using (var vector = DataVector32.NewRealTimeVectorFromConstant(2, 5))
+            {
+                vector.MapInplace((f, p) => 2 * f);
+                vector[0].Should().BeApproximately(4.0f, 1e-15f);
+                vector[1].Should().BeApproximately(4.0f, 1e-15f);
+            }
+        }
+
+        private struct MyStruct
+        {
+            public float value;
+        }
+
+        [TestMethod]
+        [DeploymentItem("basic_dsp.dll")]
+        public void MapAggregate()
+        {
+            using (var vector = DataVector32.NewRealTimeVectorFromConstant(2, 5))
+            {
+                var result = vector.MapAggregate(
+                    (f, p) => new MyStruct { value = 2 * f },
+                    (a, b) => new MyStruct { value = a.value + b.value });
+                result.value.Should().Be(2 * 2 * 5);
+            }
+        }
+
+        [TestMethod]
+        [DeploymentItem("basic_dsp.dll")]
         public void ExceptionTest()
         {
             using (var vector1 = DataVector32.NewRealTimeVectorFromConstant(2, 10))

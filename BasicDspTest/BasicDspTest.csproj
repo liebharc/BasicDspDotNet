@@ -61,6 +61,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="CompareToMatlab.cs" />
     <Compile Include="DataVector32Test.cs" />
     <Compile Include="PreparedOperations1F32Test.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -73,12 +74,27 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <Content Include="multi_ops2.m" />
+    <Content Include="unwrap_vector.m" />
+    <Content Include="diff_vector.m" />
+    <Content Include="mul_vector.m" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="..\BasicDsp\RustDrop\basic_dsp.dll">
       <Link>basic_dsp.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="MLApp">
+      <Guid>{C36E46AB-6A81-457B-9F91-A7719A06287F}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

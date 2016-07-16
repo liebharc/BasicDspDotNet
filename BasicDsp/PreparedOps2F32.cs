@@ -1,13 +1,13 @@
-﻿using System;
+using System;
 
 namespace BasicDsp
 {
-    public sealed unsafe class GenericIdentifierOps1F32
+    public sealed unsafe class GenericIdentifierOps2F32
     {
-        private readonly PreparedOps1F32 _owner;
+        private readonly PreparedOps2F32 _owner;
         private readonly ulong _arg;
 
-        internal GenericIdentifierOps1F32(PreparedOps1F32 owner, ulong arg)
+        internal GenericIdentifierOps2F32(PreparedOps2F32 owner, ulong arg)
         {
             _owner = owner;
             _arg = arg;
@@ -22,7 +22,7 @@ namespace BasicDsp
         public void MultiplyReal(float value)
         {
             DataVector32Native.MultiplyReal(_owner.Native, _arg, value);
-             
+            
         }
 
         public void Abs()
@@ -34,13 +34,13 @@ namespace BasicDsp
         public void ToComplex()
         {
             DataVector32Native.ToComplex(_owner.Native, _arg);
-             
+            
         }
 
         public void AddComplex(Complex32 value)
         {
             DataVector32Native.AddComplex(_owner.Native, _arg, value.Real, value.Imag);
-             
+            
         }
 
         public void MultiplyComplex(Complex32 value)
@@ -91,25 +91,25 @@ namespace BasicDsp
             
         }
 
-        public void AddVector(GenericIdentifierOps1F32 other)
+        public void AddVector(GenericIdentifierOps2F32 other)
         {
             DataVector32Native.AddVector(_owner.Native, _arg, other._arg);
             
         }
 
-        public void SubVector(GenericIdentifierOps1F32 other)
+        public void SubVector(GenericIdentifierOps2F32 other)
         {
             DataVector32Native.SubVector(_owner.Native, _arg, other._arg);
             
         }
 
-        public void MulVector(GenericIdentifierOps1F32 other)
+        public void MulVector(GenericIdentifierOps2F32 other)
         {
             DataVector32Native.MulVector(_owner.Native, _arg, other._arg);
             
         }
 
-        public void DivVector(GenericIdentifierOps1F32 other)
+        public void DivVector(GenericIdentifierOps2F32 other)
         {
             DataVector32Native.DivVector(_owner.Native, _arg, other._arg);
             
@@ -235,7 +235,7 @@ namespace BasicDsp
             
         }
 
-        public void CloneFrom(GenericIdentifierOps1F32 other)
+        public void CloneFrom(GenericIdentifierOps2F32 other)
         {
             DataVector32Native.CloneFrom(_owner.Native, _arg, other._arg);
             
@@ -266,30 +266,32 @@ namespace BasicDsp
         }
     }
 
-    public sealed unsafe class PreparedOps1F32 : IDisposable
+    public sealed unsafe class PreparedOps2F32 : IDisposable
     {
-        private DataVector32Native.PreparedOps1F32Struct* _native = null;
+        private DataVector32Native.PreparedOps2F32Struct* _native = null;
 
-        internal DataVector32Native.PreparedOps1F32Struct* Native
+        internal DataVector32Native.PreparedOps2F32Struct* Native
         {
             get { return _native; }
         }
 
-        public PreparedOps1F32()
+        public PreparedOps2F32()
         {
-            _native = DataVector32Native.Prepare1();
+            _native = DataVector32Native.Prepare2();
         }
 
-        public void AddOps(Action<GenericIdentifierOps1F32> ops)
+        public void AddOps(Action<GenericIdentifierOps2F32, GenericIdentifierOps2F32> ops)
         {
-            var identifier = new GenericIdentifierOps1F32(this, 0);
-            ops(identifier);
+            var identifier1 = new GenericIdentifierOps2F32(this, 0);
+            var identifier2 = new GenericIdentifierOps2F32(this, 1);
+            ops(identifier1, identifier2);
         }
 
-        public void Exec(DataVector32 vector)
+        public void Exec(DataVector32 vector1, DataVector32 vector2)
         {
-            var result = DataVector32Native.Exec(_native, vector.Native);
-            vector.Native = result.vector;
+            var result = DataVector32Native.Exec(_native, vector1.Native, vector2.Native);
+            vector1.Native = result.vector1;
+            vector2.Native = result.vector2;
             DataVector32.CheckResultCode(result.resultCode);
         }
 

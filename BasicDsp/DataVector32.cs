@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 
@@ -325,6 +326,60 @@ namespace BasicDsp
             return this;
         }
 
+        public DataVector32 MapInplace(Func<float, float, ulong, Tuple<float, float>> map)
+        {
+            DataVector32Native.MapInplaceComplexFunc mapNative = (c, point) =>
+            {
+                var res = map(c.Real, c.Imag, point);
+                return new Complex32(res.Item1, res.Item2);
+            };
+            Unwrap(DataVector32Native.MapInplaceComplex(_native, mapNative));
+            return this;
+        }
+
+        public T MapAggregate<T>(Func<float, float, ulong, T> map, Func<T, T, T> aggregate)
+        {
+            var objects = new List<GCHandle?>();
+            DataVector32Native.MapComplexFunc mapNative = (c, point) =>
+            {
+                var res = map(c.Real, c.Imag, point);
+                GCHandle gc = GCHandle.Alloc(res, GCHandleType.Pinned);
+                objects.Add(gc);
+                return (void*)gc.AddrOfPinnedObject().ToInt64();
+            };
+            DataVector32Native.AggregateFunc aggrNative = (a, b) =>
+            {
+                var aObj = (T)Marshal.PtrToStructure(new IntPtr(a), typeof(T));
+                var bObj = (T)Marshal.PtrToStructure(new IntPtr(b), typeof(T));
+                var res = aggregate(aObj, bObj);
+                GCHandle gc = GCHandle.Alloc(res, GCHandleType.Pinned);
+                var aPtr = objects.FirstOrDefault(p => p.Value.AddrOfPinnedObject() == new IntPtr(a));
+                if (aPtr.HasValue)
+                {
+                    aPtr.Value.Free();
+                    objects.Remove(aPtr);
+                }
+
+                var bPtr = objects.FirstOrDefault(p => p.Value.AddrOfPinnedObject() == new IntPtr(b));
+                if (bPtr.HasValue)
+                {
+                    bPtr.Value.Free();
+                    objects.Remove(bPtr);
+                }
+
+                objects.Add(gc);
+                return (void*)gc.AddrOfPinnedObject().ToInt64();
+            };
+            var result = DataVector32Native.MapAggregateComplex(_native, mapNative, aggrNative);
+            var typedResult = (T)Marshal.PtrToStructure(new IntPtr(result.result), typeof(T));
+            CheckResultCode(result.resultCode);
+            foreach (var gcHandle in objects)
+            {
+                gcHandle.Value.Free();
+            }
+            return typedResult;
+        }
+
         public DataVector32 Divide(DataVector32 vector)
         {
             Unwrap(DataVector32Native.DivideVector(_native, vector._native));
@@ -534,6 +589,56 @@ namespace BasicDsp
         {
             Unwrap(DataVector32Native.Unwrap(_native, value));
             return this;
+        }
+
+        public DataVector32 MapInplace(Func<float, ulong, float> map)
+        {
+            DataVector32Native.MapInplaceRealFunc mapNative = (f, point) => map(f, point);
+            Unwrap(DataVector32Native.MapInplaceReal(_native, mapNative));
+            return this;
+        }
+
+        public T MapAggregate<T>(Func<float, ulong, T> map, Func<T, T, T> aggregate)
+        {
+            var objects = new List<GCHandle?>();
+            DataVector32Native.MapRealFunc mapNative = (f, point) =>
+            {
+                var res = map(f, point);
+                GCHandle gc = GCHandle.Alloc(res, GCHandleType.Pinned);
+                objects.Add(gc);
+                return (void*)gc.AddrOfPinnedObject().ToInt64();
+            };
+            DataVector32Native.AggregateFunc aggrNative = (a, b) =>
+            {
+                var aObj = (T)Marshal.PtrToStructure(new IntPtr(a), typeof(T));
+                var bObj = (T)Marshal.PtrToStructure(new IntPtr(b), typeof(T));
+                var res = aggregate(aObj, bObj);
+                GCHandle gc = GCHandle.Alloc(res, GCHandleType.Pinned);
+                var aPtr = objects.FirstOrDefault(p => p.Value.AddrOfPinnedObject() == new IntPtr(a));
+                if (aPtr.HasValue)
+                {
+                    aPtr.Value.Free();
+                    objects.Remove(aPtr);
+                }
+
+                var bPtr = objects.FirstOrDefault(p => p.Value.AddrOfPinnedObject() == new IntPtr(b));
+                if (bPtr.HasValue)
+                {
+                    bPtr.Value.Free();
+                    objects.Remove(bPtr);
+                }
+
+                objects.Add(gc);
+                return (void*)gc.AddrOfPinnedObject().ToInt64();
+            };
+            var result = DataVector32Native.MapAggregateReal(_native, mapNative, aggrNative);
+            var typedResult = (T)Marshal.PtrToStructure(new IntPtr(result.result), typeof(T));
+            CheckResultCode(result.resultCode);
+            foreach (var gcHandle in objects)
+            {
+                gcHandle.Value.Free();
+            }
+            return typedResult;
         }
 
         public DataVector32 Magnitude()
