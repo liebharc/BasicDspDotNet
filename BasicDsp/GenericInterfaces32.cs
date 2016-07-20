@@ -159,6 +159,8 @@ namespace BasicDsp
         float RealDotProduct(DataVector32 vector);
         RealStatistics32 RealStatistics();
         RealStatistics32[] RealStatisticsSplitted(int length);
+        float RealSum();
+        float RealSumSquared();
     }
 
     public interface IComplexVectorOperations32
@@ -167,8 +169,8 @@ namespace BasicDsp
         DataVector32 Subtract(float real, float imag);
         DataVector32 Multiply(float real, float imag);
         DataVector32 Divide(float real, float imag);
-        DataVector32 MapInplace(Func<float, float, ulong, Tuple<float, float>> map);
-        T MapAggregate<T>(Func<float, float, ulong, T> map, Func<T, T, T> aggregate);
+        DataVector32 MapInplace(Func<Complex32, ulong, Complex32> map);
+        T MapAggregate<T>(Func<Complex32, ulong, T> map, Func<T, T, T> aggregate);
         DataVector32 /*REAL*/ Magnitude();
         void GetMagnitude(DataVector32 /*REAL*/ destination);
         DataVector32 /*REAL*/ MagnitudeSquared();
@@ -193,6 +195,8 @@ namespace BasicDsp
         DataVector32 SetMagPhase(DataVector32 /*REAL*/ mag, DataVector32 /*REAL*/ phase);
         
         ComplexStatistics32[] ComplexStatisticsSplitted(int length);
+        Complex32 ComplexSum();
+        Complex32 ComplexSumSquared();
         DataVector32 Reverse();
         DataVector32 Decimatei(int factor, int delay);
         DataVector32 PrepareArgument();

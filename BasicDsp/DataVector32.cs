@@ -326,23 +326,19 @@ namespace BasicDsp
             return this;
         }
 
-        public DataVector32 MapInplace(Func<float, float, ulong, Tuple<float, float>> map)
+        public DataVector32 MapInplace(Func<Complex32, ulong, Complex32> map)
         {
-            DataVector32Native.MapInplaceComplexFunc mapNative = (c, point) =>
-            {
-                var res = map(c.Real, c.Imag, point);
-                return new Complex32(res.Item1, res.Item2);
-            };
+            DataVector32Native.MapInplaceComplexFunc mapNative = (c, point) => map(c, point);
             Unwrap(DataVector32Native.MapInplaceComplex(_native, mapNative));
             return this;
         }
 
-        public T MapAggregate<T>(Func<float, float, ulong, T> map, Func<T, T, T> aggregate)
+        public T MapAggregate<T>(Func<Complex32, ulong, T> map, Func<T, T, T> aggregate)
         {
             var objects = new List<GCHandle?>();
             DataVector32Native.MapComplexFunc mapNative = (c, point) =>
             {
-                var res = map(c.Real, c.Imag, point);
+                var res = map(c, point);
                 GCHandle gc = GCHandle.Alloc(res, GCHandleType.Pinned);
                 objects.Add(gc);
                 return (void*)gc.AddrOfPinnedObject().ToInt64();
@@ -926,6 +922,26 @@ namespace BasicDsp
         public ComplexStatistics32 ComplexStatistics()
         {
             return DataVector32Native.ComplexStatistics(_native);
+        }
+
+        public float RealSum()
+        {
+            return DataVector32Native.RealSum(_native);
+        }
+
+        public float RealSumSquared()
+        {
+            return DataVector32Native.RealSumSquared(_native);
+        }
+
+        public Complex32 ComplexSum()
+        {
+            return DataVector32Native.ComplexSum(_native);
+        }
+
+        public Complex32 ComplexSumSquared()
+        {
+            return DataVector32Native.ComplexSumSquared(_native);
         }
 
         public DataVector32 MultiplyComplexExponential(float a, float b)

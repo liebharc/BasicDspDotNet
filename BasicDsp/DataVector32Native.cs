@@ -409,6 +409,26 @@ namespace BasicDsp
         public static extern ComplexStatistics32 ComplexStatistics([In]DataVector32Struct* vector);
 
         [DllImport(DllName,
+            EntryPoint = "real_sum32",
+            CallingConvention = RustConvention)]
+        public static extern float RealSum([In]DataVector32Struct* vector);
+
+        [DllImport(DllName,
+            EntryPoint = "real_sum_sq32",
+            CallingConvention = RustConvention)]
+        public static extern float RealSumSquared([In]DataVector32Struct* vector);
+
+        [DllImport(DllName,
+            EntryPoint = "complex_sum32",
+            CallingConvention = RustConvention)]
+        public static extern Complex32 ComplexSum([In]DataVector32Struct* vector);
+
+        [DllImport(DllName,
+            EntryPoint = "complex_sum_sq32",
+            CallingConvention = RustConvention)]
+        public static extern Complex32 ComplexSumSquared([In]DataVector32Struct* vector);
+
+        [DllImport(DllName,
             EntryPoint = "tan32",
             CallingConvention = RustConvention)]
         public static extern VectorResult32 Tan([In]DataVector32Struct* vector);
