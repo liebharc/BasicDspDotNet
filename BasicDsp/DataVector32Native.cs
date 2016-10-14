@@ -129,17 +129,17 @@ namespace BasicDsp
         public static extern VectorResult32 AddVector([In]DataVector32Struct* vector, [In]DataVector32Struct* operand);
 
         [DllImport(DllName,
-            EntryPoint = "subtract_vector32",
+            EntryPoint = "sub_vector32",
             CallingConvention = RustConvention)]
         public static extern VectorResult32 SubtractVector([In]DataVector32Struct* vector, [In]DataVector32Struct* operand);
 
         [DllImport(DllName,
-            EntryPoint = "multiply_vector32",
+            EntryPoint = "mul_vector32",
             CallingConvention = RustConvention)]
         public static extern VectorResult32 MultiplyVector([In]DataVector32Struct* vector, [In]DataVector32Struct* operand);
 
         [DllImport(DllName,
-            EntryPoint = "divide_vector32",
+            EntryPoint = "div_vector32",
             CallingConvention = RustConvention)]
         public static extern VectorResult32 DivideVector([In]DataVector32Struct* vector, [In]DataVector32Struct* operand);
 
@@ -149,17 +149,17 @@ namespace BasicDsp
         public static extern VectorResult32 AddSmallerVector([In]DataVector32Struct* vector, [In]DataVector32Struct* operand);
 
         [DllImport(DllName,
-            EntryPoint = "subtract_smaller_vector32",
+            EntryPoint = "sub_smaller_vector32",
             CallingConvention = RustConvention)]
         public static extern VectorResult32 SubtractSmallerVector([In]DataVector32Struct* vector, [In]DataVector32Struct* operand);
 
         [DllImport(DllName,
-            EntryPoint = "multiply_smaller_vector32",
+            EntryPoint = "mul_smaller_vector32",
             CallingConvention = RustConvention)]
         public static extern VectorResult32 MultiplySmallerVector([In]DataVector32Struct* vector, [In]DataVector32Struct* operand);
 
         [DllImport(DllName,
-            EntryPoint = "divide_smaller_vector32",
+            EntryPoint = "div_smaller_vector32",
             CallingConvention = RustConvention)]
         public static extern VectorResult32 DivideSmallerVector([In]DataVector32Struct* vector, [In]DataVector32Struct* operand);
 
