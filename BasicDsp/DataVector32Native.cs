@@ -523,7 +523,7 @@ namespace BasicDsp
         public static extern VectorResult32 Merge([In]DataVector32Struct* vector, IntPtr sources, ulong len);
 
         [DllImport(DllName,
-            EntryPoint = "override_data32",
+            EntryPoint = "overwrite_data32",
             CallingConvention = RustConvention)]
         public static extern VectorResult32 OverrideData([In]DataVector32Struct* vector, IntPtr data, ulong len);
 

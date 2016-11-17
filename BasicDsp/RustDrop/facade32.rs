@@ -1,148 +1,197 @@
-//! Functions for 32bit floating point number based vectors. Please refer to the other chapters of the help for documentation of the functions.
+//! Functions for 32bit floating point number based vectors.
+//! Please refer to the other chapters of the help for documentation of the functions.
 use super::*;
-use super::super::*;
-use super::super::combined_ops::*;
-use window_functions::*;
-use conv_types::*;
+use basic_dsp_vector::*;
+use basic_dsp_vector::window_functions::*;
+use basic_dsp_vector::conv_types::*;
 use num::complex::Complex32;
 use std::slice;
 use std::os::raw::c_void;
 use std::mem;
-use std::sync::Arc;
+
+pub type VecBuf = InteropVec<f32>;
+
+pub type VecBox = Box<InteropVec<f32>>;
 
 #[no_mangle]
-pub extern fn delete_vector32(vector: Box<DataVector32>) {
+pub extern "C" fn delete_vector32(vector: VecBox) {
     drop(vector);
 }
 
+
 #[no_mangle]
-pub extern fn new32(is_complex: i32, domain: i32, init_value: f32, length: usize, delta: f32) -> Box<DataVector32> {
+pub extern "C" fn new32(is_complex: i32,
+                        domain: i32,
+                        init_value: f32,
+                        length: usize,
+                        delta: f32)
+                        -> VecBox {
     let domain = if domain == 0 {
-            DataVectorDomain::Time
-        }
-        else {
-            DataVectorDomain::Frequency
-        };
-        
-    let vector = Box::new(DataVector32::new(is_complex != 0, domain, init_value, length, delta));
+        DataDomain::Time
+    } else {
+        DataDomain::Frequency
+    };
+
+    let mut vector = Box::new(VecBuf {
+        vec: vec!(init_value; length).to_gen_dsp_vec(is_complex != 0, domain),
+        buffer: SingleBuffer::new(),
+    });
+    vector.vec.set_delta(delta);
     vector
 }
 
 #[no_mangle]
-pub extern fn new_with_performance_options32(is_complex: i32, domain: i32, init_value: f32, length: usize, delta: f32, core_limit: usize, early_temp_allocation: bool) -> Box<DataVector32> {
+pub extern "C" fn new_with_performance_options32(is_complex: i32,
+                                                 domain: i32,
+                                                 init_value: f32,
+                                                 length: usize,
+                                                 delta: f32,
+                                                 core_limit: usize,
+                                                 early_temp_allocation: bool)
+                                                 -> VecBox {
     let domain = if domain == 0 {
-            DataVectorDomain::Time
-        }
-        else {
-            DataVectorDomain::Frequency
-        };
-        
-    let vector = Box::new(DataVector32::new_with_options(is_complex != 0, domain, init_value, length, delta, MultiCoreSettings::new(core_limit, early_temp_allocation)));
+        DataDomain::Time
+    } else {
+        DataDomain::Frequency
+    };
+
+    let mut vector = Box::new(VecBuf {
+        vec: vec!(init_value; length).to_gen_dsp_vec(is_complex != 0, domain),
+        buffer: SingleBuffer::new(),
+    });
+    vector.vec.set_delta(delta);
+    vector.vec.set_multicore_settings(MultiCoreSettings::new(core_limit, early_temp_allocation));
     vector
+
 }
 
 #[no_mangle]
-pub extern fn get_value32(vector: &DataVector32, index: usize) -> f32 {
-    vector[index]
+pub extern "C" fn get_value32(vector: &VecBuf, index: usize) -> f32 {
+    vector.vec[index]
 }
 
 #[no_mangle]
-pub extern fn set_value32(vector: &mut DataVector32, index: usize, value : f32) {
-    vector[index] = value;
+pub extern "C" fn set_value32(vector: &mut VecBuf, index: usize, value: f32) {
+    vector.vec[index] = value;
 }
 
 #[no_mangle]
-pub extern fn is_complex32(vector: &DataVector32) -> i32 {
-    if vector.is_complex() {
-        1
-    } 
-    else {
-        0
-    }
+pub extern "C" fn is_complex32(vector: &VecBuf) -> i32 {
+    if vector.vec.is_complex() { 1 } else { 0 }
 }
 
 /// Returns the vector domain as integer:
 ///
-/// 1. `0` for [`DataVectorDomain::Time`](../../enum.DataVectorDomain.html) 
-/// 2. `1` for [`DataVectorDomain::Frequency`](../../enum.DataVectorDomain.html)
-/// 
+/// 1. `0` for [`DataVecDomain::Time`](../../enum.DataVecDomain.html)
+/// 2. `1` for [`DataVecDomain::Frequency`](../../enum.DataVecDomain.html)
+///
 /// if the function returns another value then please report a bug.
 #[no_mangle]
-pub extern fn get_domain32(vector: &DataVector32) -> i32 {
-    match vector.domain() {
-        DataVectorDomain::Time => 0,
-        DataVectorDomain::Frequency => 1,
+pub extern "C" fn get_domain32(vector: &VecBuf) -> i32 {
+    match vector.vec.domain() {
+        DataDomain::Time => 0,
+        DataDomain::Frequency => 1,
     }
 }
 
 #[no_mangle]
-pub extern fn get_len32(vector: &DataVector32) -> usize {
-    vector.len()
+pub extern "C" fn get_len32(vector: &VecBuf) -> usize {
+    vector.vec.len()
 }
 
 #[no_mangle]
-pub extern fn set_len32(vector: &mut DataVector32, len: usize) {
-    vector.set_len(len)
+pub extern "C" fn set_len32(vector: &mut VecBuf, len: usize) {
+    let _ = vector.vec.resize(len);
 }
 
 #[no_mangle]
-pub extern fn get_points32(vector: &DataVector32) -> usize {
-    vector.points()
+pub extern "C" fn get_points32(vector: &VecBuf) -> usize {
+    vector.vec.points()
 }
 
 #[no_mangle]
-pub extern fn get_delta32(vector: &DataVector32) -> f32 {
-    vector.delta()
+pub extern "C" fn get_delta32(vector: &VecBuf) -> f32 {
+    vector.vec.delta()
 }
 
 #[no_mangle]
-pub extern fn complex_data32(vector: &DataVector32) -> &[Complex32] {
-    vector.complex_data()
+pub extern "C" fn complex_data32(vector: &VecBuf) -> &[Complex32] {
+    vector.vec.complex(..)
 }
 
 #[no_mangle]
-pub extern fn get_allocated_len32(vector: &DataVector32) -> usize {
-    vector.allocated_len()
+pub extern "C" fn get_allocated_len32(vector: &VecBuf) -> usize {
+    vector.vec.alloc_len()
 }
 
 #[no_mangle]
-pub extern fn add_vector32(vector: Box<DataVector32>, operand: &DataVector32) -> VectorResult<DataVector32> {
-    convert_vec!(vector.add_vector(operand))
+pub extern "C" fn add32(vector: Box<VecBuf>, operand: &VecBuf) -> VectorInteropResult<VecBuf> {
+    vector.convert_vec(|v, _| v.add(&operand.vec))
 }
 
 #[no_mangle]
-pub extern fn subtract_vector32(vector: Box<DataVector32>, operand: &DataVector32) -> VectorResult<DataVector32> {
-    convert_vec!(vector.subtract_vector(operand))
+pub extern "C" fn sub32(vector: Box<VecBuf>, operand: &VecBox) -> VectorInteropResult<VecBuf> {
+    vector.convert_vec(|v, _| v.sub(&operand.vec))
 }
 
 #[no_mangle]
-pub extern fn divide_vector32(vector: Box<DataVector32>, operand: &DataVector32) -> VectorResult<DataVector32> {
-    convert_vec!(vector.divide_vector(operand))
+pub extern "C" fn div32(vector: Box<VecBuf>, operand: &VecBuf) -> VectorInteropResult<VecBuf> {
+    vector.convert_vec(|v, _| v.div(&operand.vec))
 }
 
 #[no_mangle]
-pub extern fn multiply_vector32(vector: Box<DataVector32>, operand: &DataVector32) -> VectorResult<DataVector32> {
-    convert_vec!(vector.multiply_vector(operand))
+pub extern "C" fn mul32(vector: Box<VecBuf>, operand: &VecBuf) -> VectorInteropResult<VecBuf> {
+    vector.convert_vec(|v, _| v.mul(&operand.vec))
 }
 
 #[no_mangle]
-pub extern fn real_dot_product32(vector: &DataVector32, operand: &DataVector32) -> ScalarResult<f32> {
-    convert_scalar!(vector.real_dot_product(operand), 0.0)
+pub extern "C" fn real_dot_product32(vector: &VecBuf,
+                                     operand: &VecBuf)
+                                     -> ScalarInteropResult<f32> {
+    vector.convert_scalar(|v| {
+        DotProductOps::<f32, GenDspVec<Vec<f32>, f32>>::dot_product(v, &operand.vec)
+    },
+    0.0)
 }
 
 #[no_mangle]
-pub extern fn complex_dot_product32(vector: &DataVector32, operand: &DataVector32) -> ScalarResult<Complex32> {
-    convert_scalar!(vector.complex_dot_product(operand), Complex32::new(0.0, 0.0))
+pub extern "C" fn complex_dot_product32(vector: &VecBuf,
+                                        operand: &VecBuf)
+                                        -> ScalarInteropResult<Complex32> {
+    vector.convert_scalar(|v| {
+        DotProductOps::<Complex32, GenDspVec<Vec<f32>, f32>>::dot_product(v, &operand.vec)
+    },
+    Complex32::new(0.0, 0.0))
 }
 
 #[no_mangle]
-pub extern fn real_statistics32(vector: &DataVector32) -> Statistics<f32> {
-    vector.real_statistics()
+pub extern "C" fn real_statistics32(vector: &VecBuf) -> Statistics<f32> {
+    vector.vec.statistics()
 }
 
 #[no_mangle]
-pub extern fn complex_statistics32(vector: &DataVector32) -> Statistics<Complex32> {
-    vector.complex_statistics()
+pub extern "C" fn complex_statistics32(vector: &VecBuf) -> Statistics<Complex32> {
+    vector.vec.statistics()
+}
+
+#[no_mangle]
+pub extern "C" fn real_sum32(vector: &VecBuf) -> f32 {
+    vector.vec.sum()
+}
+
+#[no_mangle]
+pub extern "C" fn real_sum_sq32(vector: &VecBuf) -> f32 {
+    vector.vec.sum_sq()
+}
+
+#[no_mangle]
+pub extern "C" fn complex_sum32(vector: &VecBuf) -> Complex32 {
+    vector.vec.sum()
+}
+
+#[no_mangle]
+pub extern "C" fn complex_sum_sq32(vector: &VecBuf) -> Complex32 {
+    vector.vec.sum_sq()
 }
 
 /// `padding_option` argument is translated to:
@@ -152,1237 +201,936 @@ pub extern fn complex_statistics32(vector: &DataVector32) -> Statistics<Complex3
 /// 2. `1` for [`PaddingOption::Surround`](../../enum.PaddingOption.html)
 /// 2. `2` for [`PaddingOption::Center`](../../enum.PaddingOption.html)
 #[no_mangle]
-pub extern fn zero_pad32(vector: Box<DataVector32>, points: usize, padding_option: i32) -> VectorResult<DataVector32> {
+pub extern "C" fn zero_pad32(vector: Box<VecBuf>,
+                             points: usize,
+                             padding_option: i32)
+                             -> VectorInteropResult<VecBuf> {
     let padding_option = translate_to_padding_option(padding_option);
-    convert_vec!(vector.zero_pad(points, padding_option))
+    vector.convert_vec(|v, b| Ok(v.zero_pad_b(b, points, padding_option)))
 }
 
 #[no_mangle]
-pub extern fn zero_interleave32(vector: Box<DataVector32>, factor: i32) -> VectorResult<DataVector32> {
-    convert_vec!(vector.zero_interleave(factor as u32))
+pub extern "C" fn zero_interleave32(vector: Box<VecBuf>,
+                                    factor: i32)
+                                    -> VectorInteropResult<VecBuf> {
+    vector.convert_vec(|v, b| Ok(v.zero_interleave_b(b, factor as u32)))
 }
 
 #[no_mangle]
-pub extern fn diff32(vector: Box<DataVector32>) -> VectorResult<DataVector32> {
-    convert_vec!(vector.diff())
+pub extern "C" fn diff32(vector: Box<VecBuf>) -> VectorInteropResult<VecBuf> {
+    vector.convert_vec(|v, _| Ok(v.diff()))
 }
 
 #[no_mangle]
-pub extern fn diff_with_start32(vector: Box<DataVector32>) -> VectorResult<DataVector32> {
-    convert_vec!(vector.diff_with_start())
+pub extern "C" fn diff_with_start32(vector: Box<VecBuf>) -> VectorInteropResult<VecBuf> {
+    vector.convert_vec(|v, _| Ok(v.diff_with_start()))
 }
 
 #[no_mangle]
-pub extern fn cum_sum32(vector: Box<DataVector32>) -> VectorResult<DataVector32> {
-    convert_vec!(vector.cum_sum())
+pub extern "C" fn cum_sum32(vector: Box<VecBuf>) -> VectorInteropResult<VecBuf> {
+    vector.convert_vec(|v, _| Ok(v.cum_sum()))
 }
 
 #[no_mangle]
-pub extern fn real_offset32(vector: Box<DataVector32>, value: f32) -> VectorResult<DataVector32> {
-    convert_vec!(vector.real_offset(value))
+pub extern "C" fn real_offset32(vector: Box<VecBuf>, value: f32) -> VectorInteropResult<VecBuf> {
+    vector.convert_vec(|v, _| Ok(v.offset(value)))
 }
 
 #[no_mangle]
-pub extern fn real_scale32(vector: Box<DataVector32>, value: f32) -> VectorResult<DataVector32> {
-    convert_vec!(vector.real_scale(value))
+pub extern "C" fn real_scale32(vector: Box<VecBuf>, value: f32) -> VectorInteropResult<VecBuf> {
+    vector.convert_vec(|v, _| Ok(v.scale(value)))
 }
 
 #[no_mangle]
-pub extern fn abs32(vector: Box<DataVector32>) -> VectorResult<DataVector32> {
-    convert_vec!(vector.abs())
+pub extern "C" fn abs32(vector: Box<VecBuf>) -> VectorInteropResult<VecBuf> {
+    vector.convert_vec(|v, _| Ok(v.abs()))
 }
 
 #[no_mangle]
-pub extern fn sqrt32(vector: Box<DataVector32>) -> VectorResult<DataVector32> {
-    convert_vec!(vector.sqrt())
+pub extern "C" fn sqrt32(vector: Box<VecBuf>) -> VectorInteropResult<VecBuf> {
+    vector.convert_vec(|v, _| Ok(v.sqrt()))
 }
 
 #[no_mangle]
-pub extern fn square32(vector: Box<DataVector32>) -> VectorResult<DataVector32> {
-    convert_vec!(vector.square())
+pub extern "C" fn square32(vector: Box<VecBuf>) -> VectorInteropResult<VecBuf> {
+    vector.convert_vec(|v, _| Ok(v.square()))
 }
 
 #[no_mangle]
-pub extern fn root32(vector: Box<DataVector32>, value: f32) -> VectorResult<DataVector32> {
-    convert_vec!(vector.root(value))
+pub extern "C" fn root32(vector: Box<VecBuf>, value: f32) -> VectorInteropResult<VecBuf> {
+    vector.convert_vec(|v, _| Ok(v.root(value)))
 }
 
 #[no_mangle]
-pub extern fn powf32(vector: Box<DataVector32>, value: f32) -> VectorResult<DataVector32> {
-    convert_vec!(vector.powf(value))
+pub extern "C" fn powf32(vector: Box<VecBuf>, value: f32) -> VectorInteropResult<VecBuf> {
+    vector.convert_vec(|v, _| Ok(v.powf(value)))
 }
 
 #[no_mangle]
-pub extern fn ln32(vector: Box<DataVector32>) -> VectorResult<DataVector32> {
-    convert_vec!(vector.ln())
+pub extern "C" fn ln32(vector: Box<VecBuf>) -> VectorInteropResult<VecBuf> {
+    vector.convert_vec(|v, _| Ok(v.ln()))
 }
 
 #[no_mangle]
-pub extern fn exp32(vector: Box<DataVector32>) -> VectorResult<DataVector32> {
-    convert_vec!(vector.exp())
+pub extern "C" fn exp32(vector: Box<VecBuf>) -> VectorInteropResult<VecBuf> {
+    vector.convert_vec(|v, _| Ok(v.exp()))
 }
 
 #[no_mangle]
-pub extern fn log32(vector: Box<DataVector32>, value: f32) -> VectorResult<DataVector32> {
-    convert_vec!(vector.log(value))
+pub extern "C" fn log32(vector: Box<VecBuf>, value: f32) -> VectorInteropResult<VecBuf> {
+    vector.convert_vec(|v, _| Ok(v.log(value)))
 }
 
 #[no_mangle]
-pub extern fn expf32(vector: Box<DataVector32>, value: f32) -> VectorResult<DataVector32> {
-    convert_vec!(vector.expf(value))
+pub extern "C" fn expf32(vector: Box<VecBuf>, value: f32) -> VectorInteropResult<VecBuf> {
+    vector.convert_vec(|v, _| Ok(v.expf(value)))
 }
 
 #[no_mangle]
-pub extern fn to_complex32(vector: Box<DataVector32>) -> VectorResult<DataVector32> {
-    convert_vec!(vector.to_complex())
+pub extern "C" fn to_complex32(vector: Box<VecBuf>) -> VectorInteropResult<VecBuf> {
+    vector.trans_vec(|v, b| Ok(v.to_complex_b(b)))
 }
 
 #[no_mangle]
-pub extern fn sin32(vector: Box<DataVector32>) -> VectorResult<DataVector32> {
-    convert_vec!(vector.sin())
+pub extern "C" fn sin32(vector: Box<VecBuf>) -> VectorInteropResult<VecBuf> {
+    vector.convert_vec(|v, _| Ok(v.sin()))
 }
 
 #[no_mangle]
-pub extern fn cos32(vector: Box<DataVector32>) -> VectorResult<DataVector32> {
-    convert_vec!(vector.cos())
+pub extern "C" fn cos32(vector: Box<VecBuf>) -> VectorInteropResult<VecBuf> {
+    vector.convert_vec(|v, _| Ok(v.cos()))
 }
 
 #[no_mangle]
-pub extern fn tan32(vector: Box<DataVector32>) -> VectorResult<DataVector32> {
-    convert_vec!(vector.tan())
+pub extern "C" fn tan32(vector: Box<VecBuf>) -> VectorInteropResult<VecBuf> {
+    vector.convert_vec(|v, _| Ok(v.tan()))
 }
 
 #[no_mangle]
-pub extern fn asin32(vector: Box<DataVector32>) -> VectorResult<DataVector32> {
-    convert_vec!(vector.asin())
+pub extern "C" fn asin32(vector: Box<VecBuf>) -> VectorInteropResult<VecBuf> {
+    vector.convert_vec(|v, _| Ok(v.asin()))
 }
 
 #[no_mangle]
-pub extern fn acos32(vector: Box<DataVector32>) -> VectorResult<DataVector32> {
-    convert_vec!(vector.acos())
+pub extern "C" fn acos32(vector: Box<VecBuf>) -> VectorInteropResult<VecBuf> {
+    vector.convert_vec(|v, _| Ok(v.acos()))
 }
 
 #[no_mangle]
-pub extern fn atan32(vector: Box<DataVector32>) -> VectorResult<DataVector32> {
-    convert_vec!(vector.tan())
+pub extern "C" fn atan32(vector: Box<VecBuf>) -> VectorInteropResult<VecBuf> {
+    vector.convert_vec(|v, _| Ok(v.tan()))
 }
 
 #[no_mangle]
-pub extern fn sinh32(vector: Box<DataVector32>) -> VectorResult<DataVector32> {
-    convert_vec!(vector.sinh())
+pub extern "C" fn sinh32(vector: Box<VecBuf>) -> VectorInteropResult<VecBuf> {
+    vector.convert_vec(|v, _| Ok(v.sinh()))
 }
 #[no_mangle]
-pub extern fn cosh32(vector: Box<DataVector32>) -> VectorResult<DataVector32> {
-    convert_vec!(vector.cosh())
-}
-
-#[no_mangle]
-pub extern fn tanh32(vector: Box<DataVector32>) -> VectorResult<DataVector32> {
-    convert_vec!(vector.tanh())
+pub extern "C" fn cosh32(vector: Box<VecBuf>) -> VectorInteropResult<VecBuf> {
+    vector.convert_vec(|v, _| Ok(v.cosh()))
 }
 
 #[no_mangle]
-pub extern fn asinh32(vector: Box<DataVector32>) -> VectorResult<DataVector32> {
-    convert_vec!(vector.asinh())
+pub extern "C" fn tanh32(vector: Box<VecBuf>) -> VectorInteropResult<VecBuf> {
+    vector.convert_vec(|v, _| Ok(v.tanh()))
 }
 
 #[no_mangle]
-pub extern fn acosh32(vector: Box<DataVector32>) -> VectorResult<DataVector32> {
-    convert_vec!(vector.acosh())
+pub extern "C" fn asinh32(vector: Box<VecBuf>) -> VectorInteropResult<VecBuf> {
+    vector.convert_vec(|v, _| Ok(v.asinh()))
 }
 
 #[no_mangle]
-pub extern fn atanh32(vector: Box<DataVector32>) -> VectorResult<DataVector32> {
-    convert_vec!(vector.atanh())
+pub extern "C" fn acosh32(vector: Box<VecBuf>) -> VectorInteropResult<VecBuf> {
+    vector.convert_vec(|v, _| Ok(v.acosh()))
 }
 
 #[no_mangle]
-pub extern fn wrap32(vector: Box<DataVector32>, value: f32) -> VectorResult<DataVector32> {
-    convert_vec!(vector.wrap(value))
+pub extern "C" fn atanh32(vector: Box<VecBuf>) -> VectorInteropResult<VecBuf> {
+    vector.convert_vec(|v, _| Ok(v.atanh()))
 }
 
 #[no_mangle]
-pub extern fn unwrap32(vector: Box<DataVector32>, value: f32) -> VectorResult<DataVector32> {
-    convert_vec!(vector.unwrap(value))
+pub extern "C" fn wrap32(vector: Box<VecBuf>, value: f32) -> VectorInteropResult<VecBuf> {
+    vector.convert_vec(|v, _| Ok(v.wrap(value)))
 }
 
 #[no_mangle]
-pub extern fn swap_halves32(vector: Box<DataVector32>) -> VectorResult<DataVector32> {
-    convert_vec!(vector.swap_halves())
+pub extern "C" fn unwrap32(vector: Box<VecBuf>, value: f32) -> VectorInteropResult<VecBuf> {
+    vector.convert_vec(|v, _| Ok(v.unwrap(value)))
 }
 
 #[no_mangle]
-pub extern fn complex_offset32(vector: Box<DataVector32>, real: f32, imag: f32) -> VectorResult<DataVector32> {
-    convert_vec!(vector.complex_offset(Complex32::new(real, imag)))
+pub extern "C" fn swap_halves32(vector: Box<VecBuf>) -> VectorInteropResult<VecBuf> {
+    vector.convert_vec(|v, b| Ok(v.swap_halves_b(b)))
 }
 
 #[no_mangle]
-pub extern fn complex_scale32(vector: Box<DataVector32>, real: f32, imag: f32) -> VectorResult<DataVector32> {
-    convert_vec!(vector.complex_scale(Complex32::new(real, imag)))
+pub extern "C" fn complex_offset32(vector: Box<VecBuf>,
+                                   real: f32,
+                                   imag: f32)
+                                   -> VectorInteropResult<VecBuf> {
+    vector.convert_vec(|v, _| Ok(v.offset(Complex32::new(real, imag))))
 }
 
 #[no_mangle]
-pub extern fn complex_divide32(vector: Box<DataVector32>, real: f32, imag: f32) -> VectorResult<DataVector32> {
-    convert_vec!(vector.complex_scale(Complex32::new(1.0, 0.0) / Complex32::new(real, imag)))
+pub extern "C" fn complex_scale32(vector: Box<VecBuf>,
+                                  real: f32,
+                                  imag: f32)
+                                  -> VectorInteropResult<VecBuf> {
+    vector.convert_vec(|v, _| Ok(v.scale(Complex32::new(real, imag))))
 }
 
 #[no_mangle]
-pub extern fn magnitude32(vector: Box<DataVector32>) -> VectorResult<DataVector32> {
-    convert_vec!(vector.magnitude())
+pub extern "C" fn complex_divide32(vector: Box<VecBuf>,
+                                   real: f32,
+                                   imag: f32)
+                                   -> VectorInteropResult<VecBuf> {
+    vector.convert_vec(|v, _| Ok(v.scale(Complex32::new(1.0, 0.0) / Complex32::new(real, imag))))
 }
 
 #[no_mangle]
-pub extern fn get_magnitude32(vector: Box<DataVector32>, destination: &mut DataVector32) -> i32 {
-    convert_void!(vector.get_magnitude(destination))
+pub extern "C" fn magnitude32(vector: Box<VecBuf>) -> VectorInteropResult<VecBuf> {
+    vector.trans_vec(|v, b| Ok(v.magnitude_b(b)))
 }
 
 #[no_mangle]
-pub extern fn magnitude_squared32(vector: Box<DataVector32>) -> VectorResult<DataVector32> {
-    convert_vec!(vector.magnitude_squared())
+pub extern "C" fn get_magnitude32(vector: Box<VecBuf>, destination: &mut VecBuf) -> i32 {
+    convert_void(Ok(vector.vec.get_magnitude(&mut destination.vec)))
 }
 
 #[no_mangle]
-pub extern fn conj32(vector: Box<DataVector32>) -> VectorResult<DataVector32> {
-    convert_vec!(vector.conj())
+pub extern "C" fn get_magnitude_squared32(vector: Box<VecBuf>, destination: &mut VecBuf) -> i32 {
+    convert_void(Ok(vector.vec.get_magnitude_squared(&mut destination.vec)))
 }
 
 #[no_mangle]
-pub extern fn to_real32(vector: Box<DataVector32>) -> VectorResult<DataVector32> {
-    convert_vec!(vector.to_real())
+pub extern "C" fn magnitude_squared32(vector: Box<VecBuf>) -> VectorInteropResult<VecBuf> {
+    vector.trans_vec(|v, b| Ok(v.magnitude_squared_b(b)))
 }
 
 #[no_mangle]
-pub extern fn to_imag32(vector: Box<DataVector32>) -> VectorResult<DataVector32> {
-    convert_vec!(vector.to_imag())
+pub extern "C" fn conj32(vector: Box<VecBuf>) -> VectorInteropResult<VecBuf> {
+    vector.convert_vec(|v, _| Ok(v.conj()))
 }
 
 #[no_mangle]
-pub extern fn map_inplace_complex32(vector: Box<DataVector32>, map: extern fn(Complex32, usize) -> Complex32) -> VectorResult<DataVector32> {
-    convert_vec!(vector.map_inplace_complex((), move|v, i, _|map(v, i)))
+pub extern "C" fn to_real32(vector: Box<VecBuf>) -> VectorInteropResult<VecBuf> {
+    vector.trans_vec(|v, b| Ok(v.to_real_b(b)))
+}
+
+#[no_mangle]
+pub extern "C" fn to_imag32(vector: Box<VecBuf>) -> VectorInteropResult<VecBuf> {
+    vector.trans_vec(|v, b| Ok(v.to_imag_b(b)))
+}
+
+#[no_mangle]
+pub extern "C" fn map_inplace_real32(vector: Box<VecBuf>,
+                                     map: extern "C" fn(f32, usize) -> f32)
+                                     -> VectorInteropResult<VecBuf> {
+    vector.convert_vec(|v, _| Ok(v.map_inplace((), move |v, i, _| map(v, i))))
+}
+
+#[no_mangle]
+pub extern "C" fn map_inplace_complex32(vector: Box<VecBuf>,
+                                        map: extern "C" fn(Complex32, usize) -> Complex32)
+                                        -> VectorInteropResult<VecBuf> {
+    vector.convert_vec(|v, _| Ok(v.map_inplace((), move |v, i, _| map(v, i))))
 }
 
 /// Warning: This function interface heavily works around the Rust type system and the safety
 /// it provides. Use with great care!
 #[no_mangle]
-pub extern fn map_aggregate_complex32(vector: Box<DataVector32>, map: extern fn(Complex32, usize) -> *const c_void, aggregate: extern fn(*const c_void, *const c_void) -> *const c_void) -> ScalarResult<*const c_void> {
-    unsafe 
-    {
-        let result = convert_scalar!(
-            vector.map_aggregate_complex(
-                (), 
-                move|v, i, _| mem::transmute(map(v, i)),
-                move|a: usize, b: usize| mem::transmute(aggregate(mem::transmute(a), mem::transmute(b)))),
-            mem::transmute(0usize)
-        );
+pub extern "C" fn map_aggregate_real32(vector: &VecBuf,
+                                       map: extern "C" fn(f32, usize) -> *const c_void,
+                                       aggregate: extern "C" fn(*const c_void, *const c_void)
+                                                                -> *const c_void)
+                                       -> ScalarResult<*const c_void> {
+    unsafe {
+        let result = vector.convert_scalar(|v| {
+            v.map_aggregate((),
+                            move |v, i, _| mem::transmute(map(v, i)),
+                            move |a: usize, b: usize| {
+                                mem::transmute(aggregate(mem::transmute(a), mem::transmute(b)))
+                            })
+        },
+                                           mem::transmute(0usize));
+        mem::transmute(result)
+    }
+}
+
+/// Warning: This function interface heavily works around the Rust type system and the safety
+/// it provides. Use with great care!
+#[no_mangle]
+pub extern "C" fn map_aggregate_complex32(vector: &VecBuf,
+                                          map: extern "C" fn(Complex32, usize) -> *const c_void,
+                                          aggregate: extern "C" fn(*const c_void, *const c_void)
+                                                                   -> *const c_void)
+                                          -> ScalarResult<*const c_void> {
+    unsafe {
+        let result = vector.convert_scalar(|v| {
+            v.map_aggregate((),
+                            move |v, i, _| mem::transmute(map(v, i)),
+                            move |a: usize, b: usize| {
+                                mem::transmute(aggregate(mem::transmute(a), mem::transmute(b)))
+                            })
+        },
+                                           mem::transmute(0usize));
         mem::transmute(result)
     }
 }
 
 #[no_mangle]
-pub extern fn get_real32(vector: Box<DataVector32>, destination: &mut DataVector32) -> i32 {
-    convert_void!(vector.get_real(destination))
+pub extern "C" fn get_real32(vector: Box<VecBuf>, destination: &mut VecBuf) -> i32 {
+    convert_void(Ok(vector.vec.get_real(&mut destination.vec)))
 }
 
 #[no_mangle]
-pub extern fn get_imag32(vector: Box<DataVector32>, destination: &mut DataVector32) -> i32 {
-    convert_void!(vector.get_imag(destination))
+pub extern "C" fn get_imag32(vector: Box<VecBuf>, destination: &mut VecBuf) -> i32 {
+    convert_void(Ok(vector.vec.get_imag(&mut destination.vec)))
 }
 
 #[no_mangle]
-pub extern fn phase32(vector: Box<DataVector32>) -> VectorResult<DataVector32> {
-    convert_vec!(vector.phase())
+pub extern "C" fn phase32(vector: Box<VecBuf>) -> VectorInteropResult<VecBuf> {
+    vector.trans_vec(|v, b| Ok(v.phase_b(b)))
 }
 
 #[no_mangle]
-pub extern fn get_phase32(vector: Box<DataVector32>, destination: &mut DataVector32) -> i32 {
-    convert_void!(vector.get_phase(destination))
+pub extern "C" fn get_phase32(vector: Box<VecBuf>, destination: &mut VecBuf) -> i32 {
+    convert_void(Ok(vector.vec.get_phase(&mut destination.vec)))
 }
 
 #[no_mangle]
-pub extern fn plain_fft32(vector: Box<DataVector32>) -> VectorResult<DataVector32> {
-    convert_vec!(vector.plain_fft())
+pub extern "C" fn plain_fft32(vector: Box<VecBuf>) -> VectorInteropResult<VecBuf> {
+    vector.trans_vec(|v, b| Ok(v.plain_fft(b)))
 }
 
 #[no_mangle]
-pub extern fn plain_sfft32(vector: Box<DataVector32>) -> VectorResult<DataVector32> {
-    convert_vec!(vector.plain_sfft())
+pub extern "C" fn plain_sfft32(vector: Box<VecBuf>) -> VectorInteropResult<VecBuf> {
+    vector.trans_vec(|v, b| v.plain_sfft(b))
 }
 
 #[no_mangle]
-pub extern fn plain_ifft32(vector: Box<DataVector32>) -> VectorResult<DataVector32> {
-    convert_vec!(vector.plain_ifft())
+pub extern "C" fn plain_ifft32(vector: Box<VecBuf>) -> VectorInteropResult<VecBuf> {
+    vector.trans_vec(|v, b| Ok(v.plain_ifft(b)))
 }
 
 #[no_mangle]
-pub extern fn clone32(vector: Box<DataVector32>) -> Box<DataVector32> {
-    vector.clone()
+pub extern "C" fn clone32(vector: Box<VecBuf>) -> Box<VecBuf> {
+    Box::new(VecBuf {
+        vec: vector.vec.clone(),
+        buffer: SingleBuffer::new(),
+    })
 }
 
 #[no_mangle]
-pub extern fn multiply_complex_exponential32(vector: Box<DataVector32>, a: f32, b: f32) -> VectorResult<DataVector32> {
-    convert_vec!(vector.multiply_complex_exponential(a, b))
+pub extern "C" fn multiply_complex_exponential32(vector: Box<VecBuf>,
+                                                 a: f32,
+                                                 b: f32)
+                                                 -> VectorInteropResult<VecBuf> {
+    vector.convert_vec(|v, _| Ok(v.multiply_complex_exponential(a, b)))
 }
 
 #[no_mangle]
-pub extern fn add_smaller_vector32(vector: Box<DataVector32>, operand: &DataVector32) -> VectorResult<DataVector32> {
-    convert_vec!(vector.add_smaller_vector(operand))
+pub extern "C" fn add_vector32(vector: Box<VecBuf>,
+                               operand: &VecBuf)
+                               -> VectorInteropResult<VecBuf> {
+    vector.convert_vec(|v, _| v.add(&operand.vec))
 }
 
 #[no_mangle]
-pub extern fn subtract_smaller_vector32(vector: Box<DataVector32>, operand: &DataVector32) -> VectorResult<DataVector32> {
-    convert_vec!(vector.subtract_smaller_vector(operand))
+pub extern "C" fn sub_vector32(vector: Box<VecBuf>,
+                               operand: &VecBuf)
+                               -> VectorInteropResult<VecBuf> {
+    vector.convert_vec(|v, _| v.sub(&operand.vec))
 }
 
 #[no_mangle]
-pub extern fn divide_smaller_vector32(vector: Box<DataVector32>, operand: &DataVector32) -> VectorResult<DataVector32> {
-    convert_vec!(vector.divide_smaller_vector(operand))
+pub extern "C" fn div_vector32(vector: Box<VecBuf>,
+                               operand: &VecBuf)
+                               -> VectorInteropResult<VecBuf> {
+    vector.convert_vec(|v, _| v.div(&operand.vec))
 }
 
 #[no_mangle]
-pub extern fn multiply_smaller_vector32(vector: Box<DataVector32>, operand: &DataVector32) -> VectorResult<DataVector32> {
-    convert_vec!(vector.multiply_smaller_vector(operand))
+pub extern "C" fn mul_vector32(vector: Box<VecBuf>,
+                               operand: &VecBuf)
+                               -> VectorInteropResult<VecBuf> {
+    vector.convert_vec(|v, _| v.mul(&operand.vec))
 }
 
 #[no_mangle]
-pub extern fn get_real_imag32(vector: Box<DataVector32>, real: &mut DataVector32, imag: &mut DataVector32) -> i32 {
-    convert_void!(vector.get_real_imag(real, imag))
+pub extern "C" fn add_smaller_vector32(vector: Box<VecBuf>,
+                                       operand: &VecBuf)
+                                       -> VectorInteropResult<VecBuf> {
+    vector.convert_vec(|v, _| v.add_smaller(&operand.vec))
 }
 
 #[no_mangle]
-pub extern fn get_mag_phase32(vector: Box<DataVector32>, mag: &mut DataVector32, phase: &mut DataVector32) -> i32 {
-    convert_void!(vector.get_mag_phase(mag, phase))
+pub extern "C" fn sub_smaller_vector32(vector: Box<VecBuf>,
+                                       operand: &VecBuf)
+                                       -> VectorInteropResult<VecBuf> {
+    vector.convert_vec(|v, _| v.sub_smaller(&operand.vec))
 }
 
 #[no_mangle]
-pub extern fn set_real_imag32(vector: Box<DataVector32>, real: &DataVector32, imag: &DataVector32) -> VectorResult<DataVector32> {
-    convert_vec!(vector.set_real_imag(real, imag))
+pub extern "C" fn div_smaller_vector32(vector: Box<VecBuf>,
+                                       operand: &VecBuf)
+                                       -> VectorInteropResult<VecBuf> {
+    vector.convert_vec(|v, _| v.div_smaller(&operand.vec))
 }
 
 #[no_mangle]
-pub extern fn set_mag_phase32(vector: Box<DataVector32>, mag: &DataVector32, phase: &DataVector32) -> VectorResult<DataVector32> {
-    convert_vec!(vector.set_mag_phase(mag, phase))
+pub extern "C" fn mul_smaller_vector32(vector: Box<VecBuf>,
+                                       operand: &VecBuf)
+                                       -> VectorInteropResult<VecBuf> {
+    vector.convert_vec(|v, _| v.mul_smaller(&operand.vec))
 }
 
 #[no_mangle]
-pub extern fn split_into32(vector: &DataVector32, targets: *mut Box<DataVector32>, len: usize) -> i32 {
+pub extern "C" fn get_real_imag32(vector: Box<VecBuf>,
+                                  real: &mut VecBuf,
+                                  imag: &mut VecBuf)
+                                  -> i32 {
+    convert_void(Ok(vector.vec.get_real_imag(&mut real.vec, &mut imag.vec)))
+}
+
+#[no_mangle]
+pub extern "C" fn get_mag_phase32(vector: Box<VecBuf>,
+                                  mag: &mut VecBuf,
+                                  phase: &mut VecBuf)
+                                  -> i32 {
+    convert_void(Ok(vector.vec.get_mag_phase(&mut mag.vec, &mut phase.vec)))
+}
+
+#[no_mangle]
+pub extern "C" fn set_real_imag32(vector: Box<VecBuf>,
+                                  real: &VecBuf,
+                                  imag: &VecBuf)
+                                  -> VectorInteropResult<VecBuf> {
+    vector.convert_vec(|v, _| v.set_real_imag(&real.vec, &imag.vec))
+}
+
+#[no_mangle]
+pub extern "C" fn set_mag_phase32(vector: Box<VecBuf>,
+                                  mag: &VecBuf,
+                                  phase: &VecBuf)
+                                  -> VectorInteropResult<VecBuf> {
+    vector.convert_vec(|v, _| v.set_mag_phase(&mag.vec, &phase.vec))
+}
+
+#[no_mangle]
+pub extern "C" fn split_into32(vector: &VecBuf, targets: *mut Box<VecBuf>, len: usize) -> i32 {
     unsafe {
         let targets = slice::from_raw_parts_mut(targets, len);
-        convert_void!(vector.split_into(targets))
+        let mut targets: Vec<&mut GenDspVec<Vec<f32>, f32>> =
+            targets.iter_mut().map(|x| &mut x.vec).collect();
+        convert_void(vector.vec.split_into(&mut targets))
     }
 }
 
 #[no_mangle]
-pub extern fn merge32(vector: Box<DataVector32>, sources: *const Box<DataVector32>, len: usize) -> VectorResult<DataVector32> {
+pub extern "C" fn merge32(vector: Box<VecBuf>,
+                          sources: *const Box<VecBuf>,
+                          len: usize)
+                          -> VectorInteropResult<VecBuf> {
     unsafe {
         let sources = slice::from_raw_parts(sources, len);
-        convert_vec!(vector.merge(sources))
+        let sources: Vec<&GenDspVec<Vec<f32>, f32>> = sources.iter().map(|x| &x.vec).collect();
+        vector.convert_vec(|v, _| v.merge(&sources))
     }
 }
 
 #[no_mangle]
-pub extern fn override_data32(vector: Box<DataVector32>, data: *const f32, len: usize) -> VectorResult<DataVector32> {
+pub extern "C" fn overwrite_data32(mut vector: Box<VecBuf>,
+                                   data: *const f32,
+                                   len: usize)
+                                   -> VectorInteropResult<VecBuf> {
     let data = unsafe { slice::from_raw_parts(data, len) };
-    convert_vec!(vector.override_data(data))
+    if len < vector.vec.len() {
+        vector.vec[0..len].clone_from_slice(&data);
+        VectorInteropResult {
+            result_code: 0,
+            vector: vector,
+        }
+    } else {
+        VectorInteropResult {
+            result_code: translate_error(ErrorReason::InvalidArgumentLength),
+            vector: vector,
+        }
+    }
 }
 
 #[no_mangle]
-pub extern fn real_statistics_splitted32(vector: &DataVector32, data: *mut Statistics<f32>, len: usize) -> i32 {
+pub extern "C" fn real_statistics_splitted32(vector: &VecBuf,
+                                             data: *mut Statistics<f32>,
+                                             len: usize)
+                                             -> i32 {
     let mut data = unsafe { slice::from_raw_parts_mut(data, len) };
-    let stats = vector.real_statistics_splitted(data.len());
+    let stats = vector.vec.statistics_splitted(data.len());
     for i in 0..stats.len() {
         data[i] = stats[i];
     }
-    
+
     0
 }
 
 #[no_mangle]
-pub extern fn complex_statistics_splitted32(vector: &DataVector32, data: *mut Statistics<Complex32>, len: usize) -> i32 {
+pub extern "C" fn complex_statistics_splitted32(vector: &VecBuf,
+                                                data: *mut Statistics<Complex32>,
+                                                len: usize)
+                                                -> i32 {
     let mut data = unsafe { slice::from_raw_parts_mut(data, len) };
-    let stats = vector.complex_statistics_splitted(data.len());
+    let stats = vector.vec.statistics_splitted(data.len());
     for i in 0..stats.len() {
         data[i] = stats[i];
     }
-    
+
     0
 }
 
 #[no_mangle]
-pub extern fn fft32(vector: Box<DataVector32>) -> VectorResult<DataVector32> {
-    convert_vec!(vector.fft())
+pub extern "C" fn fft32(vector: Box<VecBuf>) -> VectorInteropResult<VecBuf> {
+    vector.trans_vec(|v, b| Ok(v.fft(b)))
 }
 
 #[no_mangle]
-pub extern fn sfft32(vector: Box<DataVector32>) -> VectorResult<DataVector32> {
-    convert_vec!(vector.sfft())
+pub extern "C" fn sfft32(vector: Box<VecBuf>) -> VectorInteropResult<VecBuf> {
+    vector.trans_vec(|v, b| v.sfft(b))
 }
 
 #[no_mangle]
-pub extern fn ifft32(vector: Box<DataVector32>) -> VectorResult<DataVector32> {
-    convert_vec!(vector.ifft())
+pub extern "C" fn ifft32(vector: Box<VecBuf>) -> VectorInteropResult<VecBuf> {
+    vector.trans_vec(|v, b| Ok(v.ifft(b)))
 }
 
 #[no_mangle]
-pub extern fn plain_sifft32(vector: Box<DataVector32>) -> VectorResult<DataVector32> {
-    convert_vec!(vector.plain_sifft())
+pub extern "C" fn plain_sifft32(vector: Box<VecBuf>) -> VectorInteropResult<VecBuf> {
+    vector.trans_vec(|v, b| v.plain_sifft(b))
 }
 
 #[no_mangle]
-pub extern fn sifft32(vector: Box<DataVector32>) -> VectorResult<DataVector32> {
-    convert_vec!(vector.sifft())
+pub extern "C" fn sifft32(vector: Box<VecBuf>) -> VectorInteropResult<VecBuf> {
+    vector.trans_vec(|v, b| v.sifft(b))
 }
 
 #[no_mangle]
-pub extern fn mirror32(vector: Box<DataVector32>) -> VectorResult<DataVector32> {
-    convert_vec!(vector.mirror())
+pub extern "C" fn mirror32(vector: Box<VecBuf>) -> VectorInteropResult<VecBuf> {
+    vector.convert_vec(|v, b| Ok(v.mirror(b)))
 }
 
-pub extern fn fft_shift32(vector: Box<DataVector32>) -> VectorResult<DataVector32> {
-    convert_vec!(vector.fft_shift())
+pub extern "C" fn fft_shift32(vector: Box<VecBuf>) -> VectorInteropResult<VecBuf> {
+    vector.convert_vec(|v, b| Ok(v.fft_shift(b)))
 }
 
-pub extern fn ifft_shift32(vector: Box<DataVector32>) -> VectorResult<DataVector32> {
-    convert_vec!(vector.ifft_shift())
+pub extern "C" fn ifft_shift32(vector: Box<VecBuf>) -> VectorInteropResult<VecBuf> {
+    vector.convert_vec(|v, b| Ok(v.ifft_shift(b)))
 }
 
 /// `window` argument is translated to:
-/// 
+///
 /// 1. `0` to [`TriangularWindow`](../../window_functions/struct.TriangularWindow.html)
 /// 2. `1` to [`HammingWindow`](../../window_functions/struct.TriangularWindow.html)
 #[no_mangle]
-pub extern fn apply_window32(vector: Box<DataVector32>, window: i32) -> VectorResult<DataVector32> {
+pub extern "C" fn apply_window32(vector: Box<VecBuf>, window: i32) -> VectorInteropResult<VecBuf> {
     let window = translate_to_window_function(window);
-    convert_vec!(vector.apply_window(window.as_ref()))
+    vector.convert_vec(|v, _| Ok(v.apply_window(window.as_ref())))
 }
 
 /// See [`apply_window32`](fn.apply_window32.html) for a description of the `window` parameter.
 #[no_mangle]
-pub extern fn unapply_window32(vector: Box<DataVector32>, window: i32) -> VectorResult<DataVector32> {
+pub extern "C" fn unapply_window32(vector: Box<VecBuf>,
+                                   window: i32)
+                                   -> VectorInteropResult<VecBuf> {
     let window = translate_to_window_function(window);
-    convert_vec!(vector.unapply_window(window.as_ref()))
+    vector.convert_vec(|v, _| Ok(v.unapply_window(window.as_ref())))
 }
 
 /// See [`apply_window32`](fn.apply_window32.html) for a description of the `window` parameter.
 #[no_mangle]
-pub extern fn windowed_fft32(vector: Box<DataVector32>, window: i32) -> VectorResult<DataVector32> {
+pub extern "C" fn windowed_fft32(vector: Box<VecBuf>, window: i32) -> VectorInteropResult<VecBuf> {
     let window = translate_to_window_function(window);
-    convert_vec!(vector.windowed_fft(window.as_ref()))
+    vector.trans_vec(|v, b| Ok(v.windowed_fft(b, window.as_ref())))
 }
 
 /// See [`apply_window32`](fn.apply_window32.html) for a description of the `window` parameter.
 #[no_mangle]
-pub extern fn windowed_sfft32(vector: Box<DataVector32>, window: i32) -> VectorResult<DataVector32> {
+pub extern "C" fn windowed_sfft32(vector: Box<VecBuf>, window: i32) -> VectorInteropResult<VecBuf> {
     let window = translate_to_window_function(window);
-    convert_vec!(vector.windowed_sfft(window.as_ref()))
+    vector.trans_vec(|v, b| v.windowed_sfft(b, window.as_ref()))
 }
 
 /// See [`apply_window32`](fn.apply_window32.html) for a description of the `window` parameter.
 #[no_mangle]
-pub extern fn windowed_ifft32(vector: Box<DataVector32>, window: i32) -> VectorResult<DataVector32> {
+pub extern "C" fn windowed_ifft32(vector: Box<VecBuf>, window: i32) -> VectorInteropResult<VecBuf> {
     let window = translate_to_window_function(window);
-    convert_vec!(vector.windowed_ifft(window.as_ref()))
+    vector.trans_vec(|v, b| Ok(v.windowed_ifft(b, window.as_ref())))
 }
 
 /// See [`apply_window32`](fn.apply_window32.html) for a description of the `window` parameter.
 #[no_mangle]
-pub extern fn windowed_sifft32(vector: Box<DataVector32>, window: i32) -> VectorResult<DataVector32> {
+pub extern "C" fn windowed_sifft32(vector: Box<VecBuf>,
+                                   window: i32)
+                                   -> VectorInteropResult<VecBuf> {
     let window = translate_to_window_function(window);
-    convert_vec!(vector.windowed_sifft(window.as_ref()))
+    vector.trans_vec(|v, b| v.windowed_sifft(b, window.as_ref()))
 }
 
-/// Creates a window from the function `window` and the void pointer `window_data`. The `window_data` pointer is passed to the `window`
+/// Creates a window from the function `window` and the void pointer `window_data`.
+/// The `window_data` pointer is passed to the `window`
 /// function at every call and can be used to store parameters.
 #[no_mangle]
-pub extern fn apply_custom_window32(
-    vector: Box<DataVector32>, 
-    window: extern fn(*const c_void, usize, usize) -> f32, 
-    window_data: *const c_void,
-    is_symmetric: bool) -> VectorResult<DataVector32> {
+pub extern "C" fn apply_custom_window32(vector: Box<VecBuf>,
+                                        window: extern "C" fn(*const c_void, usize, usize) -> f32,
+                                        window_data: *const c_void,
+                                        is_symmetric: bool)
+                                        -> VectorInteropResult<VecBuf> {
     unsafe {
-        let window = ForeignWindowFunction { window_function: window, window_data: mem::transmute(window_data), is_symmetric: is_symmetric };
-        convert_vec!(vector.apply_window(&window))
+        let window = ForeignWindowFunction {
+            window_function: window,
+            window_data: mem::transmute(window_data),
+            is_symmetric: is_symmetric,
+        };
+        vector.convert_vec(|v, _| Ok(v.apply_window(&window)))
     }
 }
 
-/// See [`apply_custom_window32`](fn.apply_custom_window32.html) for a description of the `window` and `window_data` parameter.
+/// See [`apply_custom_window32`](fn.apply_custom_window32.html) for a description of the
+/// `window` and `window_data` parameter.
 #[no_mangle]
-pub extern fn unapply_custom_window32(
-    vector: Box<DataVector32>, 
-    window: extern fn(*const c_void, usize, usize) -> f32, 
-    window_data: *const c_void,
-    is_symmetric: bool) -> VectorResult<DataVector32> {
+pub extern "C" fn unapply_custom_window32(vector: Box<VecBuf>,
+                                          window: extern "C" fn(*const c_void, usize, usize) -> f32,
+                                          window_data: *const c_void,
+                                          is_symmetric: bool)
+                                          -> VectorInteropResult<VecBuf> {
     unsafe {
-        let window = ForeignWindowFunction { window_function: window, window_data: mem::transmute(window_data), is_symmetric: is_symmetric };
-        convert_vec!(vector.unapply_window(&window))
+        let window = ForeignWindowFunction {
+            window_function: window,
+            window_data: mem::transmute(window_data),
+            is_symmetric: is_symmetric,
+        };
+        vector.convert_vec(|v, _| Ok(v.unapply_window(&window)))
     }
 }
 
-/// See [`apply_custom_window32`](fn.apply_custom_window32.html) for a description of the `window` and `window_data` parameter.
+/// See [`apply_custom_window32`](fn.apply_custom_window32.html) for a description of the
+/// `window` and `window_data` parameter.
 #[no_mangle]
-pub extern fn windowed_custom_fft32(
-    vector: Box<DataVector32>, 
-    window: extern fn(*const c_void, usize, usize) -> f32, 
-    window_data: *const c_void,
-    is_symmetric: bool) -> VectorResult<DataVector32> {
+pub extern "C" fn windowed_custom_fft32(vector: Box<VecBuf>,
+                                        window: extern "C" fn(*const c_void, usize, usize) -> f32,
+                                        window_data: *const c_void,
+                                        is_symmetric: bool)
+                                        -> VectorInteropResult<VecBuf> {
     unsafe {
-        let window = ForeignWindowFunction { window_function: window, window_data: mem::transmute(window_data), is_symmetric: is_symmetric };
-        convert_vec!(vector.windowed_fft(&window))
+        let window = ForeignWindowFunction {
+            window_function: window,
+            window_data: mem::transmute(window_data),
+            is_symmetric: is_symmetric,
+        };
+        vector.trans_vec(|v, b| Ok(v.windowed_fft(b, &window)))
     }
 }
 
-/// See [`apply_custom_window32`](fn.apply_custom_window32.html) for a description of the `window` and `window_data` parameter.
+/// See [`apply_custom_window32`](fn.apply_custom_window32.html) for a description of the
+/// `window` and `window_data` parameter.
 #[no_mangle]
-pub extern fn windowed_custom_sfft32(
-    vector: Box<DataVector32>, 
-    window: extern fn(*const c_void, usize, usize) -> f32, 
-    window_data: *const c_void,
-    is_symmetric: bool) -> VectorResult<DataVector32> {
+pub extern "C" fn windowed_custom_sfft32(vector: Box<VecBuf>,
+                                         window: extern "C" fn(*const c_void, usize, usize) -> f32,
+                                         window_data: *const c_void,
+                                         is_symmetric: bool)
+                                         -> VectorInteropResult<VecBuf> {
     unsafe {
-        let window = ForeignWindowFunction { window_function: window, window_data: mem::transmute(window_data), is_symmetric: is_symmetric };
-        convert_vec!(vector.windowed_sfft(&window))
+        let window = ForeignWindowFunction {
+            window_function: window,
+            window_data: mem::transmute(window_data),
+            is_symmetric: is_symmetric,
+        };
+        vector.trans_vec(|v, b| v.windowed_sfft(b, &window))
     }
 }
 
-/// See [`apply_custom_window32`](fn.apply_custom_window32.html) for a description of the `window` and `window_data` parameter.
+/// See [`apply_custom_window32`](fn.apply_custom_window32.html) for a description of the
+/// `window` and `window_data` parameter.
 #[no_mangle]
-pub extern fn windowed_custom_ifft32(
-    vector: Box<DataVector32>, 
-    window: extern fn(*const c_void, usize, usize) -> f32, 
-    window_data: *const c_void,
-    is_symmetric: bool) -> VectorResult<DataVector32> {
+pub extern "C" fn windowed_custom_ifft32(vector: Box<VecBuf>,
+                                         window: extern "C" fn(*const c_void, usize, usize) -> f32,
+                                         window_data: *const c_void,
+                                         is_symmetric: bool)
+                                         -> VectorInteropResult<VecBuf> {
     unsafe {
-        let window = ForeignWindowFunction { window_function: window, window_data: mem::transmute(window_data), is_symmetric: is_symmetric };
-        convert_vec!(vector.windowed_ifft(&window))
+        let window = ForeignWindowFunction {
+            window_function: window,
+            window_data: mem::transmute(window_data),
+            is_symmetric: is_symmetric,
+        };
+        vector.trans_vec(|v, b| Ok(v.windowed_ifft(b, &window)))
     }
 }
 
-/// See [`apply_custom_window32`](fn.apply_custom_window32.html) for a description of the `window` and `window_data` parameter.
+/// See [`apply_custom_window32`](fn.apply_custom_window32.html) for a description of the
+/// `window` and `window_data` parameter.
 #[no_mangle]
-pub extern fn windowed_custom_sifft32(
-    vector: Box<DataVector32>, 
-    window: extern fn(*const c_void, usize, usize) -> f32, 
-    window_data: *const c_void,
-    is_symmetric: bool) -> VectorResult<DataVector32> {
+pub extern "C" fn windowed_custom_sifft32(vector: Box<VecBuf>,
+                                          window: extern "C" fn(*const c_void, usize, usize) -> f32,
+                                          window_data: *const c_void,
+                                          is_symmetric: bool)
+                                          -> VectorInteropResult<VecBuf> {
     unsafe {
-        let window = ForeignWindowFunction { window_function: window, window_data: mem::transmute(window_data), is_symmetric: is_symmetric };
-        convert_vec!(vector.windowed_sifft(&window))
+        let window = ForeignWindowFunction {
+            window_function: window,
+            window_data: mem::transmute(window_data),
+            is_symmetric: is_symmetric,
+        };
+        vector.trans_vec(|v, b| v.windowed_sifft(b, &window))
     }
 }
 
 #[no_mangle]
-pub extern fn reverse32(vector: Box<DataVector32>) -> VectorResult<DataVector32> {
-    convert_vec!(vector.reverse())
+pub extern "C" fn reverse32(vector: Box<VecBuf>) -> VectorInteropResult<VecBuf> {
+    vector.convert_vec(|v, _| Ok(v.reverse()))
 }
 
 #[no_mangle]
-pub extern fn decimatei32(vector: Box<DataVector32>, decimation_factor: u32, delay: u32) -> VectorResult<DataVector32> {
-    convert_vec!(vector.decimatei(decimation_factor, delay))
+pub extern "C" fn decimatei32(vector: Box<VecBuf>,
+                              decimation_factor: u32,
+                              delay: u32)
+                              -> VectorInteropResult<VecBuf> {
+    vector.convert_vec(|v, _| Ok(v.decimatei(decimation_factor, delay)))
 }
 
 #[no_mangle]
-pub extern fn prepare_argument32(vector: Box<DataVector32>) -> VectorResult<DataVector32> {
-    convert_vec!(vector.prepare_argument())
+pub extern "C" fn prepare_argument32(vector: Box<VecBuf>) -> VectorInteropResult<VecBuf> {
+    vector.trans_vec(|v, b| Ok(v.prepare_argument(b)))
 }
 
 #[no_mangle]
-pub extern fn prepare_argument_padded32(vector: Box<DataVector32>) -> VectorResult<DataVector32> {
-    convert_vec!(vector.prepare_argument_padded())
+pub extern "C" fn prepare_argument_padded32(vector: Box<VecBuf>) -> VectorInteropResult<VecBuf> {
+    vector.trans_vec(|v, b| Ok(v.prepare_argument_padded(b)))
 }
 
 #[no_mangle]
-pub extern fn correlate32(vector: Box<DataVector32>, other: &DataVector32) -> VectorResult<DataVector32> {
-    convert_vec!(vector.correlate(other))
+pub extern "C" fn correlate32(vector: Box<VecBuf>, other: &VecBuf) -> VectorInteropResult<VecBuf> {
+    vector.convert_vec(|v, b| v.correlate(b, &other.vec))
 }
 
 #[no_mangle]
-pub extern fn convolve_vector32(vector: Box<DataVector32>, impulse_response: &DataVector32) -> VectorResult<DataVector32> {
-    convert_vec!(vector.convolve_vector(impulse_response))
+pub extern "C" fn convolve_vector32(vector: Box<VecBuf>,
+                                    impulse_response: &VecBuf)
+                                    -> VectorInteropResult<VecBuf> {
+    vector.convert_vec(|v, b| v.convolve_vector(b, &impulse_response.vec))
 }
 
-/// Convolves the vector with an impulse response defined by `impulse_response` and the void pointer `impulse_response_data`. 
+/// Convolves the vector with an impulse response defined by `impulse_response` and
+/// the void pointer `impulse_response_data`.
 /// The `impulse_response_data` pointer is passed to the `impulse_response`
 /// function at every call and can be used to store parameters.
 #[no_mangle]
-pub extern fn convolve_real32(vector: Box<DataVector32>, 
-    impulse_response: extern fn(*const c_void, f32) -> f32, 
-    impulse_response_data: *const c_void,
-    is_symmetric: bool,
-    ratio: f32,
-    len: usize) -> VectorResult<DataVector32> {
+pub extern "C" fn convolve_real32(vector: Box<VecBuf>,
+                                  impulse_response: extern "C" fn(*const c_void, f32) -> f32,
+                                  impulse_response_data: *const c_void,
+                                  is_symmetric: bool,
+                                  ratio: f32,
+                                  len: usize)
+                                  -> VectorInteropResult<VecBuf> {
     unsafe {
-        let function: &RealImpulseResponse<f32> = &ForeignRealConvolutionFunction { conv_function: impulse_response, conv_data: mem::transmute(impulse_response_data), is_symmetric: is_symmetric };
-        convert_vec!(vector.convolve(function, ratio, len))
+        let function: &RealImpulseResponse<f32> = &ForeignRealConvolutionFunction {
+            conv_function: impulse_response,
+            conv_data: mem::transmute(impulse_response_data),
+            is_symmetric: is_symmetric,
+        };
+        vector.convert_vec(|v, b| Ok(v.convolve(b, function, ratio, len)))
     }
 }
 
-/// Convolves the vector with an impulse response defined by `impulse_response` and the void pointer `impulse_response_data`. 
+/// Convolves the vector with an impulse response defined by `impulse_response` and the
+/// void pointer `impulse_response_data`.
 /// The `impulse_response_data` pointer is passed to the `impulse_response`
 /// function at every call and can be used to store parameters.
 #[no_mangle]
-pub extern fn convolve_complex32(vector: Box<DataVector32>, 
-    impulse_response: extern fn(*const c_void, f32) -> Complex32, 
-    impulse_response_data: *const c_void,
-    is_symmetric: bool,
-    ratio: f32,
-    len: usize) -> VectorResult<DataVector32> {
+pub extern "C" fn convolve_complex32(vector: Box<VecBuf>,
+                                     impulse_response: extern "C" fn(*const c_void, f32)
+                                                                     -> Complex32,
+                                     impulse_response_data: *const c_void,
+                                     is_symmetric: bool,
+                                     ratio: f32,
+                                     len: usize)
+                                     -> VectorInteropResult<VecBuf> {
     unsafe {
-        let function: &ComplexImpulseResponse<f32> = &ForeignComplexConvolutionFunction { conv_function: impulse_response, conv_data: mem::transmute(impulse_response_data), is_symmetric: is_symmetric };
-        convert_vec!(vector.convolve(function, ratio, len))
+        let function: &ComplexImpulseResponse<f32> = &ForeignComplexConvolutionFunction {
+            conv_function: impulse_response,
+            conv_data: mem::transmute(impulse_response_data),
+            is_symmetric: is_symmetric,
+        };
+        vector.convert_vec(|v, b| Ok(v.convolve(b, function, ratio, len)))
     }
 }
 
 /// `impulse_response` argument is translated to:
-/// 
+///
 /// 1. `0` to [`SincFunction`](../../conv_types/struct.SincFunction.html)
 /// 2. `1` to [`RaisedCosineFunction`](../../conv_types/struct.RaisedCosineFunction.html)
 ///
 /// `rolloff` is only used if this is a valid parameter for the selected `impulse_response`
-#[no_mangle]    
-pub extern fn convolve32(vector: Box<DataVector32>, 
-    impulse_response: i32,
-    rolloff: f32,
-    ratio: f32,
-    len: usize) -> VectorResult<DataVector32> {
+#[no_mangle]
+pub extern "C" fn convolve32(vector: Box<VecBuf>,
+                             impulse_response: i32,
+                             rolloff: f32,
+                             ratio: f32,
+                             len: usize)
+                             -> VectorInteropResult<VecBuf> {
     let function = translate_to_real_convolution_function(impulse_response, rolloff);
-    convert_vec!(vector.convolve(function.as_ref(), ratio, len))
+    vector.convert_vec(|v, b| Ok(v.convolve(b, function.as_ref(), ratio, len)))
 }
 
-/// Convolves the vector with an impulse response defined by `frequency_response` and the void pointer `frequency_response_data`. 
+/// Convolves the vector with an impulse response defined by `frequency_response` and
+/// the void pointer `frequency_response_data`.
 /// The `frequency_response_data` pointer is passed to the `frequency_response`
 /// function at every call and can be used to store parameters.
 #[no_mangle]
-pub extern fn multiply_frequency_response_real32(vector: Box<DataVector32>, 
-    frequency_response: extern fn(*const c_void, f32) -> f32, 
+pub extern fn multiply_frequency_response_real32(vector: Box<VecBuf>,
+    frequency_response: extern fn(*const c_void, f32) -> f32,
     frequency_response_data: *const c_void,
     is_symmetric: bool,
-    ratio: f32) -> VectorResult<DataVector32> {
+    ratio: f32) -> VectorInteropResult<VecBuf> {
     unsafe {
-        let function: &RealFrequencyResponse<f32> = &ForeignRealConvolutionFunction { conv_function: frequency_response, conv_data: mem::transmute(frequency_response_data), is_symmetric: is_symmetric };
-        convert_vec!(vector.multiply_frequency_response(function, ratio))
+        let function: &RealFrequencyResponse<f32> = &ForeignRealConvolutionFunction {
+            conv_function: frequency_response,
+            conv_data: mem::transmute(frequency_response_data),
+            is_symmetric: is_symmetric,
+        };
+        vector.convert_vec(|v, _| Ok(v.multiply_frequency_response(function, ratio)))
     }
 }
 
-/// Convolves the vector with an impulse response defined by `frequency_response` and the void pointer `frequency_response_data`. 
+/// Convolves the vector with an impulse response defined by `frequency_response`
+/// and the void pointer `frequency_response_data`.
 /// The `frequency_response` pointer is passed to the `frequency_response`
 /// function at every call and can be used to store parameters.
 #[no_mangle]
-pub extern fn multiply_frequency_response_complex32(vector: Box<DataVector32>, 
-    frequency_response: extern fn(*const c_void, f32) -> Complex32, 
+pub extern fn multiply_frequency_response_complex32(vector: Box<VecBuf>,
+    frequency_response: extern fn(*const c_void, f32) -> Complex32,
     frequency_response_data: *const c_void,
     is_symmetric: bool,
-    ratio: f32) -> VectorResult<DataVector32> {
+    ratio: f32) -> VectorInteropResult<VecBuf> {
     unsafe {
-        let function: &ComplexFrequencyResponse<f32> = &ForeignComplexConvolutionFunction { conv_function: frequency_response, conv_data: mem::transmute(frequency_response_data), is_symmetric: is_symmetric };
-        convert_vec!(vector.multiply_frequency_response(function, ratio))
+        let function: &ComplexFrequencyResponse<f32> = &ForeignComplexConvolutionFunction {
+            conv_function: frequency_response,
+            conv_data: mem::transmute(frequency_response_data),
+            is_symmetric: is_symmetric,
+        };
+        vector.convert_vec(|v, _| Ok(v.multiply_frequency_response(function, ratio)))
     }
 }
 
 /// `frequency_response` argument is translated to:
-/// 
+///
 /// 1. `0` to [`SincFunction`](../../conv_types/struct.SincFunction.html)
 /// 2. `1` to [`RaisedCosineFunction`](../../conv_types/struct.RaisedCosineFunction.html)
 ///
 /// `rolloff` is only used if this is a valid parameter for the selected `frequency_response`
-#[no_mangle]    
-pub extern fn multiply_frequency_response32(vector: Box<DataVector32>, 
-    frequency_response: i32,
-    rolloff: f32,
-    ratio: f32) -> VectorResult<DataVector32> {
+#[no_mangle]
+pub extern "C" fn multiply_frequency_response32(vector: Box<VecBuf>,
+                                                frequency_response: i32,
+                                                rolloff: f32,
+                                                ratio: f32)
+                                                -> VectorInteropResult<VecBuf> {
     let function = translate_to_real_frequency_response(frequency_response, rolloff);
-    convert_vec!(vector.multiply_frequency_response(function.as_ref(), ratio))
+    vector.convert_vec(|v, _| Ok(v.multiply_frequency_response(function.as_ref(), ratio)))
 }
 
-/// Convolves the vector with an impulse response defined by `impulse_response` and the void pointer `impulse_response_data`. 
+/// Convolves the vector with an impulse response defined by `impulse_response` and
+/// the void pointer `impulse_response_data`.
 /// The `impulse_response_data` pointer is passed to the `impulse_response`
 /// function at every call and can be used to store parameters.
 #[no_mangle]
-pub extern fn interpolatef_custom32(vector: Box<DataVector32>, 
-    impulse_response: extern fn(*const c_void, f32) -> f32, 
-    impulse_response_data: *const c_void,
-    is_symmetric: bool,
-    interpolation_factor: f32,
-    delay: f32,
-    len: usize) -> VectorResult<DataVector32> {
+pub extern "C" fn interpolatef_custom32(vector: Box<VecBuf>,
+                                        impulse_response: extern "C" fn(*const c_void, f32) -> f32,
+                                        impulse_response_data: *const c_void,
+                                        is_symmetric: bool,
+                                        interpolation_factor: f32,
+                                        delay: f32,
+                                        len: usize)
+                                        -> VectorInteropResult<VecBuf> {
     unsafe {
-        let function: &RealImpulseResponse<f32> = &ForeignRealConvolutionFunction { conv_function: impulse_response, conv_data: mem::transmute(impulse_response_data), is_symmetric: is_symmetric };
-        convert_vec!(vector.interpolatef(function, interpolation_factor, delay, len))
+        let function: &RealImpulseResponse<f32> = &ForeignRealConvolutionFunction {
+            conv_function: impulse_response,
+            conv_data: mem::transmute(impulse_response_data),
+            is_symmetric: is_symmetric,
+        };
+        vector.convert_vec(|v, b| Ok(v.interpolatef(b, function, interpolation_factor, delay, len)))
     }
 }
 
 /// `impulse_response` argument is translated to:
-/// 
+///
 /// 1. `0` to [`SincFunction`](../../conv_types/struct.SincFunction.html)
 /// 2. `1` to [`RaisedCosineFunction`](../../conv_types/struct.RaisedCosineFunction.html)
 ///
 /// `rolloff` is only used if this is a valid parameter for the selected `impulse_response`
-#[no_mangle]    
-pub extern fn interpolatef32(vector: Box<DataVector32>, 
-    impulse_response: i32,
-    rolloff: f32,
-    interpolation_factor: f32,
-    delay: f32,
-    len: usize) -> VectorResult<DataVector32> {
+#[no_mangle]
+pub extern "C" fn interpolatef32(vector: Box<VecBuf>,
+                                 impulse_response: i32,
+                                 rolloff: f32,
+                                 interpolation_factor: f32,
+                                 delay: f32,
+                                 len: usize)
+                                 -> VectorInteropResult<VecBuf> {
     let function = translate_to_real_convolution_function(impulse_response, rolloff);
-    convert_vec!(vector.interpolatef(function.as_ref(), interpolation_factor, delay, len))
+    vector.convert_vec(|v, b| {
+        Ok(v.interpolatef(b, function.as_ref(), interpolation_factor, delay, len))
+    })
 }
 
-/// Convolves the vector with an impulse response defined by `frequency_response` and the void pointer `frequency_response_data`. 
+/// Convolves the vector with an impulse response defined by `frequency_response` and
+/// the void pointer `frequency_response_data`.
 /// The `frequency_response_data` pointer is passed to the `frequency_response`
 /// function at every call and can be used to store parameters.
 #[no_mangle]
-pub extern fn interpolatei_custom32(vector: Box<DataVector32>, 
-    frequency_response: extern fn(*const c_void, f32) -> f32, 
-    frequency_response_data: *const c_void,
-    is_symmetric: bool,
-    interpolation_factor: i32) -> VectorResult<DataVector32> {
+pub extern "C" fn interpolatei_custom32(vector: Box<VecBuf>,
+                                        frequency_response: extern "C" fn(*const c_void, f32)
+                                                                          -> f32,
+                                        frequency_response_data: *const c_void,
+                                        is_symmetric: bool,
+                                        interpolation_factor: i32)
+                                        -> VectorInteropResult<VecBuf> {
     unsafe {
-        let function: &RealFrequencyResponse<f32> = &ForeignRealConvolutionFunction { conv_function: frequency_response, conv_data: mem::transmute(frequency_response_data), is_symmetric: is_symmetric };
-        convert_vec!(vector.interpolatei(function, interpolation_factor as u32))
+        let function: &RealFrequencyResponse<f32> = &ForeignRealConvolutionFunction {
+            conv_function: frequency_response,
+            conv_data: mem::transmute(frequency_response_data),
+            is_symmetric: is_symmetric,
+        };
+        vector.convert_vec(|v, b| v.interpolatei(b, function, interpolation_factor as u32))
     }
 }
 
 /// `frequency_response` argument is translated to:
-/// 
+///
 /// 1. `0` to [`SincFunction`](../../conv_types/struct.SincFunction.html)
 /// 2. `1` to [`RaisedCosineFunction`](../../conv_types/struct.RaisedCosineFunction.html)
 ///
 /// `rolloff` is only used if this is a valid parameter for the selected `frequency_response`
-#[no_mangle]    
-pub extern fn interpolatei32(vector: Box<DataVector32>, 
-    frequency_response: i32,
-    rolloff: f32,
-    interpolation_factor: i32) -> VectorResult<DataVector32> {
+#[no_mangle]
+pub extern "C" fn interpolatei32(vector: Box<VecBuf>,
+                                 frequency_response: i32,
+                                 rolloff: f32,
+                                 interpolation_factor: i32)
+                                 -> VectorInteropResult<VecBuf> {
     let function = translate_to_real_frequency_response(frequency_response, rolloff);
-    convert_vec!(vector.interpolatei(function.as_ref(), interpolation_factor as u32))
+    vector.convert_vec(|v, b| v.interpolatei(b, function.as_ref(), interpolation_factor as u32))
 }
 
-#[no_mangle]    
-pub extern fn interpolate_lin32(vector: Box<DataVector32>, interpolation_factor: f32, delay: f32) -> VectorResult<DataVector32> {
-    convert_vec!(vector.interpolate_lin(interpolation_factor, delay))
-}
-
-#[no_mangle]    
-pub extern fn interpolate_hermite32(vector: Box<DataVector32>, interpolation_factor: f32, delay: f32) -> VectorResult<DataVector32> {
-    convert_vec!(vector.interpolate_hermite(interpolation_factor, delay))
-}  
-
-pub type PreparedOp1F32 = PreparedOperation1<f32, DataVector32, DataVector32>;
-
-pub type PreparedOp2F32 = PreparedOperation2<f32, DataVector32, DataVector32, DataVector32, DataVector32>;
-
-/// Prepares an operation.
-/// multi_ops1 will not be made available in for interop since the same functionality 
-/// can be created with prepared ops, and internally this is what this lib does too.
-#[no_mangle]
-pub extern fn prepared_ops1_f32() -> Box<PreparedOp1F32> {
-    Box::new(prepare1::<f32, DataVector32>())
-}
-
-#[no_mangle]
-pub extern fn delete_ops1_f32(ops: Box<PreparedOp1F32>) {
-    drop(ops);
-}
-
-/// Prepares an operation.
-/// multi_ops2 will not be made available in for interop since the same functionality 
-/// can be created with prepared ops, and internally this is what this lib does too.
-#[no_mangle]
-pub extern fn prepared_ops2_f32() -> Box<PreparedOp2F32> {
-    Box::new(prepare2::<f32, DataVector32, DataVector32>())
-}
-
-#[no_mangle]
-pub extern fn delete_ops2_f32(ops: Box<PreparedOp2F32>) {
-    drop(ops);
-}
-
-/// Prepares an operation.
-/// multi_ops1 will not be made available in for interop since the same functionality 
-/// can be created with prepared ops, and internally this is what this lib does too.
-#[no_mangle]
-pub extern fn extend_prepared_ops1_f32(ops: Box<PreparedOp1F32>) -> Box<PreparedOp2F32> {
-    Box::new(ops.extend::<DataVector32>())
-}
-
-#[no_mangle]
-pub extern fn exec_prepared_ops1_f32(
-    ops: &PreparedOp1F32,
-    v: Box<DataVector32>) -> VectorResult<DataVector32> {
-    convert_vec!(ops.exec(*v))
-}
-
-#[no_mangle]
-pub extern fn exec_prepared_ops2_f32(
-    ops: &PreparedOp2F32, 
-    v1: Box<DataVector32>, 
-    v2: Box<DataVector32>) -> BinaryVectorResult<DataVector32> {
-    convert_bin_vec!(ops.exec(*v1, *v2))
-}
-
-//----------------------------------------------
-// PreparedOp1F32
-//----------------------------------------------
-#[no_mangle]
-pub extern fn add_real_ops1_f32(ops: &mut PreparedOp1F32, arg: usize, value: f32) {
-    ops.add_enum_op(Operation::AddReal(arg, value))
-}
-
-#[no_mangle]
-pub extern fn multiply_real_ops1_f32(ops: &mut PreparedOp1F32, arg: usize, value: f32) {
-    ops.add_enum_op(Operation::MultiplyReal(arg, value))
-}
-
-#[no_mangle]
-pub extern fn abs_ops1_f32(ops: &mut PreparedOp1F32, arg: usize) {
-    ops.add_enum_op(Operation::Abs(arg))
-}
-
-#[no_mangle]
-pub extern fn to_complex_ops1_f32(ops: &mut PreparedOp1F32, arg: usize) {
-    ops.add_enum_op(Operation::ToComplex(arg))
-}
-
-#[no_mangle]
-pub extern fn map_inplace_real32(vector: Box<DataVector32>, map: extern fn(f32, usize) -> f32) -> VectorResult<DataVector32> {
-    convert_vec!(vector.map_inplace_real((), move|v, i, _|map(v, i)))
-}
-
-/// Warning: This function interface heavily works around the Rust type system and the safety
-/// it provides. Use with great care!
-#[no_mangle]
-pub extern fn map_aggregate_real32(vector: Box<DataVector32>, map: extern fn(f32, usize) -> *const c_void, aggregate: extern fn(*const c_void, *const c_void) -> *const c_void) -> ScalarResult<*const c_void> {
-    unsafe 
-    {
-        let result = convert_scalar!(
-            vector.map_aggregate_real(
-                (), 
-                move|v, i, _| mem::transmute(map(v, i)),
-                move|a: usize, b: usize| mem::transmute(aggregate(mem::transmute(a), mem::transmute(b)))),
-            mem::transmute(0usize)
-        );
-        mem::transmute(result)
-    }
-}
-
-#[no_mangle]
-pub extern fn add_complex_ops1_f32(ops: &mut PreparedOp1F32, arg: usize, re: f32, im: f32) {
-    ops.add_enum_op(Operation::AddComplex(arg, Complex32::new(re, im)))
-}
-
-#[no_mangle]
-pub extern fn multiply_complex_ops1_f32(ops: &mut PreparedOp1F32, arg: usize, re: f32, im: f32) {
-    ops.add_enum_op(Operation::MultiplyComplex(arg, Complex32::new(re, im)))
-}
-
-#[no_mangle]
-pub extern fn magnitude_ops1_f32(ops: &mut PreparedOp1F32, arg: usize) {
-    ops.add_enum_op(Operation::Magnitude(arg))
-}
-
-#[no_mangle]
-pub extern fn magnitude_squared_ops1_f32(ops: &mut PreparedOp1F32, arg: usize) {
-    ops.add_enum_op(Operation::MagnitudeSquared(arg))
-}
-
-#[no_mangle]
-pub extern fn complex_conj_ops1_f32(ops: &mut PreparedOp1F32, arg: usize) {
-    ops.add_enum_op(Operation::ComplexConj(arg))
-}
-
-#[no_mangle]
-pub extern fn to_real_ops1_f32(ops: &mut PreparedOp1F32, arg: usize) {
-    ops.add_enum_op(Operation::ToReal(arg))
-}
-
-#[no_mangle]
-pub extern fn to_imag_ops1_f32(ops: &mut PreparedOp1F32, arg: usize) {
-    ops.add_enum_op(Operation::ToImag(arg))
-}
-
-#[no_mangle]
-pub extern fn phase_ops1_f32(ops: &mut PreparedOp1F32, arg: usize) {
-    ops.add_enum_op(Operation::Phase(arg))
-}
-
-#[no_mangle]
-pub extern fn multiply_complex_exponential_ops1_f32(ops: &mut PreparedOp1F32, arg: usize, a: f32, b: f32) {
-    ops.add_enum_op(Operation::MultiplyComplexExponential(arg, a, b))
-}
-
-#[no_mangle]
-pub extern fn add_vector_ops1_f32(ops: &mut PreparedOp1F32, arg: usize, other: usize) {
-    ops.add_enum_op(Operation::AddVector(arg, other))
-}
-
-#[no_mangle]
-pub extern fn mul_vector_ops1_f32(ops: &mut PreparedOp1F32, arg: usize, other: usize) {
-    ops.add_enum_op(Operation::MulVector(arg, other))
-}
-
-#[no_mangle]
-pub extern fn sub_vector_ops1_f32(ops: &mut PreparedOp1F32, arg: usize, other: usize) {
-    ops.add_enum_op(Operation::SubVector(arg, other))
-}
-
-#[no_mangle]
-pub extern fn div_vector_ops1_f32(ops: &mut PreparedOp1F32, arg: usize, other: usize) {
-    ops.add_enum_op(Operation::DivVector(arg, other))
-}
-
-#[no_mangle]
-pub extern fn square_ops1_f32(ops: &mut PreparedOp1F32, arg: usize) {
-    ops.add_enum_op(Operation::Square(arg))
-}
-
-#[no_mangle]
-pub extern fn sqrt_ops1_f32(ops: &mut PreparedOp1F32, arg: usize) {
-    ops.add_enum_op(Operation::Sqrt(arg))
-}
-
-#[no_mangle]
-pub extern fn root_ops1_f32(ops: &mut PreparedOp1F32, arg: usize, value: f32) {
-    ops.add_enum_op(Operation::Root(arg, value))
-}
-
-#[no_mangle]
-pub extern fn powf_ops1_f32(ops: &mut PreparedOp1F32, arg: usize, value: f32) {
-    ops.add_enum_op(Operation::Powf(arg, value))
-}
-
-#[no_mangle]
-pub extern fn ln_ops1_f32(ops: &mut PreparedOp1F32, arg: usize) {
-    ops.add_enum_op(Operation::Ln(arg))
-}
-
-#[no_mangle]
-pub extern fn exp_ops1_f32(ops: &mut PreparedOp1F32, arg: usize) {
-    ops.add_enum_op(Operation::Exp(arg))
-}
-
-#[no_mangle]
-pub extern fn log_ops1_f32(ops: &mut PreparedOp1F32, arg: usize, value: f32) {
-    ops.add_enum_op(Operation::Log(arg, value))
-}
-
-#[no_mangle]
-pub extern fn expf_ops1_f32(ops: &mut PreparedOp1F32, arg: usize, value: f32) {
-    ops.add_enum_op(Operation::Expf(arg, value))
-}
-
-#[no_mangle]
-pub extern fn sin_ops1_f32(ops: &mut PreparedOp1F32, arg: usize) {
-    ops.add_enum_op(Operation::Sin(arg))
-}
-
-#[no_mangle]
-pub extern fn cos_ops1_f32(ops: &mut PreparedOp1F32, arg: usize) {
-    ops.add_enum_op(Operation::Cos(arg))
-}
-
-#[no_mangle]
-pub extern fn tan_ops1_f32(ops: &mut PreparedOp1F32, arg: usize) {
-    ops.add_enum_op(Operation::Tan(arg))
-}
-
-#[no_mangle]
-pub extern fn asin_ops1_f32(ops: &mut PreparedOp1F32, arg: usize) {
-    ops.add_enum_op(Operation::ASin(arg))
-}
-
-#[no_mangle]
-pub extern fn acos_ops1_f32(ops: &mut PreparedOp1F32, arg: usize) {
-    ops.add_enum_op(Operation::ACos(arg))
-}
-
-#[no_mangle]
-pub extern fn atan_ops1_f32(ops: &mut PreparedOp1F32, arg: usize) {
-    ops.add_enum_op(Operation::ATan(arg))
-}
-
-#[no_mangle]
-pub extern fn sinh_ops1_f32(ops: &mut PreparedOp1F32, arg: usize) {
-    ops.add_enum_op(Operation::Sinh(arg))
-}
-
-#[no_mangle]
-pub extern fn cosh_ops1_f32(ops: &mut PreparedOp1F32, arg: usize) {
-    ops.add_enum_op(Operation::Cosh(arg))
-}
-
-#[no_mangle]
-pub extern fn tanh_ops1_f32(ops: &mut PreparedOp1F32, arg: usize) {
-    ops.add_enum_op(Operation::Tanh(arg))
-}
-
-#[no_mangle]
-pub extern fn asinh_ops1_f32(ops: &mut PreparedOp1F32, arg: usize) {
-    ops.add_enum_op(Operation::ASinh(arg))
-}
-
-#[no_mangle]
-pub extern fn acosh_ops1_f32(ops: &mut PreparedOp1F32, arg: usize) {
-    ops.add_enum_op(Operation::ACosh(arg))
-}
-
-#[no_mangle]
-pub extern fn atanh_ops1_f32(ops: &mut PreparedOp1F32, arg: usize) {
-    ops.add_enum_op(Operation::ATanh(arg))
-}
-
-#[no_mangle]
-pub extern fn clone_from_ops1_f32(ops: &mut PreparedOp1F32, arg: usize, source: usize) {
-    ops.add_enum_op(Operation::CloneFrom(arg, source))
-}
-
-#[no_mangle]
-pub extern fn add_points_ops1_f32(ops: &mut PreparedOp1F32, arg: usize) {
-    ops.add_enum_op(Operation::AddPoints(arg))
-}
-
-#[no_mangle]
-pub extern fn sub_points_ops1_f32(ops: &mut PreparedOp1F32, arg: usize) {
-    ops.add_enum_op(Operation::SubPoints(arg))
-}
-
-#[no_mangle]
-pub extern fn mul_points_ops1_f32(ops: &mut PreparedOp1F32, arg: usize) {
-    ops.add_enum_op(Operation::MulPoints(arg))
-}
-
-#[no_mangle]
-pub extern fn div_points_ops1_f32(ops: &mut PreparedOp1F32, arg: usize) {
-    ops.add_enum_op(Operation::DivPoints(arg))
-}
-
-#[no_mangle]
-pub extern fn map_real_ops1_f32(ops: &mut PreparedOp1F32, arg: usize, map: extern fn(f32, usize) -> f32) {
-    ops.add_enum_op(Operation::MapReal(arg, Arc::new(move|v, i|map(v, i))))
-}
-
-#[no_mangle]
-pub extern fn map_complex_ops1_f32(ops: &mut PreparedOp1F32, arg: usize, map: extern fn(Complex32, usize) -> Complex32) {
-    ops.add_enum_op(Operation::MapComplex(arg, Arc::new(move|v, i|map(v, i))))
-}
-
-//----------------------------------------------
-// PreparedOp2F32
-//----------------------------------------------
-#[no_mangle]
-pub extern fn add_real_ops2_f32(ops: &mut PreparedOp2F32, arg: usize, value: f32) {
-    ops.add_enum_op(Operation::AddReal(arg, value))
-}
-
-#[no_mangle]
-pub extern fn multiply_real_ops2_f32(ops: &mut PreparedOp2F32, arg: usize, value: f32) {
-    ops.add_enum_op(Operation::MultiplyReal(arg, value))
-}
-
-#[no_mangle]
-pub extern fn abs_ops2_f32(ops: &mut PreparedOp2F32, arg: usize) {
-    ops.add_enum_op(Operation::Abs(arg))
-}
-
-#[no_mangle]
-pub extern fn to_complex_ops2_f32(ops: &mut PreparedOp2F32, arg: usize) {
-    ops.add_enum_op(Operation::ToComplex(arg))
-}
-
-#[no_mangle]
-pub extern fn add_complex_ops2_f32(ops: &mut PreparedOp2F32, arg: usize, re: f32, im: f32) {
-    ops.add_enum_op(Operation::AddComplex(arg, Complex32::new(re, im)))
-}
-
-#[no_mangle]
-pub extern fn multiply_complex_ops2_f32(ops: &mut PreparedOp2F32, arg: usize, re: f32, im: f32) {
-    ops.add_enum_op(Operation::MultiplyComplex(arg, Complex32::new(re, im)))
-}
-
-#[no_mangle]
-pub extern fn magnitude_ops2_f32(ops: &mut PreparedOp2F32, arg: usize) {
-    ops.add_enum_op(Operation::Magnitude(arg))
-}
-
-#[no_mangle]
-pub extern fn magnitude_squared_ops2_f32(ops: &mut PreparedOp2F32, arg: usize) {
-    ops.add_enum_op(Operation::MagnitudeSquared(arg))
-}
-
-#[no_mangle]
-pub extern fn complex_conj_ops2_f32(ops: &mut PreparedOp2F32, arg: usize) {
-    ops.add_enum_op(Operation::ComplexConj(arg))
-}
-
-#[no_mangle]
-pub extern fn to_real_ops2_f32(ops: &mut PreparedOp2F32, arg: usize) {
-    ops.add_enum_op(Operation::ToReal(arg))
-}
-
-#[no_mangle]
-pub extern fn to_imag_ops2_f32(ops: &mut PreparedOp2F32, arg: usize) {
-    ops.add_enum_op(Operation::ToImag(arg))
-}
-
-#[no_mangle]
-pub extern fn phase_ops2_f32(ops: &mut PreparedOp2F32, arg: usize) {
-    ops.add_enum_op(Operation::Phase(arg))
-}
-
-#[no_mangle]
-pub extern fn multiply_complex_exponential_ops2_f32(ops: &mut PreparedOp2F32, arg: usize, a: f32, b: f32) {
-    ops.add_enum_op(Operation::MultiplyComplexExponential(arg, a, b))
-}
-
-#[no_mangle]
-pub extern fn add_vector_ops2_f32(ops: &mut PreparedOp2F32, arg: usize, other: usize) {
-    ops.add_enum_op(Operation::AddVector(arg, other))
-}
-
-#[no_mangle]
-pub extern fn mul_vector_ops2_f32(ops: &mut PreparedOp2F32, arg: usize, other: usize) {
-    ops.add_enum_op(Operation::MulVector(arg, other))
-}
-
-#[no_mangle]
-pub extern fn sub_vector_ops2_f32(ops: &mut PreparedOp2F32, arg: usize, other: usize) {
-    ops.add_enum_op(Operation::SubVector(arg, other))
-}
-
-#[no_mangle]
-pub extern fn div_vector_ops2_f32(ops: &mut PreparedOp2F32, arg: usize, other: usize) {
-    ops.add_enum_op(Operation::DivVector(arg, other))
-}
-
-#[no_mangle]
-pub extern fn square_ops2_f32(ops: &mut PreparedOp2F32, arg: usize) {
-    ops.add_enum_op(Operation::Square(arg))
-}
-
-#[no_mangle]
-pub extern fn sqrt_ops2_f32(ops: &mut PreparedOp2F32, arg: usize) {
-    ops.add_enum_op(Operation::Sqrt(arg))
-}
-
-#[no_mangle]
-pub extern fn root_ops2_f32(ops: &mut PreparedOp2F32, arg: usize, value: f32) {
-    ops.add_enum_op(Operation::Root(arg, value))
-}
-
-#[no_mangle]
-pub extern fn powf_ops2_f32(ops: &mut PreparedOp2F32, arg: usize, value: f32) {
-    ops.add_enum_op(Operation::Powf(arg, value))
-}
-
-#[no_mangle]
-pub extern fn ln_ops2_f32(ops: &mut PreparedOp2F32, arg: usize) {
-    ops.add_enum_op(Operation::Ln(arg))
-}
-
-#[no_mangle]
-pub extern fn exp_ops2_f32(ops: &mut PreparedOp2F32, arg: usize) {
-    ops.add_enum_op(Operation::Exp(arg))
-}
-
-#[no_mangle]
-pub extern fn log_ops2_f32(ops: &mut PreparedOp2F32, arg: usize, value: f32) {
-    ops.add_enum_op(Operation::Log(arg, value))
-}
-
-#[no_mangle]
-pub extern fn expf_ops2_f32(ops: &mut PreparedOp2F32, arg: usize, value: f32) {
-    ops.add_enum_op(Operation::Expf(arg, value))
-}
-
-#[no_mangle]
-pub extern fn sin_ops2_f32(ops: &mut PreparedOp2F32, arg: usize) {
-    ops.add_enum_op(Operation::Sin(arg))
-}
-
-#[no_mangle]
-pub extern fn cos_ops2_f32(ops: &mut PreparedOp2F32, arg: usize) {
-    ops.add_enum_op(Operation::Cos(arg))
-}
-
-#[no_mangle]
-pub extern fn tan_ops2_f32(ops: &mut PreparedOp2F32, arg: usize) {
-    ops.add_enum_op(Operation::Tan(arg))
-}
-
-#[no_mangle]
-pub extern fn asin_ops2_f32(ops: &mut PreparedOp2F32, arg: usize) {
-    ops.add_enum_op(Operation::ASin(arg))
-}
-
-#[no_mangle]
-pub extern fn acos_ops2_f32(ops: &mut PreparedOp2F32, arg: usize) {
-    ops.add_enum_op(Operation::ACos(arg))
-}
-
-#[no_mangle]
-pub extern fn atan_ops2_f32(ops: &mut PreparedOp2F32, arg: usize) {
-    ops.add_enum_op(Operation::ATan(arg))
-}
-
-#[no_mangle]
-pub extern fn sinh_ops2_f32(ops: &mut PreparedOp2F32, arg: usize) {
-    ops.add_enum_op(Operation::Sinh(arg))
-}
-
-#[no_mangle]
-pub extern fn cosh_ops2_f32(ops: &mut PreparedOp2F32, arg: usize) {
-    ops.add_enum_op(Operation::Cosh(arg))
-}
-
-#[no_mangle]
-pub extern fn tanh_ops2_f32(ops: &mut PreparedOp2F32, arg: usize) {
-    ops.add_enum_op(Operation::Tanh(arg))
-}
-
-#[no_mangle]
-pub extern fn asinh_ops2_f32(ops: &mut PreparedOp2F32, arg: usize) {
-    ops.add_enum_op(Operation::ASinh(arg))
-}
-
-#[no_mangle]
-pub extern fn acosh_ops2_f32(ops: &mut PreparedOp2F32, arg: usize) {
-    ops.add_enum_op(Operation::ACosh(arg))
-}
-
-#[no_mangle]
-pub extern fn atanh_ops2_f32(ops: &mut PreparedOp2F32, arg: usize) {
-    ops.add_enum_op(Operation::ATanh(arg))
-}
-
-#[no_mangle]
-pub extern fn clone_from_ops2_f32(ops: &mut PreparedOp2F32, arg: usize, source: usize) {
-    ops.add_enum_op(Operation::CloneFrom(arg, source))
-}
-
-#[no_mangle]
-pub extern fn add_points_ops2_f32(ops: &mut PreparedOp2F32, arg: usize) {
-    ops.add_enum_op(Operation::AddPoints(arg))
-}
-
-#[no_mangle]
-pub extern fn sub_points_ops2_f32(ops: &mut PreparedOp2F32, arg: usize) {
-    ops.add_enum_op(Operation::SubPoints(arg))
-}
-
-#[no_mangle]
-pub extern fn mul_points_ops2_f32(ops: &mut PreparedOp2F32, arg: usize) {
-    ops.add_enum_op(Operation::MulPoints(arg))
-}
-
-#[no_mangle]
-pub extern fn div_points_ops2_f32(ops: &mut PreparedOp2F32, arg: usize) {
-    ops.add_enum_op(Operation::DivPoints(arg))
-}
-
 #[no_mangle]
-pub extern fn map_real_ops2_f32(ops: &mut PreparedOp2F32, arg: usize, map: extern fn(f32, usize) -> f32) {
-    ops.add_enum_op(Operation::MapReal(arg, Arc::new(move|v, i|map(v, i))))
+pub extern "C" fn interpolate_lin32(vector: Box<VecBuf>,
+                                    interpolation_factor: f32,
+                                    delay: f32)
+                                    -> VectorInteropResult<VecBuf> {
+    vector.convert_vec(|v, b| Ok(v.interpolate_lin(b, interpolation_factor, delay)))
 }
 
 #[no_mangle]
-pub extern fn map_complex_ops2_f32(ops: &mut PreparedOp2F32, arg: usize, map: extern fn(Complex32, usize) -> Complex32) {
-    ops.add_enum_op(Operation::MapComplex(arg, Arc::new(move|v, i|map(v, i))))
+pub extern "C" fn interpolate_hermite32(vector: Box<VecBuf>,
+                                        interpolation_factor: f32,
+                                        delay: f32)
+                                        -> VectorInteropResult<VecBuf> {
+    vector.convert_vec(|v, b| Ok(v.interpolate_hermite(b, interpolation_factor, delay)))
 }
