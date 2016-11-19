@@ -158,7 +158,7 @@ namespace BasicDsp
         T MapAggregate<T>(Func<float, ulong, T> map, Func<T, T, T> aggregate);
         float RealDotProduct(DataVector32 vector);
         RealStatistics32 RealStatistics();
-        RealStatistics32[] RealStatisticsSplitted(int length);
+        RealStatistics32[] RealStatisticsSplit(int length);
         float RealSum();
         float RealSumSquared();
     }
@@ -194,7 +194,7 @@ namespace BasicDsp
 
         DataVector32 SetMagPhase(DataVector32 /*REAL*/ mag, DataVector32 /*REAL*/ phase);
         
-        ComplexStatistics32[] ComplexStatisticsSplitted(int length);
+        ComplexStatistics32[] ComplexStatisticsSplit(int length);
         Complex32 ComplexSum();
         Complex32 ComplexSumSquared();
         DataVector32 Reverse();

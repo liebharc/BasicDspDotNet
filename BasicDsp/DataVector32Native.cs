@@ -533,14 +533,14 @@ namespace BasicDsp
         public static extern VectorResult32 SetLen([In]DataVector32Struct* vector, ulong len);
 
         [DllImport(DllName,
-            EntryPoint = "real_statistics_splitted32",
+            EntryPoint = "real_statistics_split32",
             CallingConvention = RustConvention)]
-        public static extern int RealStatisticsSplitted([In]DataVector32Struct* vector, IntPtr targets, ulong len);
+        public static extern int RealStatisticsSplit([In]DataVector32Struct* vector, IntPtr targets, ulong len);
 
         [DllImport(DllName,
-            EntryPoint = "complex_statistics_splitted32",
+            EntryPoint = "complex_statistics_split32",
             CallingConvention = RustConvention)]
-        public static extern int ComplexStatisticsSplitted([In]DataVector32Struct* vector, IntPtr targets, ulong len);
+        public static extern int ComplexStatisticsSplit([In]DataVector32Struct* vector, IntPtr targets, ulong len);
 
         [DllImport(DllName,
             EntryPoint = "reverse32",

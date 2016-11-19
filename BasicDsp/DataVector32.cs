@@ -983,12 +983,12 @@ namespace BasicDsp
             }
         }
 
-        public RealStatistics32[] RealStatisticsSplitted(int length)
+        public RealStatistics32[] RealStatisticsSplit(int length)
         {
             var result = new RealStatistics32[length];
             using (var intPtr = new DisposableHandle(GCHandle.Alloc(result, GCHandleType.Pinned)))
             {
-                var code = DataVector32Native.RealStatisticsSplitted(_native, intPtr.IntPtr, (ulong)length);
+                var code = DataVector32Native.RealStatisticsSplit(_native, intPtr.IntPtr, (ulong)length);
                 CheckResultCode(code);
                 return result;
             }
@@ -1003,12 +1003,12 @@ namespace BasicDsp
             }
         }
 
-        public ComplexStatistics32[] ComplexStatisticsSplitted(int length)
+        public ComplexStatistics32[] ComplexStatisticsSplit(int length)
         {
             var result = new ComplexStatistics32[length];
             using (var intPtr = new DisposableHandle(GCHandle.Alloc(result, GCHandleType.Pinned)))
             {
-                var code = DataVector32Native.ComplexStatisticsSplitted(_native, intPtr.IntPtr, (ulong)length);
+                var code = DataVector32Native.ComplexStatisticsSplit(_native, intPtr.IntPtr, (ulong)length);
                 CheckResultCode(code);
                 return result;
             }
